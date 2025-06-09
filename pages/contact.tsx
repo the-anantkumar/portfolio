@@ -32,21 +32,28 @@ export default function Contact() {
   }
 
   return (
-    <div className="px-8">
+    <>
       <Head>
         <title>Contact - Portfolio</title>
         <meta name="description" content="Get in touch using the contact form." />
       </Head>
-      <main className="min-h-screen py-16">
-        <h1 className="text-4xl font-bold mb-4">Contact</h1>
-        <form onSubmit={handleSubmit} className="max-w-md space-y-4">
+      <h1 className="text-4xl font-bold mb-4">Contact</h1>
+      <form onSubmit={handleSubmit} className="max-w-md space-y-4" aria-label="Contact form">
+        <label className="block">
+          <span className="sr-only">Name</span>
           <input className="w-full p-2 border" name="name" placeholder="Name" required />
+        </label>
+        <label className="block">
+          <span className="sr-only">Email</span>
           <input className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
+        </label>
+        <label className="block">
+          <span className="sr-only">Message</span>
           <textarea className="w-full p-2 border" name="message" placeholder="Message" required />
-          <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
-        </form>
-        {status && <p className="mt-4">{status}</p>}
-      </main>
-    </div>
+        </label>
+        <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
+      </form>
+      {status && <p className="mt-4" role="status">{status}</p>}
+    </>
   )
 }

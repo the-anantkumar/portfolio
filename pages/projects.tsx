@@ -1,16 +1,18 @@
 import Head from 'next/head'
+import ProjectCard from '../components/ProjectCard'
 
 export default function Projects() {
   return (
-    <div className="px-8">
+    <>
       <Head>
         <title>Projects - Portfolio</title>
         <meta name="description" content="A showcase of my projects and work." />
       </Head>
-      <main className="min-h-screen py-16">
-        <h1 className="text-4xl font-bold mb-4">Projects</h1>
-        <p>Describe your projects here.</p>
-      </main>
-    </div>
+      <h1 className="text-4xl font-bold mb-4">Projects</h1>
+      <div className="grid gap-4 md:grid-cols-2">
+        <ProjectCard title="Project One" description="Description of project one." link="#" />
+        <ProjectCard title="Project Two" description="Description of project two." link="#" />
+      </div>
+    </>
   )
 }
