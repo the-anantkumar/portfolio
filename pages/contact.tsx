@@ -8,7 +8,7 @@ export default function Contact() {
     e.preventDefault()
     const form = e.currentTarget
     const data = {
-      name: form.name.valueOf,
+      name: form.name.value,
       email: form.email.value,
       message: form.message.value,
     }
