@@ -3,7 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     // Tailwind can generate large CSS files; optimize them in production
-    optimizeCss: true,
+    // Disabled during development to prevent runtime failures when critters
+    // is not installed.
+    optimizeCss: false,
   },
 }
 
