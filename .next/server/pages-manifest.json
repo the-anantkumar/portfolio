@@ -1,0 +1,14 @@
+{
+  "/_app": "pages/_app.js",
+  "/about": "pages/about.js",
+  "/achievements": "pages/achievements.js",
+  "/api/contact": "pages/api/contact.js",
+  "/api/hello": "pages/api/hello.js",
+  "/contact": "pages/contact.js",
+  "/experience": "pages/experience.js",
+  "/": "pages/index.js",
+  "/projects": "pages/projects.js",
+  "/skills": "pages/skills.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js"
+}
