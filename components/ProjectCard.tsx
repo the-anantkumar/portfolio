@@ -9,7 +9,7 @@ interface Props {
 
 export default function ProjectCard({ title, description, imageSrc, link }: Props) {
   return (
-    <article className="border rounded p-4" aria-labelledby={title.replace(/\s+/g, '-') + '-title'}>
+    <article className="border rounded-lg p-4 shadow-lg bg-white" aria-labelledby={title.replace(/\s+/g, '-') + '-title'}>
       <Image
         src={imageSrc}
         alt={title + ' screenshot'}
@@ -22,7 +22,7 @@ export default function ProjectCard({ title, description, imageSrc, link }: Prop
       </h3>
       <p className="mb-2 text-gray-700">{description}</p>
       {link && (
-        <a href={link} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+        <a href={link} className="text-indigo-600 hover:underline" target="_blank" rel="noopener noreferrer">
           View More
         </a>
       )}
