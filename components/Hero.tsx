@@ -8,7 +8,7 @@ export default function Hero() {
       aria-label="Introduction"
     >
       <h1 className="text-6xl font-extrabold mb-6">Hi, I'm Anant Kumar Srivastava.</h1>
-      <p className="text-2xl mb-8">A passionate developer crafting beautiful web experiences.</p>
+      <p className="text-2xl mb-8">Software engineer building data-driven services and user-friendly tools.</p>
       <Link
         href="#projects"
         className="inline-block bg-white text-indigo-700 px-6 py-3 rounded shadow hover:bg-gray-100"

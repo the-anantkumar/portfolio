@@ -10,11 +10,28 @@ export default function Experience() {
       </Head>
       <h1 className="text-4xl font-bold mb-4">Experience</h1>
       <ul className="border-l-2 border-gray-300 ml-2">
-        <TimelineItem title="Company A" subtitle="Role" date="2020 - Present">
-          Brief description of your role at Company A.
+        <TimelineItem
+          title="Nielsen Media"
+          subtitle="Member of Technical Staff"
+          date="Jul 2024 - Present"
+        >
+          Developed event-driven microservices and automated data pipelines using
+          AWS, Redis, and Airflow.
         </TimelineItem>
-        <TimelineItem title="Company B" subtitle="Role" date="2018 - 2020">
-          Brief description of your role at Company B.
+        <TimelineItem
+          title="SAP Labs"
+          subtitle="Developer Intern"
+          date="Feb 2024 - Jul 2024"
+        >
+          Created an SAPUI5 logging plugin and internal DevOps tools with Jira
+          integrations.
+        </TimelineItem>
+        <TimelineItem
+          title="IIIT Delhi"
+          subtitle="R&amp;D Intern"
+          date="Jun 2023 - Dec 2023"
+        >
+          Built a mobile app for patented research using smartphone sensors.
         </TimelineItem>
       </ul>
     </>
