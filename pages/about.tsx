@@ -7,6 +7,9 @@ export default function About() {
       <Head>
         <title>About - Portfolio</title>
         <meta name="description" content="Learn more about the person behind this portfolio." />
+        <meta property="og:title" content="About - Portfolio" />
+        <meta property="og:description" content="Learn more about the person behind this portfolio." />
+        <meta property="og:image" content="/images/profile.svg" />
       </Head>
       <Image
         src="/images/profile.svg"

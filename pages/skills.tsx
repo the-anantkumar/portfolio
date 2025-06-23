@@ -6,6 +6,9 @@ export default function Skills() {
       <Head>
         <title>Skills - Portfolio</title>
         <meta name="description" content="Technical skills and proficiencies." />
+        <meta property="og:title" content="Skills - Portfolio" />
+        <meta property="og:description" content="Technical skills and proficiencies." />
+        <meta property="og:image" content="/images/profile.svg" />
       </Head>
       <h1 className="text-4xl font-bold mb-4">Skills</h1>
       <h2 className="text-2xl font-semibold mt-4">Languages</h2>

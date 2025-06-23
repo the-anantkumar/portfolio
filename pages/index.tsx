@@ -41,6 +41,9 @@ export default function Home() {
       <Head>
         <title>Home - Portfolio</title>
         <meta name="description" content="Personal portfolio homepage" />
+        <meta property="og:title" content="Home - Portfolio" />
+        <meta property="og:description" content="Personal portfolio homepage" />
+        <meta property="og:image" content="/images/profile.svg" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
@@ -182,17 +185,17 @@ export default function Home() {
       >
         <h1 className="text-4xl font-bold mb-4">Contact</h1>
         <form onSubmit={handleSubmit} className="max-w-md space-y-4 mx-auto" aria-label="Contact form">
-          <label className="block">
+          <label className="block" htmlFor="home-contact-name">
             <span className="sr-only">Name</span>
-            <input className="w-full p-2 border" name="name" placeholder="Name" required />
+            <input id="home-contact-name" className="w-full p-2 border" name="name" placeholder="Name" required />
           </label>
-          <label className="block">
+          <label className="block" htmlFor="home-contact-email">
             <span className="sr-only">Email</span>
-            <input className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
+            <input id="home-contact-email" className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
           </label>
-          <label className="block">
+          <label className="block" htmlFor="home-contact-message">
             <span className="sr-only">Message</span>
-            <textarea className="w-full p-2 border" name="message" placeholder="Message" required />
+            <textarea id="home-contact-message" className="w-full p-2 border" name="message" placeholder="Message" required />
           </label>
           <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
         </form>
