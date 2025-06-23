@@ -5,6 +5,6 @@
 @tailwind utilities;
 
 body {
-  @apply font-sans text-gray-800;
+  @apply font-sans bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100;
   scroll-behavior: smooth;
 }
