@@ -6,11 +6,11 @@ export default function Contact() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const form = e.currentTarget
+    const form = e.currentTarget as HTMLFormElement
     const data = {
-      name: form.name.value,
-      email: form.email.value,
-      message: form.message.value,
+      name: (form.elements.namedItem('name') as HTMLInputElement)?.value || '',
+      email: (form.elements.namedItem('email') as HTMLInputElement)?.value || '',
+      message: (form.elements.namedItem('message') as HTMLTextAreaElement)?.value || '',
     }
 
     try {
