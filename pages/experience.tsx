@@ -7,6 +7,9 @@ export default function Experience() {
       <Head>
         <title>Experience - Portfolio</title>
         <meta name="description" content="Professional work and experiences." />
+        <meta property="og:title" content="Experience - Portfolio" />
+        <meta property="og:description" content="Professional work and experiences." />
+        <meta property="og:image" content="/images/profile.svg" />
       </Head>
       <h1 className="text-4xl font-bold mb-4">Experience</h1>
       <ul className="border-l-2 border-gray-300 ml-2">
