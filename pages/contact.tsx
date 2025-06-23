@@ -36,6 +36,9 @@ export default function Contact() {
       <Head>
         <title>Contact - Portfolio</title>
         <meta name="description" content="Get in touch using the contact form." />
+        <meta property="og:title" content="Contact - Portfolio" />
+        <meta property="og:description" content="Get in touch using the contact form." />
+        <meta property="og:image" content="/images/profile.svg" />
       </Head>
       <h1 className="text-4xl font-bold mb-4">Contact</h1>
       <form onSubmit={handleSubmit} className="max-w-md space-y-4" aria-label="Contact form">

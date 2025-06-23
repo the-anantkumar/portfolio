@@ -6,6 +6,9 @@ export default function Achievements() {
       <Head>
         <title>Achievements - Portfolio</title>
         <meta name="description" content="Awards and notable achievements." />
+        <meta property="og:title" content="Achievements - Portfolio" />
+        <meta property="og:description" content="Awards and notable achievements." />
+        <meta property="og:image" content="/images/profile.svg" />
       </Head>
       <h1 className="text-4xl font-bold mb-4">Achievements</h1>
       <ul className="list-disc list-inside text-left">

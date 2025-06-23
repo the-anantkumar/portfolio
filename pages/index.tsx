@@ -41,6 +41,9 @@ export default function Home() {
       <Head>
         <title>Home - Portfolio</title>
         <meta name="description" content="Personal portfolio homepage" />
+        <meta property="og:title" content="Home - Portfolio" />
+        <meta property="og:description" content="Personal portfolio homepage" />
+        <meta property="og:image" content="/images/profile.svg" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero />
