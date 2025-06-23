@@ -7,7 +7,7 @@ export default function Hero() {
       className="py-32 text-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white"
       aria-label="Introduction"
     >
-      <h1 className="text-6xl font-extrabold mb-6">Hi, I'm Your Name</h1>
+      <h1 className="text-6xl font-extrabold mb-6">Hi, I'm Anant Kumar Srivastava.</h1>
       <p className="text-2xl mb-8">A passionate developer crafting beautiful web experiences.</p>
       <Link
         href="#projects"
