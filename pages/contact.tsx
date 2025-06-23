@@ -39,17 +39,17 @@ export default function Contact() {
       </Head>
       <h1 className="text-4xl font-bold mb-4">Contact</h1>
       <form onSubmit={handleSubmit} className="max-w-md space-y-4" aria-label="Contact form">
-        <label className="block">
+        <label className="block" htmlFor="contact-name">
           <span className="sr-only">Name</span>
-          <input className="w-full p-2 border" name="name" placeholder="Name" required />
+          <input id="contact-name" className="w-full p-2 border" name="name" placeholder="Name" required />
         </label>
-        <label className="block">
+        <label className="block" htmlFor="contact-email">
           <span className="sr-only">Email</span>
-          <input className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
+          <input id="contact-email" className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
         </label>
-        <label className="block">
+        <label className="block" htmlFor="contact-message">
           <span className="sr-only">Message</span>
-          <textarea className="w-full p-2 border" name="message" placeholder="Message" required />
+          <textarea id="contact-message" className="w-full p-2 border" name="message" placeholder="Message" required />
         </label>
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
       </form>
