@@ -11,14 +11,14 @@ export default function Projects() {
       <h1 className="text-4xl font-bold mb-4">Projects</h1>
       <div className="grid gap-4 md:grid-cols-2">
         <ProjectCard
-          title="Project One"
-          description="Description of project one."
+          title="Codeforces POTD Extension"
+          description="Chrome extension recommending daily Codeforces problems; 2500+ users with a 4.9★ rating."
           imageSrc="/images/project1.svg"
           link="#"
         />
         <ProjectCard
-          title="Project Two"
-          description="Description of project two."
+          title="Image Encryption App"
+          description="Java Swing tool using chaotic logistic maps for fast image encryption."
           imageSrc="/images/project2.svg"
           link="#"
         />

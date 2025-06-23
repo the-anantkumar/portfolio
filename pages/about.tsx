@@ -16,7 +16,12 @@ export default function About() {
         className="mx-auto rounded-full mb-4"
       />
       <h1 className="text-4xl font-bold mb-4">About Me</h1>
-      <p>Write something about yourself here.</p>
+      <p>
+        I'm Anant Kumar Srivastava, a software engineer with a B.E. in Electronics
+        and Instrumentation and an M.Sc. in Mathematics from BITS Pilani
+        (2019–2024). I enjoy creating scalable data systems and simple user
+        experiences.
+      </p>
     </>
   )
 }

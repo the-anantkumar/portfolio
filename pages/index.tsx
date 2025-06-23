@@ -61,7 +61,12 @@ export default function Home() {
           className="mx-auto rounded-full mb-4"
         />
         <h1 className="text-4xl font-bold mb-4">About Me</h1>
-        <p>Write something about yourself here.</p>
+        <p>
+          I'm Anant Kumar Srivastava, a software engineer with a B.E. in
+          Electronics and Instrumentation and an M.Sc. in Mathematics from BITS
+          Pilani (2019–2024). I enjoy creating scalable data systems and simple
+          user experiences.
+        </p>
       </motion.section>
 
       <motion.section
@@ -75,14 +80,14 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-4">Projects</h1>
         <div className="grid gap-4 md:grid-cols-2">
           <ProjectCard
-            title="Project One"
-            description="Description of project one."
+            title="Codeforces POTD Extension"
+            description="Chrome extension recommending daily Codeforces problems; 2500+ users with a 4.9★ rating."
             imageSrc="/images/project1.svg"
             link="#"
           />
           <ProjectCard
-            title="Project Two"
-            description="Description of project two."
+            title="Image Encryption App"
+            description="Java Swing tool using chaotic logistic maps for fast image encryption."
             imageSrc="/images/project2.svg"
             link="#"
           />
@@ -99,11 +104,26 @@ export default function Home() {
       >
         <h1 className="text-4xl font-bold mb-4">Experience</h1>
         <ul className="border-l-2 border-gray-300 ml-2">
-          <TimelineItem title="Company A" subtitle="Role" date="2020 - Present">
-            Brief description of your role at Company A.
+          <TimelineItem
+            title="Nielsen Media"
+            subtitle="Member of Technical Staff"
+            date="Jul 2024 - Present"
+          >
+            Developed event-driven microservices and automated data pipelines using AWS, Redis, and Airflow.
           </TimelineItem>
-          <TimelineItem title="Company B" subtitle="Role" date="2018 - 2020">
-            Brief description of your role at Company B.
+          <TimelineItem
+            title="SAP Labs"
+            subtitle="Developer Intern"
+            date="Feb 2024 - Jul 2024"
+          >
+            Created an SAPUI5 logging plugin and internal DevOps tools with Jira integrations.
+          </TimelineItem>
+          <TimelineItem
+            title="IIIT Delhi"
+            subtitle="R&amp;D Intern"
+            date="Jun 2023 - Dec 2023"
+          >
+            Built a mobile app for patented research using smartphone sensors.
           </TimelineItem>
         </ul>
       </motion.section>
@@ -117,7 +137,18 @@ export default function Home() {
         viewport={{ once: true }}
       >
         <h1 className="text-4xl font-bold mb-4">Skills</h1>
-        <p>List your skills here.</p>
+        <h2 className="text-2xl font-semibold mt-4">Languages</h2>
+        <ul className="list-disc list-inside text-left">
+          <li>C++, Java, JavaScript, Python, SQL, Bash</li>
+        </ul>
+        <h2 className="text-2xl font-semibold mt-4">Technologies</h2>
+        <ul className="list-disc list-inside text-left">
+          <li>
+            AWS, Apache Airflow, Kubernetes, Docker, Redis, Presto/PostgreSQL,
+            Maven, Gradle, CI/CD, Google Cloud, Grafana, Node.js, HTML/CSS,
+            Terraform, Terragrunt, Spark, Git, Linux
+          </li>
+        </ul>
       </motion.section>
 
       <motion.section
@@ -129,7 +160,16 @@ export default function Home() {
         viewport={{ once: true }}
       >
         <h1 className="text-4xl font-bold mb-4">Achievements</h1>
-        <p>Share your achievements here.</p>
+        <ul className="list-disc list-inside text-left">
+          <li>
+            Global rank&nbsp;103 among 10k+ participants in a CodeChef Div&nbsp;2
+            contest.
+          </li>
+          <li>
+            Keyboard player certified by Trinity College London with one of its
+            highest rankings.
+          </li>
+        </ul>
       </motion.section>
 
       <motion.section

@@ -4,7 +4,7 @@ export default function Navbar() {
   return (
     <header className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-md sticky top-0 z-50">
       <nav className="container mx-auto flex items-center justify-between p-4" aria-label="Main navigation">
-        <Link href="/" className="text-xl font-semibold">Your Name</Link>
+        <Link href="/" className="text-xl font-semibold">Anant Kumar Srivastava</Link>
         <ul className="flex space-x-4">
           <li>
             <Link href="#about" className="hover:text-yellow-300">
