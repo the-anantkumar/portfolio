@@ -18,7 +18,7 @@ export default function About() {
         height={200}
         className="mx-auto rounded-full mb-4"
       />
-      <h1 className="text-4xl font-bold mb-4">About Me</h1>
+      <h1 className="text-4xl font-bold font-heading mb-4">About Me</h1>
       <p>
         I'm Anant Kumar Srivastava, a software engineer with a B.E. in Electronics
         and Instrumentation and an M.Sc. in Mathematics from BITS Pilani

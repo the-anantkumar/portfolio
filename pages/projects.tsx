@@ -11,7 +11,7 @@ export default function Projects() {
         <meta property="og:description" content="A showcase of my projects and work." />
         <meta property="og:image" content="/images/profile.svg" />
       </Head>
-      <h1 className="text-4xl font-bold mb-4">Projects</h1>
+      <h1 className="text-4xl font-bold font-heading mb-4">Projects</h1>
       <div className="grid gap-4 md:grid-cols-2">
         <ProjectCard
           title="Codeforces POTD Extension"

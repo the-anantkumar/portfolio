@@ -40,7 +40,7 @@ export default function Contact() {
         <meta property="og:description" content="Get in touch using the contact form." />
         <meta property="og:image" content="/images/profile.svg" />
       </Head>
-      <h1 className="text-4xl font-bold mb-4">Contact</h1>
+      <h1 className="text-4xl font-bold font-heading mb-4">Contact</h1>
       <form onSubmit={handleSubmit} className="max-w-md space-y-4" aria-label="Contact form">
         <label className="block" htmlFor="contact-name">
           <span className="sr-only">Name</span>
@@ -54,7 +54,7 @@ export default function Contact() {
           <span className="sr-only">Message</span>
           <textarea id="contact-message" className="w-full p-2 border" name="message" placeholder="Message" required />
         </label>
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
+        <button type="submit" className="px-4 py-2 bg-accent text-white">Send</button>
       </form>
       {status && <p className="mt-4" role="status">{status}</p>}
     </>

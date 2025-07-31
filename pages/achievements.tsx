@@ -10,7 +10,7 @@ export default function Achievements() {
         <meta property="og:description" content="Awards and notable achievements." />
         <meta property="og:image" content="/images/profile.svg" />
       </Head>
-      <h1 className="text-4xl font-bold mb-4">Achievements</h1>
+      <h1 className="text-4xl font-bold font-heading mb-4">Achievements</h1>
       <ul className="list-disc list-inside text-left">
         <li>
           Global rank&nbsp;103 among 10k+ participants in a CodeChef Div&nbsp;2
