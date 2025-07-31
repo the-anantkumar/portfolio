@@ -31,7 +31,7 @@ export default function Layout({ children }: Props) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-dark">
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <main id="main-content" className="flex-grow container mx-auto px-4 py-8">
         {children}

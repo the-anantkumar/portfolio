@@ -11,7 +11,7 @@ export default function Experience() {
         <meta property="og:description" content="Professional work and experiences." />
         <meta property="og:image" content="/images/profile.svg" />
       </Head>
-      <h1 className="text-4xl font-bold mb-4">Experience</h1>
+      <h1 className="text-4xl font-bold font-heading mb-4">Experience</h1>
       <ul className="border-l-2 border-gray-300 ml-2">
         <TimelineItem
           title="Nielsen Media"

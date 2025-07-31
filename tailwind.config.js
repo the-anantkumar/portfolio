@@ -7,8 +7,13 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        accent: '#00ffff',
+        dark: '#121212',
+      },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        heading: ['Poppins', 'sans-serif'],
       },
     },
   },

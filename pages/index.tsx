@@ -63,7 +63,7 @@ export default function Home() {
           height={200}
           className="mx-auto rounded-full mb-4"
         />
-        <h1 className="text-4xl font-bold mb-4">About Me</h1>
+        <h1 className="text-4xl font-bold font-heading mb-4">About Me</h1>
         <p>
           I'm Anant Kumar Srivastava, a software engineer with a B.E. in
           Electronics and Instrumentation and an M.Sc. in Mathematics from BITS
@@ -80,7 +80,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h1 className="text-4xl font-bold mb-4">Projects</h1>
+        <h1 className="text-4xl font-bold font-heading mb-4">Projects</h1>
         <div className="grid gap-4 md:grid-cols-2">
           <ProjectCard
             title="Codeforces POTD Extension"
@@ -105,7 +105,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h1 className="text-4xl font-bold mb-4">Experience</h1>
+        <h1 className="text-4xl font-bold font-heading mb-4">Experience</h1>
         <ul className="border-l-2 border-gray-300 ml-2">
           <TimelineItem
             title="Nielsen Media"
@@ -139,12 +139,12 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h1 className="text-4xl font-bold mb-4">Skills</h1>
-        <h2 className="text-2xl font-semibold mt-4">Languages</h2>
+        <h1 className="text-4xl font-bold font-heading mb-4">Skills</h1>
+        <h2 className="text-2xl font-semibold font-heading mt-4">Languages</h2>
         <ul className="list-disc list-inside text-left">
           <li>C++, Java, JavaScript, Python, SQL, Bash</li>
         </ul>
-        <h2 className="text-2xl font-semibold mt-4">Technologies</h2>
+        <h2 className="text-2xl font-semibold font-heading mt-4">Technologies</h2>
         <ul className="list-disc list-inside text-left">
           <li>
             AWS, Apache Airflow, Kubernetes, Docker, Redis, Presto/PostgreSQL,
@@ -162,7 +162,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h1 className="text-4xl font-bold mb-4">Achievements</h1>
+        <h1 className="text-4xl font-bold font-heading mb-4">Achievements</h1>
         <ul className="list-disc list-inside text-left">
           <li>
             Global rank&nbsp;103 among 10k+ participants in a CodeChef Div&nbsp;2
@@ -183,7 +183,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h1 className="text-4xl font-bold mb-4">Contact</h1>
+        <h1 className="text-4xl font-bold font-heading mb-4">Contact</h1>
         <form onSubmit={handleSubmit} className="max-w-md space-y-4 mx-auto" aria-label="Contact form">
           <label className="block" htmlFor="home-contact-name">
             <span className="sr-only">Name</span>
@@ -197,7 +197,7 @@ export default function Home() {
             <span className="sr-only">Message</span>
             <textarea id="home-contact-message" className="w-full p-2 border" name="message" placeholder="Message" required />
           </label>
-          <button type="submit" className="px-4 py-2 bg-blue-500 text-white">Send</button>
+          <button type="submit" className="px-4 py-2 bg-accent text-white">Send</button>
         </form>
         {status && <p className="mt-4" role="status">{status}</p>}
       </motion.section>
