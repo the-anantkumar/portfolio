@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import Navbar from './Navbar'
 import Footer from './Footer'
 
@@ -8,6 +9,7 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     const stored = localStorage.getItem('theme') as 'light' | 'dark' | null
@@ -31,12 +33,17 @@ export default function Layout({ children }: Props) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-dark">
+    <motion.div
+      initial={shouldReduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: 'easeInOut' }}
+      className="flex min-h-screen flex-col bg-white dark:bg-dark"
+    >
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
       <main id="main-content" className="flex-grow container mx-auto px-4 py-8">
         {children}
       </main>
       <Footer />
-    </div>
+    </motion.div>
   )
 }
