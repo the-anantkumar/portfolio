@@ -17,7 +17,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, imageSrc, link, technologies, status = '', metrics }) => (
-  <div className="glass-morphism-heavy rounded-2xl p-6 border border-accent-cyan/30">
+  <div className="glass-morphism-heavy rounded-2xl p-6 border border-accent-cyan/30 flex flex-col items-center justify-center">
     <div className="flex justify-between items-start mb-4">
       <h3 className="text-xl font-display font-bold text-gradient-tech">{title}</h3>
       {status && (
