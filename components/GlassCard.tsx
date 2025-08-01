@@ -1,8 +1,8 @@
-import { ReactNode } from 'react'
+import { ReactNode, forwardRef } from 'react'
 import { motion, HTMLMotionProps } from 'framer-motion'
 // import { cn } from '@/lib/utils'
 
-interface GlassCardProps extends HTMLMotionProps<"div"> {
+interface GlassCardProps extends Omit<HTMLMotionProps<"div">, 'ref'> {
   children: ReactNode
   variant?: 'default' | 'highlighted' | 'interactive'
   blur?: 'sm' | 'md' | 'lg' | 'xl'
@@ -10,15 +10,18 @@ interface GlassCardProps extends HTMLMotionProps<"div"> {
   glow?: boolean
 }
 
-export default function GlassCard({ 
-  children, 
-  className,
-  variant = 'default',
-  blur = 'md',
-  border = true,
-  glow = false,
-  ...props 
-}: GlassCardProps) {
+const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(function GlassCard(
+  {
+    children,
+    className,
+    variant = 'default',
+    blur = 'md',
+    border = true,
+    glow = false,
+    ...props
+  },
+  ref
+) {
   const baseClasses = "relative backdrop-blur-md rounded-xl overflow-hidden"
   
   const variantClasses = {
@@ -39,6 +42,7 @@ export default function GlassCard({
 
   return (
     <motion.div
+      ref={ref}
       className={cn(
         baseClasses,
         variantClasses[variant],
@@ -61,7 +65,9 @@ export default function GlassCard({
       </div>
     </motion.div>
   )
-}
+})
+
+export default GlassCard
 
 // Utility function for className merging
 export function cn(...inputs: any[]) {
