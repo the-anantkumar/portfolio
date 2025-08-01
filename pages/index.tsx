@@ -1,40 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+
+import ContactForm from '../components/ContactForm'
 import { motion } from 'framer-motion'
 import Hero from '../components/Hero'
 import ProjectCard from '../components/ProjectCard'
 import TimelineItem from '../components/TimelineItem'
 
 export default function Home() {
-  const [status, setStatus] = useState<string | null>(null)
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const form = e.currentTarget
-    const data = {
-      name: form.name.value,
-      email: form.email.value,
-      message: form.message.value,
-    }
-
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (res.ok) {
-        setStatus('Message sent!')
-        form.reset()
-      } else {
-        const body = await res.json()
-        setStatus(body.error || 'Something went wrong')
-      }
-    } catch (err) {
-      setStatus('Failed to submit form')
-    }
-  }
 
   return (
     <>
@@ -184,22 +157,7 @@ export default function Home() {
         viewport={{ once: true }}
       >
         <h1 className="text-4xl font-bold font-heading mb-4">Contact</h1>
-        <form onSubmit={handleSubmit} className="max-w-md space-y-4 mx-auto" aria-label="Contact form">
-          <label className="block" htmlFor="home-contact-name">
-            <span className="sr-only">Name</span>
-            <input id="home-contact-name" className="w-full p-2 border" name="name" placeholder="Name" required />
-          </label>
-          <label className="block" htmlFor="home-contact-email">
-            <span className="sr-only">Email</span>
-            <input id="home-contact-email" className="w-full p-2 border" name="email" type="email" placeholder="Email" required />
-          </label>
-          <label className="block" htmlFor="home-contact-message">
-            <span className="sr-only">Message</span>
-            <textarea id="home-contact-message" className="w-full p-2 border" name="message" placeholder="Message" required />
-          </label>
-          <button type="submit" className="px-4 py-2 bg-accent text-white">Send</button>
-        </form>
-        {status && <p className="mt-4" role="status">{status}</p>}
+        <ContactForm idPrefix="home-contact" className="max-w-md space-y-4 mx-auto" />
       </motion.section>
     </>
   )
