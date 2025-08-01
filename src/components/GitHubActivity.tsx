@@ -1,22 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
-import dynamic from 'next/dynamic'
 import GlassCard from './GlassCard'
 
-// Dynamically import to avoid SSR issues
-const GitHubCalendar = dynamic(() => import('react-github-calendar'), {
-  ssr: false,
-  loading: () => (
-    <div className="animate-pulse">
-      <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded-lg mb-4"></div>
-      <div className="flex space-x-2">
-        {[...Array(12)].map((_, i) => (
-          <div key={i} className="h-3 w-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
-        ))}
-      </div>
-    </div>
-  )
-})
+const GitHubCalendar = lazy(() => import('react-github-calendar'))
 
 interface GitHubStats {
   totalContributions: number
@@ -126,21 +112,23 @@ export default function GitHubActivity({ username = "your-github-username" }) {
                   </div>
                 </div>
               ) : (
-                <div className="github-calendar-container">
-                  <GitHubCalendar
-                    username={username}
-                    colorScheme="dark"
-                    theme={calendarTheme}
-                    fontSize={14}
-                    blockSize={12}
-                    blockMargin={4}
-                    blockRadius={2}
-                    showWeekdayLabels
-                    style={{
-                      color: 'var(--tw-colors-gray-300)',
-                    }}
-                  />
-                </div>
+                <Suspense fallback={<div className="animate-pulse h-32 bg-gray-300 dark:bg-gray-700 rounded-lg" />}>
+                  <div className="github-calendar-container">
+                    <GitHubCalendar
+                      username={username}
+                      colorScheme="dark"
+                      theme={calendarTheme}
+                      fontSize={14}
+                      blockSize={12}
+                      blockMargin={4}
+                      blockRadius={2}
+                      showWeekdayLabels
+                      style={{
+                        color: 'var(--tw-colors-gray-300)',
+                      }}
+                    />
+                  </div>
+                </Suspense>
               )}
             </GlassCard>
           </div>

@@ -1,5 +1,5 @@
 // pages/index.tsx
-import Head from 'next/head'
+import { Helmet } from 'react-helmet'
 import Hero from '../components/Hero'
 
 import AboutSection from '../components/AboutSection'
@@ -12,11 +12,11 @@ import ContactSection from '../components/ContactSection'
 export default function Home() {
   return (
     <>
-      <Head>
+      <Helmet>
         <title>Home – Portfolio</title>
         <meta name="description" content="Personal portfolio homepage" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+      </Helmet>
 
       {/* This is pure SSR‐safe */}
       <Hero />

@@ -1,16 +1,16 @@
-import Head from 'next/head'
+import { Helmet } from 'react-helmet'
 import ProjectCard from '../components/ProjectCard'
 
 export default function Projects() {
   return (
     <>
-      <Head>
+      <Helmet>
         <title>Projects - Portfolio</title>
         <meta name="description" content="A showcase of my projects and work." />
         <meta property="og:title" content="Projects - Portfolio" />
         <meta property="og:description" content="A showcase of my projects and work." />
         <meta property="og:image" content="/images/profile.svg" />
-      </Head>
+      </Helmet>
       <h1 className="text-4xl font-bold font-heading mb-4">Projects</h1>
       <div className="grid gap-4 md:grid-cols-2">
         <ProjectCard

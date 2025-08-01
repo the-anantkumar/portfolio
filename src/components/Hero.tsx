@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 export default function Hero() {
@@ -47,17 +47,17 @@ export default function Hero() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href="#projects">
+          <a href="#projects">
             <button className="group relative px-8 py-4 bg-gradient-to-r from-accent to-primary-400 text-dark-900 font-semibold rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
               <span className="relative z-10">View My Work</span>
             </button>
-          </Link>
+          </a>
 
-          <Link href="#contact">
+          <a href="#contact">
             <button className="group px-8 py-4 border-2 border-accent text-accent font-semibold rounded-full backdrop-blur-sm hover:bg-accent hover:text-dark-900 transition-all duration-300 hover:scale-105">
               Get In Touch
             </button>
-          </Link>
+          </a>
         </div>
 
         {/* Simple scroll indicator */}

@@ -1,5 +1,4 @@
 // components/ProjectCard.tsx
-import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 
 interface Props {
@@ -31,13 +30,12 @@ export default function ProjectCard({
       whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
     >
-      <Image
+      <img
         src={imageSrc}
         alt={`${title} screenshot`}
         width={600}
         height={400}
         className="mb-2 rounded"
-        unoptimized
       />
 
       <h3
