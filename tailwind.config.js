@@ -20,6 +20,10 @@ module.exports = {
           900: '#0c4a6e',
         },
         accent: '#00ffff',
+        accentBlue: '#00ffff',
+        accentRed: '#ff006e',
+        accentViolet: '#8b5cf6',
+        matte: '#0D0D0D',
         dark: {
           50: '#fafafa',
           100: '#f4f4f5',
@@ -41,7 +45,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-        heading: ['Poppins', 'sans-serif'],
+        heading: ['"Crimson Text"', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       backdropBlur: {
