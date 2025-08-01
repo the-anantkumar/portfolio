@@ -1,9 +1,25 @@
+<<<<<<< HEAD
+=======
+import { motion } from 'framer-motion'
+>>>>>>> codex/fix-hydration-and-build-issues
 import TimelineItem from './TimelineItem'
 
 export default function ExperienceSection() {
   return (
+<<<<<<< HEAD
     <section id="experience" className="py-20">
       <h2 className="text-3xl font-bold font-heading mb-4 text-center">Experience</h2>
+=======
+    <motion.section
+      id="experience"
+      className="py-20 text-center"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+    >
+      <h1 className="text-4xl font-bold font-heading mb-4">Experience</h1>
+>>>>>>> codex/fix-hydration-and-build-issues
       <ul className="border-l-2 border-gray-300 ml-2">
         <TimelineItem
           title="Nielsen Media"
@@ -27,6 +43,10 @@ export default function ExperienceSection() {
           Built a mobile app for patented research using smartphone sensors.
         </TimelineItem>
       </ul>
+<<<<<<< HEAD
     </section>
+=======
+    </motion.section>
+>>>>>>> codex/fix-hydration-and-build-issues
   )
 }
