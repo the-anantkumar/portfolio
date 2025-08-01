@@ -38,7 +38,7 @@ export default function Navbar({ theme, onToggleTheme }: Props) {
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i]
-        if (section && section.offsetTop <= scrollPos) {
+        if (section && (section as HTMLElement).offsetTop <= scrollPos) {
           setActiveSection(navItems[i].id)
           break
         }
