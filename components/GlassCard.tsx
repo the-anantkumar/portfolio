@@ -1,11 +1,7 @@
 import { ReactNode, forwardRef } from 'react'
 import { motion, HTMLMotionProps } from 'framer-motion'
 
-<<<<<<< HEAD
-export interface GlassCardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
-=======
 interface GlassCardProps extends Omit<HTMLMotionProps<"div">, 'ref'> {
->>>>>>> codex/fix-hydration-and-build-issues
   children: ReactNode
   variant?: 'default' | 'highlighted' | 'interactive'
   blur?: 'sm' | 'md' | 'lg' | 'xl'
@@ -25,13 +21,8 @@ const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(function GlassCard(
   },
   ref
 ) {
-<<<<<<< HEAD
-  const baseClasses = 'relative backdrop-blur-md rounded-xl overflow-hidden'
-
-=======
   const baseClasses = "relative backdrop-blur-md rounded-xl overflow-hidden"
   
->>>>>>> codex/fix-hydration-and-build-issues
   const variantClasses = {
     default: 'bg-glass-light dark:bg-glass-dark',
     highlighted:
