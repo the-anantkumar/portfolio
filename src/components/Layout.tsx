@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import Background from './Background'
 
 interface Props { children: ReactNode }
 
@@ -27,22 +28,20 @@ export default function Layout({ children }: Props) {
   }
 
   return (
-    <motion.div
-      // Tell React to ignore any style/attribute diff here
-      suppressHydrationWarning
-
-      // Animate on mount, skip if user prefers reduced motion
-      initial={shouldReduceMotion ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: 'easeInOut' }}
-
-      className="flex min-h-screen flex-col bg-white dark:bg-dark"
-    >
-      <Navbar theme={theme} onToggleTheme={toggleTheme} />
-      <main id="main-content" className="flex-grow container mx-auto px-4 py-8">
-        {children}
-      </main>
-      <Footer />
-    </motion.div>
+    <Background variant="black" effect="parallax">
+      <motion.div
+        suppressHydrationWarning
+        initial={shouldReduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: 'easeInOut' }}
+        className="flex min-h-screen flex-col"
+      >
+        <Navbar theme={theme} onToggleTheme={toggleTheme} />
+        <main id="main-content" className="flex-grow container mx-auto px-4 py-8">
+          {children}
+        </main>
+        <Footer />
+      </motion.div>
+    </Background>
   )
 }

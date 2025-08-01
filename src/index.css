@@ -58,3 +58,21 @@ body {
   outline: 2px solid #00ffff;
   outline-offset: 2px;
 }
+/* Matte black noise background */
+.bg-noise {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAAAAACo4kLRAAABr0lEQVR4nAGkAVv+AKwKf4wvqsSXdaYWt8DMIdhDs06aAftXUDnoswcO3BZo8zGb0PhnC8P+ARU8CExN5JD8wpNOa+fj8SH69g+ZAdjlx4pKQhhElkH/efX/8DlfgQYyBA6lMbxd8qDZyxy9QicaF5uXHA0XAVE6AtdBQQ35LSnHzXcexOM2UMf3AAkbThaUl+6lcwgtBdATRV7zkibVAMUeCPX+RzXHTwfuI68dud7ACb7eAVJpy3Rp/d47X8/uN+XLjMUmj6FTAR3mO0cOLw73zHm/4uGtDNeJuho9ACDd0aPBP/+UCc2yJLlKkYl/0tXxAgDFYx9em5jxwfVq9zv+luEYDmiIAKPquUP+ebMvyy00xnKrpry3RMZ0ARy8l8jrwaEN7yj1hV7oZzWgQxNYADVcHZ6FF1EmJk6ynOgN6jj0Yu+dARHg/3LtKiBYky1f14JdxSN8wkNEALq1CFwfuvGceFPhbwFRAOdB9ZeyAeeI+6+QRnulKi/dsysWePm8yQVzAHfsrqsLu8ArrqHbNVLcr1tbUAEhAgkLfhWDLv8ltSm/ZuNKbQIx+zUyyLHIV6Rb6QcAAAAASUVORK5CYII=");
+  background-size: cover;
+  opacity: 0.05;
+}
+
+.bg-gradient-depth {
+  background-image: linear-gradient(to bottom, #0B0B0B, #0D0D0D, #111111);
+}
+
+.bg-matte::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.6));
+  pointer-events: none;
+}
