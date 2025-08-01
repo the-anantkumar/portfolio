@@ -1,15 +1,13 @@
 // pages/index.tsx
 import Head from 'next/head'
-import dynamic from 'next/dynamic'
 import Hero from '../components/Hero'
 
-// Dynamically import client‐only sections
-const AboutSection       = dynamic(() => import('../components/AboutSection'),       { ssr: false })
-const ProjectsSection    = dynamic(() => import('../components/ProjectsSection'),    { ssr: false })
-const ExperienceSection  = dynamic(() => import('../components/ExperienceSection'),  { ssr: false })
-const SkillsSection      = dynamic(() => import('../components/SkillsSection'),      { ssr: false })
-const AchievementsSection= dynamic(() => import('../components/AchievementsSection'),{ ssr: false })
-const ContactSection     = dynamic(() => import('../components/ContactSection'),     { ssr: false })
+import AboutSection from '../components/AboutSection'
+import ProjectsSection from '../components/ProjectsSection'
+import ExperienceSection from '../components/ExperienceSection'
+import SkillsSection from '../components/SkillsSection'
+import AchievementsSection from '../components/AchievementsSection'
+import ContactSection from '../components/ContactSection'
 
 export default function Home() {
   return (
@@ -23,7 +21,7 @@ export default function Home() {
       {/* This is pure SSR‐safe */}
       <Hero />
 
-      {/* These load on the client only—no SSR, no hydration mismatch */}
+      {/* Additional sections */}
       <AboutSection />
       <ProjectsSection />
       <ExperienceSection />
