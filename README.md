@@ -1,6 +1,6 @@
 # Portfolio
 
-This project is a simple Next.js portfolio site.
+This project is a simple React portfolio built with **Vite**.
 
 ## Prerequisites
 
@@ -16,17 +16,11 @@ npm install
 npm run dev
 ```
 
-Lint the project with:
-
-```bash
-npm run lint
-```
-
-Create an optimized production build and start it locally:
+Create an optimized production build and preview it locally:
 
 ```bash
 npm run build
-npm start
+npm run serve
 ```
 
 ## Deploying to Vercel
@@ -40,11 +34,11 @@ npm start
 ## Project Structure
 
 ```
-/ (root)
-  pages/         # Application routes and API endpoints
+/(root)
   public/        # Static assets such as images
-  styles/        # CSS modules and global styles
-  next.config.js # Next.js configuration
+  src/           # React components and pages
+  index.html     # Vite entry HTML
+  vite.config.ts # Vite configuration
   tsconfig.json  # TypeScript configuration
 ```
 

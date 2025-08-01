@@ -1,16 +1,16 @@
-import Head from 'next/head'
+import { Helmet } from 'react-helmet'
 import TimelineItem from '../components/TimelineItem'
 
 export default function Experience() {
   return (
     <>
-      <Head>
+      <Helmet>
         <title>Experience - Portfolio</title>
         <meta name="description" content="Professional work and experiences." />
         <meta property="og:title" content="Experience - Portfolio" />
         <meta property="og:description" content="Professional work and experiences." />
         <meta property="og:image" content="/images/profile.svg" />
-      </Head>
+      </Helmet>
       <h1 className="text-4xl font-bold font-heading mb-4">Experience</h1>
       <ul className="border-l-2 border-gray-300 ml-2">
         <TimelineItem

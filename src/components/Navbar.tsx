@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
 
 interface Props {
   theme: 'light' | 'dark'
@@ -30,11 +30,11 @@ export default function Navbar({ theme, onToggleTheme }: Props) {
           <ul className="hidden md:flex space-x-6">
             {navItems.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="group relative">
+                <a href={item.href} className="group relative">
                   <span className="text-gray-300 hover:text-accent transition-colors duration-300 font-medium">
                     {item.label}
                   </span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

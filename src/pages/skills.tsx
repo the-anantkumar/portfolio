@@ -1,15 +1,15 @@
-import Head from 'next/head'
+import { Helmet } from 'react-helmet'
 
 export default function Skills() {
   return (
     <>
-      <Head>
+      <Helmet>
         <title>Skills - Portfolio</title>
         <meta name="description" content="Technical skills and proficiencies." />
         <meta property="og:title" content="Skills - Portfolio" />
         <meta property="og:description" content="Technical skills and proficiencies." />
         <meta property="og:image" content="/images/profile.svg" />
-      </Head>
+      </Helmet>
       <h1 className="text-4xl font-bold font-heading mb-4">Skills</h1>
       <h2 className="text-2xl font-semibold font-heading mt-4">Languages</h2>
       <ul className="list-disc list-inside text-left">

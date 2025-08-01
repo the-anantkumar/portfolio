@@ -1,15 +1,15 @@
-import Head from 'next/head'
+import { Helmet } from 'react-helmet'
 
 export default function Achievements() {
   return (
     <>
-      <Head>
+      <Helmet>
         <title>Achievements - Portfolio</title>
         <meta name="description" content="Awards and notable achievements." />
         <meta property="og:title" content="Achievements - Portfolio" />
         <meta property="og:description" content="Awards and notable achievements." />
         <meta property="og:image" content="/images/profile.svg" />
-      </Head>
+      </Helmet>
       <h1 className="text-4xl font-bold font-heading mb-4">Achievements</h1>
       <ul className="list-disc list-inside text-left">
         <li>

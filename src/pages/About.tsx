@@ -1,5 +1,4 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import { Helmet } from 'react-helmet'
 import { motion, useReducedMotion } from 'framer-motion'
 
 export default function About() {
@@ -7,7 +6,7 @@ export default function About() {
 
   return (
     <>
-      <Head>
+      <Helmet>
         <title>About - Portfolio</title>
         <meta
           name="description"
@@ -19,7 +18,7 @@ export default function About() {
           content="Learn more about the person behind this portfolio."
         />
         <meta property="og:image" content="/images/profile.svg" />
-      </Head>
+      </Helmet>
       <div className="grid gap-8 md:grid-cols-2 items-start">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: -20 }}
@@ -31,13 +30,12 @@ export default function About() {
           }}
           className="relative w-52 h-52 mx-auto"
         >
-          <Image
+          <img
             src="/images/profile.svg"
             alt="Profile photo"
             width={200}
             height={200}
             className="rounded-full mb-4"
-            unoptimized // Add this for SVG files
           />
           <motion.svg
             viewBox="0 0 200 200"
