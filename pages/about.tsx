@@ -37,6 +37,7 @@ export default function About() {
             width={200}
             height={200}
             className="rounded-full mb-4"
+            unoptimized // Add this for SVG files
           />
           <motion.svg
             viewBox="0 0 200 200"

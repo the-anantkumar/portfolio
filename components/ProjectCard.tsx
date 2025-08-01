@@ -1,34 +1,52 @@
+// components/ProjectCard.tsx
 import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 
 interface Props {
-  title: string
+  title?: string
   description: string
   imageSrc: string
   link?: string
 }
 
-export default function ProjectCard({ title, description, imageSrc, link }: Props) {
+export default function ProjectCard({
+  title = '',
+  description,
+  imageSrc,
+  link,
+}: Props) {
   const shouldReduceMotion = useReducedMotion()
+
+  // Create a safe slug for aria labels/ids
+  const slug = title
+    .trim()
+    .replace(/\s+/g, '-')
+    .toLowerCase() || 'project'
 
   return (
     <motion.article
       className="relative rounded-lg p-4 shadow-lg bg-white group"
-      aria-labelledby={title.replace(/\s+/g, '-') + '-title'}
+      aria-labelledby={`${slug}-title`}
       initial={false}
       whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
     >
       <Image
         src={imageSrc}
-        alt={title + ' screenshot'}
+        alt={`${title} screenshot`}
         width={600}
         height={400}
         className="mb-2 rounded"
+        unoptimized
       />
-      <h3 id={title.replace(/\s+/g, '-') + '-title'} className="text-xl font-semibold font-heading mb-2">
-        {title}
+
+      <h3
+        id={`${slug}-title`}
+        className="text-xl font-semibold font-heading mb-2"
+      >
+        {title || 'Untitled Project'}
       </h3>
+
       <motion.div
         initial={{ opacity: shouldReduceMotion ? 1 : 0 }}
         whileHover={{ opacity: 1 }}
@@ -36,11 +54,17 @@ export default function ProjectCard({ title, description, imageSrc, link }: Prop
       >
         <p className="mb-2 text-gray-700">{description}</p>
         {link && (
-          <a href={link} className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+          <a
+            href={link}
+            className="text-accent hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             View More
           </a>
         )}
       </motion.div>
+
       <motion.svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"

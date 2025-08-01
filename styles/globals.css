@@ -5,7 +5,57 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure consistent box sizing */
+* {
+  box-sizing: border-box;
+}
+
+/* Basic body styles */
 body {
-  @apply font-sans bg-white text-gray-800 dark:bg-dark dark:text-gray-100;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background: #0c4a6e;
+  color: #f3f4f6;
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure dark mode is applied correctly */
+.dark {
+  color-scheme: dark;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid #00ffff;
+  outline-offset: 2px;
 }
