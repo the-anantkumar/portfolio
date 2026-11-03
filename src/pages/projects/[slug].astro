@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
+import { withBase } from "../../lib/paths";
 export async function getStaticPaths() {
   return (await getCollection("projects")).map((project) => ({
     params: { slug: project.id },
@@ -28,7 +29,7 @@ const next =
   description={project.data.summary}
 >
   <article class="case wrap">
-    <a class="back-link" href="/#work">← All selected work</a>
+    <a class="back-link" href={withBase("#work")}>← All selected work</a>
     <div class="case-header">
       <span class="eyebrow">{project.data.label}</span><h1>
         {project.data.title}
@@ -75,7 +76,7 @@ const next =
         }
       </nav><div class="prose case-content"><Content /></div>
     </div>
-    <a class="next-project" href={`/projects/${next.id}/`}
+    <a class="next-project" href={withBase(`projects/${next.id}/`)}
       ><span class="eyebrow">NEXT CASE STUDY</span><span
         >{next.data.title} <span aria-hidden="true">↗</span></span
       ></a

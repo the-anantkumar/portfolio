@@ -3,6 +3,7 @@ import { getCollection, getEntry, render } from "astro:content";
 import GitHubSection from "../components/GitHubSection.astro";
 import Base from "../layouts/Base.astro";
 import ProjectVisual from "../components/ProjectVisual.astro";
+import { withBase } from "../lib/paths";
 const home = (await getEntry("pages", "home"))!;
 const about = (await getEntry("pages", "about"))!;
 const experience = (await getEntry("pages", "experience"))!;
@@ -109,7 +110,7 @@ const projects = (
                     </>
                   </div>
                   <h3>
-                    <a href={`/projects/${project.id}/`}>
+                    <a href={withBase(`projects/${project.id}/`)}>
                       {project.data.title}
                     </a>
                   </h3>
@@ -125,7 +126,7 @@ const projects = (
                       <span>{project.data.evidence}</span>
                       <a
                         class="text-link"
-                        href={`/projects/${project.id}/`}
+                        href={withBase(`projects/${project.id}/`)}
                         aria-label={`Read case study: ${project.data.title}`}
                       >
                         Read case study <span aria-hidden="true">↗</span>
@@ -143,7 +144,7 @@ const projects = (
       <span class="tiny-square" aria-hidden="true"></span><p>
         This portfolio is a project, too. Static, lightweight, and built for a
         zero-cost hosting budget.
-      </p><a class="text-link" href="/projects/portfolio/"
+      </p><a class="text-link" href={withBase("projects/portfolio/")}
         >See the decisions <span aria-hidden="true">↗</span></a
       >
     </div>

@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { withBase } from "../lib/paths";
 ---
 
 <Base title="Page not found | Anant Kumar Srivastava"
@@ -8,6 +9,8 @@ import Base from "../layouts/Base.astro";
       This page<br /><em>isn’t here.</em>
     </h1><p>The work you’re looking for might be on the homepage.</p><a
       class="button"
-      href="/">Back to the portfolio <span aria-hidden="true">↗</span></a>
+      href={withBase()}
+      >Back to the portfolio <span aria-hidden="true">↗</span></a
+    >
   </section></Base
 >
