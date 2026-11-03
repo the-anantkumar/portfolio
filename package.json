@@ -14,7 +14,8 @@
     "serve": "astro preview --host 127.0.0.1",
     "test": "npm run test:github && node scripts/verify-build.mjs",
     "test:github": "node --test scripts/refresh-github.test.mjs",
-    "refresh:github": "node scripts/refresh-github.mjs"
+    "refresh:github": "node scripts/refresh-github.mjs",
+    "test:browser": "node scripts/verify-browser.mjs"
   },
   "dependencies": {
     "astro": "7.4.5"
