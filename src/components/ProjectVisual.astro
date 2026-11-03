@@ -1,0 +1,125 @@
+---
+interface Props {
+  kind: "trlr" | "codeforces" | "nielsen" | "portfolio";
+}
+const { kind } = Astro.props;
+---
+
+<div class:list={["project-visual", `visual-${kind}`]} aria-hidden="true">
+  {
+    kind === "trlr" && (
+      <div class="trlr-art">
+        <>
+          <span class="art-caption">A MORE PERSONAL KIND OF AI</span>
+          <div class="orbit orbit-one" />
+          <div class="orbit orbit-two" />
+          <div class="orbit orbit-three" />
+          <span class="trlr-word">
+            trlr<span>↗</span>
+          </span>
+          <div class="art-bottom">
+            <>
+              <span>Conversation → Understanding</span>
+              <span>01 / EXPLORING</span>
+            </>
+          </div>
+        </>
+      </div>
+    )
+  }
+  {
+    kind === "codeforces" && (
+      <div class="calendar-art">
+        <>
+          <div class="calendar-head">
+            <>
+              <span class="cf-logo">
+                <>
+                  <i />
+                  <i />
+                  <i />
+                </>
+              </span>
+              <span>
+                One problem.
+                <>
+                  <br />
+                  <strong>Every day.</strong>
+                </>
+              </span>
+              <span class="calendar-arrow">↗</span>
+            </>
+          </div>
+          <div class="calendar-grid">
+            {Array.from({ length: 28 }, (_, i) => (
+              <span
+                class:list={{
+                  done: [1, 2, 4, 5, 8, 9, 10, 12, 15, 16, 17, 18].includes(i),
+                  today: i === 19,
+                }}
+              >
+                {i === 19 ? "↗" : i + 1}
+              </span>
+            ))}
+          </div>
+          <div class="calendar-foot">
+            <>
+              <span>CODEFORCES POTD</span>
+              <span>Find your rhythm.</span>
+            </>
+          </div>
+        </>
+      </div>
+    )
+  }
+  {
+    kind === "nielsen" && (
+      <div class="systems-art">
+        <>
+          <span class="art-caption">FROM EVENT TO OUTCOME</span>
+          <div class="system-line">
+            <>
+              <span>01</span>
+              <strong>Ingest</strong>
+              <small>Message queues</small>
+            </>
+          </div>
+          <span class="system-connector">↓</span>
+          <div class="system-line">
+            <>
+              <span>02</span>
+              <strong>Process</strong>
+              <small>Python + orchestration</small>
+            </>
+          </div>
+          <span class="system-connector">↓</span>
+          <div class="system-line">
+            <>
+              <span>03</span>
+              <strong>Persist</strong>
+              <small>Durable storage</small>
+            </>
+          </div>
+          <span class="system-foot">A conceptual view of the workflow</span>
+        </>
+      </div>
+    )
+  }
+  {
+    kind === "portfolio" && (
+      <div class="portfolio-art">
+        <>
+          <span class="art-caption">LESS TO LOAD. MORE TO SAY.</span>
+          <span class="static-word">
+            Static.
+            <>
+              <br />
+              <em>By design.</em>
+            </>
+          </span>
+          <span>Markdown → HTML → Your browser</span>
+        </>
+      </div>
+    )
+  }
+</div>

@@ -1,0 +1,73 @@
+---
+import snapshot from "../data/github.json";
+const activeDays = snapshot.days.filter((day) => day.count > 0).length;
+const formatDate = (date: string) =>
+  new Date(date.length === 10 ? `${date}T00:00:00Z` : date).toLocaleDateString(
+    "en-GB",
+    { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" },
+  );
+---
+
+<section
+  id="github"
+  class="github-section wrap"
+  aria-labelledby="github-heading"
+>
+  <div class="github-panel">
+    <div class="github-section-heading">
+      <div>
+        <span class="eyebrow">GITHUB / @{snapshot.username}</span><h2
+          id="github-heading"
+        >
+          A year of building.
+        </h2>
+      </div>
+      <p>
+        My GitHub contributions,<br />right here in the portfolio.
+      </p>
+    </div>
+    <dl class="github-metrics">
+      <div>
+        <dt>Contributions in this calendar</dt><dd>{snapshot.total}</dd>
+      </div>
+      <div><dt>Days with contributions</dt><dd>{activeDays}</dd></div>
+    </dl>
+    <div
+      class="heatmap-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="GitHub contribution calendar. Scroll horizontally to explore the full year."
+    >
+      <img
+        class="heatmap"
+        src="/github-heatmap.svg"
+        width="725"
+        height="125"
+        loading="lazy"
+        decoding="async"
+        alt={`${snapshot.total} contributions from ${formatDate(snapshot.from)} to ${formatDate(snapshot.to)}. Brighter pink cells indicate higher activity. Exact daily counts are available in the CSV download.`}
+      />
+    </div>
+    <div class="heatmap-foot">
+      <p>
+        {formatDate(snapshot.from)} — {formatDate(snapshot.to)}<span
+          class="scroll-hint"
+        >
+          · Scroll to explore ←</span>
+      </p><div class="heatmap-legend" aria-hidden="true">
+        <span>Less</span>{
+          [0, 1, 2, 3, 4].map((level) => <i class={`level-${level}`} />)
+        }<span>More</span>
+      </div>
+    </div>
+    <div class="github-calendar-footer">
+      <span>Calendar snapshot · {formatDate(snapshot.fetchedAt)}</span><a
+        class="activity-download"
+        href="/github-contributions.csv"
+        download="github-contributions.csv"
+        >Daily counts <span aria-hidden="true">↓</span><span
+          class="download-format">CSV</span
+        ></a>
+    </div>
+  </div>
+</section>

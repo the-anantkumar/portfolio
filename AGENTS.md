@@ -1,128 +1,15 @@
-# Agents Overview
+# Portfolio implementation guide
 
-This document lists the main components and API routes in this project, along with their purpose, inputs and outputs, dependencies, and example usage.
+This repository is an Astro static site on `pilot`. There is no backend, React runtime, API route for contacts, or runtime GitHub fetch.
 
-## Hero Component
-**Purpose**: Displays the landing section with a brief introduction and a call-to-action link.
-
-**Inputs/Outputs**: Accepts no props and returns a React element.
-
-**Dependencies**: Uses `next/link` for client-side navigation.
-
-**Example Usage**:
-```tsx
-import Hero from '../components/Hero'
-
-<Hero />
-```
-
-## Navbar Component
-**Purpose**: Provides the site navigation links at the top of the page.
-
-**Inputs/Outputs**: Accepts no props and returns a React element.
-
-**Dependencies**: Uses `next/link` for navigation between sections.
-
-**Example Usage**:
-```tsx
-import Navbar from '../components/Navbar'
-
-<Navbar />
-```
-
-## Layout Component
-**Purpose**: Wraps pages with a consistent layout containing the `Navbar` and `Footer`.
-
-**Inputs/Outputs**: Receives `children` (React nodes) and returns a React element.
-
-**Dependencies**: Imports `Navbar` and `Footer` components from the project.
-
-**Example Usage**:
-```tsx
-import Layout from '../components/Layout'
-
-export default function App({ Component, pageProps }) {
-  return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  )
-}
-```
-
-## ProjectCard Component
-**Purpose**: Shows information about a project including image, description, and optional link.
-
-**Inputs/Outputs**:
-- `title` – string
-- `description` – string
-- `imageSrc` – string path to an image
-- `link?` – optional string URL
-
-Returns a React element.
-
-**Dependencies**: Uses `next/image` for optimized images.
-
-**Example Usage**:
-```tsx
-import ProjectCard from '../components/ProjectCard'
-
-<ProjectCard
-  title="My Project"
-  description="Short summary"
-  imageSrc="/images/project.png"
-  link="https://example.com"
-/>
-```
-
-## TimelineItem Component
-**Purpose**: Displays an item within a timeline such as work experience or education.
-
-**Inputs/Outputs**:
-- `title` – string
-- `subtitle?` – optional string
-- `date` – string displayed as the timeline date
-- `children?` – optional React nodes shown below the title
-
-Returns a React element.
-
-**Dependencies**: None besides React typings.
-
-**Example Usage**:
-```tsx
-import TimelineItem from '../components/TimelineItem'
-
-<TimelineItem title="Job" subtitle="Role" date="2024">
-  Description of duties
-</TimelineItem>
-```
-
-## API Routes
-
-### `/api/hello`
-**Purpose**: Example endpoint returning a simple JSON object.
-
-**Inputs/Outputs**: Accepts an HTTP request and responds with `{ name: 'John Doe' }`.
-
-**Dependencies**: None.
-
-**Example Usage**:
-```bash
-curl /api/hello
-```
-
-### `/api/contact`
-**Purpose**: Handles contact form submissions and sends an email via Nodemailer.
-
-**Inputs/Outputs**: Expects a POST request with `name`, `email`, and `message` fields. Returns `{ success: true }` on success or an error message.
-
-**Dependencies**:
-- `nodemailer` for sending email
-- Environment variables `CONTACT_EMAIL_USER` and `CONTACT_EMAIL_PASS`
-
-**Example Usage**:
-```bash
-curl -X POST /api/contact \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Alice","email":"alice@example.com","message":"Hi"}'
-```
+- Preserve the zero-cost constraint: no paid services, purchased domains, model APIs, or automatic upgrades.
+- Use typed Markdown collections for public content. `src/content/projects` feeds both cards and detail pages.
+- Keep `.codex/`, resume source files, secrets, private product data, and infrastructure identifiers out of Git and `dist/`.
+- Only the explicitly authorized email and professional profile links belong in public contact content.
+- Keep ordinary pages script-free, accessible without JavaScript, and under documented performance budgets.
+- Figures need a source, a date or measurement period, and clear individual/team attribution.
+- trlr is founder work; Nielsen is employer work. Do not imply validated prediction superiority or clinical validity.
+- Run `npm run check` and `npm run build` after code/content changes. Use Node 24.
+- Apply browser checks to substantive visual changes, including mobile, reduced motion, keyboard navigation, and a script-disabled browser.
+- Build checks do not apply Cloudflare HTTP headers; verify them on the actual hosting deployment.
+- No deployment, account creation, or paid resource is implied by a local implementation request.
