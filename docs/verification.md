@@ -98,3 +98,17 @@ This release replaces the planned Cloudflare deployment with GitHub Pages and mo
 - `actionlint` 1.7.12 validates the workflow. Its binary was checked against the official release digest before use. Dependency installation reports no known vulnerabilities at this checkpoint.
 - Root and production builds verify document CSP, base-prefixed links, canonical/social URLs, the sitemap, and a source revision marker. GitHub Pages controls actual response headers and CDN caching; the optional Cloudflare headers are not part of this host's guarantee.
 - Remote CI and publication use the same committed checks, plus `test:hosted` against the exact released revision. The [workflow history](https://github.com/the-anantkumar/portfolio/actions/workflows/portfolio.yml) is the source of evidence for each deployed revision.
+
+## Public release and automation verified
+
+Verified on 3 November 2026:
+
+- [PR #33](https://github.com/the-anantkumar/portfolio/pull/33) merged into `main` as `6fce220b97711fb49c63dbb03c151c230b8ef4ce`, preserving all phased commits. The 13 release-preparation commits each contain one to three changed files.
+- [PR CI](https://github.com/the-anantkumar/portfolio/actions/runs/41684947722) passed the type, build, unit, browser, and accessibility checks before merge.
+- [First production run](https://github.com/the-anantkumar/portfolio/actions/runs/41685255545) deployed the site and passed its public-release checks. The site is available at https://the-anantkumar.github.io/portfolio/ with HTTPS enforced. The Pages environment permits deployments from `main` only.
+- The workflow is active on `main`, including its six-hour schedule. A [manual refresh run](https://github.com/the-anantkumar/portfolio/actions/runs/41685324762) exercised a real data change: 266 to 284 contributions across 367 calendar dates.
+- That run created bot commit `68b4637e99e3bc3e7379fd7b7becae1fba2bd06b`, changing only `src/data/github.json`. Its validation and deployment jobs both passed, including the check that the public revision marker matched the refreshed source commit and that calendar/CSV assets matched the verified build.
+- The committed browser suite also passed directly against the live HTTPS site: all case studies, 1440/390/320px layouts, no-JavaScript navigation, loaded heatmap, reduced motion, keyboard skip access, pause control, custom 404 recovery, and axe WCAG A/AA checks. Local screenshots remain in ignored `artifacts/hosted/`.
+- GitHub Pages uses the Actions publishing source. No Cloudflare account, purchased domain, paid plan, custom service secret, or paid API was provisioned. Hosting-specific response/cache limitations remain documented in the deployment runbook.
+
+These links record the initial production verification. Later runs identify their own source revision through `release.json` and repeat the automated checks. A scheduled trigger has been enabled; this verification does not claim to have waited for the next six-hour scheduled execution.
