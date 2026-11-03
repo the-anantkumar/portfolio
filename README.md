@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, and size budgets. `npm test` tests the calendar refresh and reruns those checks against the existing `dist/` build. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and reruns those checks against the existing `dist/` build. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -33,27 +33,36 @@ npm run preview
 - `docs/architecture.md`: stack decisions, budgets, hosting, and future search boundaries.
 - `docs/editorial-review.md`: the three-perspective editorial review.
 
-Set `featured: true` and a numeric `order` to feature a project. The Markdown filename is its public URL slug. Keep existing slugs stable; add a Cloudflare `_redirects` entry if a published slug changes.
+Set `featured: true` and a numeric `order` to feature a project. The Markdown filename is its public URL slug. Keep existing slugs stable; GitHub Pages does not support server redirect rules.
 
-## Free Cloudflare Pages deployment
+## Free GitHub Pages deployment
 
-Use **Cloudflare Pages Free**, with Git integration for this repository:
+Production URL: **https://the-anantkumar.github.io/portfolio/**
+
+`main` is the production branch; `pilot` remains the development branch. `.github/workflows/portfolio.yml` checks pull requests, then builds and deploys successful changes on `main`. The same workflow handles the six-hour contribution refresh and verifies the public release after deployment.
 
 | Setting | Value |
 | --- | --- |
-| Production branch | `pilot` |
-| Framework | Astro |
-| Build command | `npm run check && npm run build` |
-| Output directory | `dist` |
-| Node version | 24 (also recorded in `.node-version`) |
+| Pages source | GitHub Actions |
+| Production branch | `main` |
+| Node version | 24 |
+| Site origin (`SITE_URL`) | `https://the-anantkumar.github.io` |
+| Base path (`SITE_BASE`) | `/portfolio` |
+| Static output | `dist` |
 
-Use the supplied `pages.dev` hostname. No purchased domain, Functions, database, KV/R2 storage, email delivery, AI service, or paid plan is required. Do not enable paid add-ons or automatic upgrades. This repository prepares deployment; it does not create a Cloudflare account or publish itself.
+No purchased domain, backend, database, model API, or Cloudflare account is needed. Use the public repository and standard GitHub-hosted runner. No paid plan or automatic upgrade is enabled. The small Pages artifact expires after one day; dependency caching is disabled. See [deployment, testing, and rollback](docs/deployment.md).
 
-Cloudflare sets `CF_PAGES_URL`, which is used for canonical links and sitemap URLs. Set `SITE_URL` to the stable production HTTPS URL when known, especially if building preview deployments. Local builds intentionally omit canonical URLs and emit an empty sitemap rather than invent a public address. You can test canonical output with `SITE_URL=https://example.pages.dev npm run build`; that example is not the deployed site.
+To reproduce the production build locally:
 
-The `_headers` file restricts scripts and network connections because v1 has no browser API calls. It is applied by Cloudflare, not Astro's local preview server. Future search will require a deliberate same-origin CSP update.
+```sh
+SITE_URL=https://the-anantkumar.github.io SITE_BASE=/portfolio npm run build
+npm test
+npm run test:browser
+```
 
-Deployments are static and portable. Use Cloudflare's previous successful deployment to roll back, or revert the source change and rebuild. If free terms change or quota is exhausted, keep the last working site and reconsider hosting rather than authorizing spending.
+Ordinary local builds use `/` and omit canonical URLs. Production links, assets, social previews, and the sitemap include `/portfolio/`. `dist/release.json` identifies the source commit deployed for verification.
+
+GitHub Pages does not apply `public/_headers`; that file remains an optional Cloudflare configuration for a future host migration. Every HTML page supplies a restrictive Content Security Policy and referrer policy through metadata. Response-only protections such as `frame-ancestors`, custom cache headers, and Permissions-Policy cannot be configured on Pages. Host caching may briefly delay a newly deployed asset. Future search requires a deliberate CSP change.
 
 ## Privacy and claims
 
@@ -71,15 +80,15 @@ The homepage displays the contribution calendar and aggregate activity counts. G
 
 The SVG is a local, lazy-loaded static asset; daily counts are available as a CSV. Visitors make no GitHub API requests. The calendar works without JavaScript and shows its snapshot date.
 
-**A six-hour refresh workflow is included.** It fetches the public calendar, validates it, and commits changed data to `pilot` only after the site passes its checks. Connected Cloudflare Pages Git integration then rebuilds the site. Unchanged data produces no commit or deployment; failures preserve the last good snapshot. Manual refresh still works:
+**The six-hour refresh is part of the deployment workflow.** It validates public calendar data, commits changes to `main`, then tests and deploys that exact revision in the same run. Unchanged scheduled checks skip deployment; failures retain the last published site. Manual refresh still works:
 
 ```sh
 npm run refresh:github
 npm run build
 ```
 
-The workflow is prepared locally, **not activated by a local commit**. Push the implementation to `pilot`, add the workflow file to the repository's default branch (`main`), enable Actions, and connect Cloudflare Pages to `pilot`. See [activation, freshness, costs, and rollback](docs/github-refresh.md). No personal access token or new service secret is required.
+No personal access token or service secret is required. [Refresh operations and failure handling](docs/github-refresh.md) describe the schedule, manual runs, and pause controls.
 
-This is an automatically refreshed snapshot, not a real-time feed. Reloading a page reads the most recently deployed data; an already-open page does not poll. The displayed snapshot date changes only when the saved calendar changes.
+This is an automatically refreshed snapshot. Reloading the page reads deployed data; an already-open page does not poll. The displayed snapshot date changes only when the saved calendar changes. GitHub contribution processing, the schedule, deployment, and CDN caching all affect freshness.
 
 Slow ambient light and ring movement use CSS transforms. The pause control in the header stops motion; `prefers-reduced-motion` disables it automatically. No preference storage or animation JavaScript is needed.

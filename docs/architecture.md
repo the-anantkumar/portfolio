@@ -27,9 +27,9 @@ Only the public content collection may feed future search. Never index `.codex`,
 - CSS and fonts: one build-managed stylesheet and system fonts; no remote requests.
 - Target Lighthouse mobile performance/accessibility: 95 or above. Lab scores are not field Core Web Vitals.
 - Build output must have working internal links, one h1 per page, no simulation states or known private markers.
-- Cloudflare Pages Free serves static output at its included subdomain. No functions or paid add-ons.
+- GitHub Pages serves static output from the public repository at its included github.io URL. No functions or paid add-ons.
 
-Canonical origin comes from `SITE_URL`, then `CF_PAGES_URL`. Local builds omit a fictional canonical origin. Preview URLs should be given the stable production `SITE_URL` before publication. Asset caching and restrictive HTTP security headers live in `public/_headers`.
+Production uses `SITE_URL=https://the-anantkumar.github.io` and `SITE_BASE=/portfolio`; local builds default to `/` without a canonical origin. A shared path helper prefixes authored links and public assets. Build checks reject links outside the hosting base and validate sitemap/social URLs. Every document includes CSP and referrer metadata because GitHub Pages does not apply the optional Cloudflare `public/_headers` file. Host cache behavior and response-only security headers remain outside application control.
 
 ## Future search and AI
 
@@ -42,8 +42,8 @@ Generated answers are not required for semantic search. If added later, ground t
 ## References
 
 - [Astro's static-first design](https://docs.astro.build/en/concepts/why-astro/)
-- [Cloudflare Pages limits](https://developers.cloudflare.com/pages/platform/limits/)
-- [Cloudflare static request pricing](https://developers.cloudflare.com/pages/functions/pricing/)
+- [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+- [GitHub Pages Actions deployment](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 - [Pagefind](https://pagefind.app/)
 - [Transformers.js](https://huggingface.co/docs/transformers.js/en/index)
 
@@ -55,4 +55,4 @@ A dark, continuous spectral palette replaces paper-like surfaces. Native checkbo
 
 ## Contribution-only GitHub section
 
-Repository cards, repository metadata, and their refresh script were removed at the owner's request. The section shows only aggregate contribution activity and a dated heatmap. A GitHub Actions workflow checks every six hours once activated on the default branch, updates only `pilot`'s snapshot, and uses Pages Git integration for deployment. No visitor-triggered API fetch exists. See [the refresh runbook](github-refresh.md) for activation and failure behavior.
+Repository cards, repository metadata, and their refresh script were removed at the owner's request. The section shows only aggregate contribution activity and a dated heatmap. The deployment workflow checks every six hours on `main`, commits only changed calendar data, validates that exact revision in Chromium, then publishes the verified Pages artifact within the same run. No visitor-triggered API fetch exists. See [the refresh runbook](github-refresh.md) for activation and failure behavior.
