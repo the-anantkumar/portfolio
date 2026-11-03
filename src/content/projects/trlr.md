@@ -14,7 +14,7 @@ links:
     url: https://thetrlr.com
 ---
 ## The problem
-A conversation can contain a great deal of context about a person. The product question behind trlr is whether an AI system can use that context to develop a useful personal understanding—and whether that understanding improves its predictions.
+A conversation can contain a great deal of context about a person. The product question behind trlr is whether an AI system can use that context to develop a useful personal understanding, and whether that understanding improves its predictions.
 
 ## My contribution
 As founder, I own both the product direction and engineering implementation. That means turning a broad product hypothesis into a working conversational experience, defining how it should be evaluated, and carrying the application through deployment.

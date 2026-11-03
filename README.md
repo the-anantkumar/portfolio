@@ -1,4 +1,4 @@
-# Anant Kumar Srivastava — portfolio
+# Anant Kumar Srivastava | portfolio
 
 A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership.
 

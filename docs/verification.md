@@ -1,4 +1,4 @@
-# Verification — 3 November 2026
+# Verification | 3 November 2026
 
 ## Build and static checks
 
@@ -59,7 +59,7 @@ The in-app browser preview host was unavailable, so automated Chromium screensho
 - Final desktop/mobile/reveal axe checks report zero WCAG A/AA violations. Final Lighthouse reports 100 in all four categories, 0.8s FCP/LCP, and zero CLS. The earlier DOM-size diagnostic was eliminated by using a lazy-loaded SVG instead of putting the full calendar/data table into the page DOM.
 - Local preview remains running at the user's request. Hosting has not been deployed.
 
-## Embedded GitHub section — supersedes the collapsed reveal
+## Embedded GitHub section (supersedes the collapsed reveal)
 
 - The calendar is visible by default at `#github`; hero and contact GitHub links scroll there instead of opening GitHub.
 - Four verified public repositories are embedded with reviewed summaries, languages, actual star/fork counts, and native expandable overviews. Selection is editorial, not a popularity ranking.

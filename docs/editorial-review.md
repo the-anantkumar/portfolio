@@ -31,11 +31,11 @@ Lead with trlr, Codeforces POTD, and Nielsen engineering. The image-encryption p
 
 ## Homepage line
 
-“I build backend systems and user-facing products—from production data workflows at Nielsen to founding trlr.”
+“I build backend systems and user-facing products, from production data workflows at Nielsen to founding trlr.”
 
 The reviewed draft resolves the above presentation issues. Additional quantitative claims remain excluded until their source and attribution are established. Visual and functional verification is recorded separately in verification.md.
 
-## Supplied Nielsen highlights — November update
+## Supplied Nielsen highlights (November update)
 
 The owner supplied eight additional highlights. They are included with scope and status intact: approximately 7 million rows / 28 checks in a parallel run; 18 evaluated migration runs over 3 domains; nonproduction Airflow QA/UAT covering 50 connections and 449+ variables with one exception; a classification correction for 2 unnamed services; consolidation across 2 development/test environments; Fabric8 cleanup; a cross-midnight defect investigation submitted for peer review; and a three-component design with implementation/testing pending. These are owner-supplied professional claims, not independently verified public metrics. Internal evidence and service identities are not published.
 

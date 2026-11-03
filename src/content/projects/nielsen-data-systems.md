@@ -1,7 +1,7 @@
 ---
 title: Data systems at Nielsen
 label: Production engineering
-summary: Making data changes safer to ship—from large-scale parity checks to migration safeguards and workload automation.
+summary: Making data changes safer to ship through large-scale parity checks, migration safeguards, and workload automation.
 role: Member of Technical Staff · Employer work
 category: Backend & infrastructure
 stack: [Python, AWS, Airflow, Kubernetes, Fabric8, Redis]
@@ -49,7 +49,7 @@ I identified a cross-midnight timestamp defect that produced a **−40,120-secon
 
 The completed deliverable is the investigation and submitted findings. A deployed correction is not claimed here.
 
-## Design work — implementation pending
+## Design work (implementation pending)
 I authored a technical design spanning **3 processing components** to separate classification from smoothing logic. **Implementation and testing remain pending.**
 
 This is a design deliverable and is deliberately distinguished from the completed classification correction described above.

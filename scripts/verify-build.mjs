@@ -20,6 +20,10 @@ let total = 0;
 for (const file of files) total += (await stat(file)).size;
 for (const file of pages) {
   const html = await readFile(file, "utf8");
+  assert(
+    !/\u2014|&mdash;|&#0*8212;|&#x0*2014;/i.test(html),
+    `${file}: use ordinary punctuation instead of em dashes`,
+  );
   assert.equal(
     (html.match(/<h1(?: |>)/g) || []).length,
     1,
