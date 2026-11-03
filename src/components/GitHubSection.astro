@@ -1,5 +1,6 @@
 ---
 import snapshot from "../data/github.json";
+import { withBase } from "../lib/paths";
 const activeDays = snapshot.days.filter((day) => day.count > 0).length;
 const formatDate = (date: string) =>
   new Date(date.length === 10 ? `${date}T00:00:00Z` : date).toLocaleDateString(
@@ -40,7 +41,7 @@ const formatDate = (date: string) =>
     >
       <img
         class="heatmap"
-        src="/github-heatmap.svg"
+        src={withBase("github-heatmap.svg")}
         width="725"
         height="125"
         loading="lazy"
@@ -53,7 +54,8 @@ const formatDate = (date: string) =>
         {formatDate(snapshot.from)} to {formatDate(snapshot.to)}<span
           class="scroll-hint"
         >
-          · Scroll to explore ←</span>
+          · Scroll to explore ←</span
+        >
       </p><div class="heatmap-legend" aria-hidden="true">
         <span>Less</span>{
           [0, 1, 2, 3, 4].map((level) => <i class={`level-${level}`} />)
@@ -63,11 +65,12 @@ const formatDate = (date: string) =>
     <div class="github-calendar-footer">
       <span>Calendar snapshot · {formatDate(snapshot.fetchedAt)}</span><a
         class="activity-download"
-        href="/github-contributions.csv"
+        href={withBase("github-contributions.csv")}
         download="github-contributions.csv"
         >Daily counts <span aria-hidden="true">↓</span><span
           class="download-format">CSV</span
-        ></a>
+        ></a
+      >
     </div>
   </div>
 </section>
