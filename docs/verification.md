@@ -86,3 +86,15 @@ At this checkpoint, the heatmap was manual: `npm run refresh:github` refreshed t
 - Astro checks: zero errors, warnings, or hints. Build and test commands pass, including internal links, calendar/CSV consistency, punctuation, privacy boundaries, and size budgets. The complete output is approximately 176 KB with zero application JavaScript.
 - Chromium checks with JavaScript disabled pass at 1440, 390, and 320px: heatmap visible, two aggregate metrics, no repository cards, and no horizontal overflow.
 - SVG/CSV cache revalidation headers are included for Cloudflare. Local preview does not apply them; confirm after hosting is connected. No remote workflow activation or deployment is claimed.
+
+## GitHub Pages release preparation
+
+This release replaces the planned Cloudflare deployment with GitHub Pages and moves production to `main`. The earlier notes above record local checkpoints; the current hosting contract is in [deployment.md](deployment.md).
+
+- Node 24 type checks pass with no errors, warnings, or hints. Both root-path local builds and `/portfolio/` production builds pass publication/link/size validation.
+- All 18 calendar tests pass. Production output is approximately 180 KB, with zero application JavaScript.
+- The committed Chromium suite passes at 1440, 390, and 320px, including all case studies, no-JavaScript navigation, heatmap asset loading, reduced motion, keyboard skip access, animation pause, custom 404 recovery, and axe WCAG A/AA checks.
+- The pause test checks the glows and rings with active CSS animations; decorative stationary rings are excluded. This corrected a test assertion rather than changing the visual behavior.
+- `actionlint` 1.7.12 validates the workflow. Its binary was checked against the official release digest before use. Dependency installation reports no known vulnerabilities at this checkpoint.
+- Root and production builds verify document CSP, base-prefixed links, canonical/social URLs, the sitemap, and a source revision marker. GitHub Pages controls actual response headers and CDN caching; the optional Cloudflare headers are not part of this host's guarantee.
+- Remote CI and publication use the same committed checks, plus `test:hosted` against the exact released revision. The [workflow history](https://github.com/the-anantkumar/portfolio/actions/workflows/portfolio.yml) is the source of evidence for each deployed revision.
