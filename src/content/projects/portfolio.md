@@ -29,4 +29,4 @@ The build checks an initial homepage transfer budget of 300 KB and an initial co
 The content is structured for later static indexing. Search can be loaded on demand. Browser-local AI remains a separate, optional experiment with explicit download costs and an ordinary-search fallback; no paid inference is connected to this site.
 
 ## Delivery
-The generated files are portable to static hosting. Cloudflare Pages Free is the documented target, using its included subdomain. A custom domain, paid backend, analytics service, and model API are not required.
+GitHub Pages serves the generated files from this portfolio's public repository. GitHub Actions validates and deploys changes, including scheduled contribution-calendar updates. A custom domain, paid backend, analytics service, and model API are not required.
