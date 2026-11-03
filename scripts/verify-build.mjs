@@ -3,6 +3,9 @@ import path from "node:path";
 import { gzipSync } from "node:zlib";
 import assert from "node:assert/strict";
 const root = path.resolve("dist");
+const release = JSON.parse(
+  await readFile(path.join(root, "release.json"), "utf8"),
+);
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   return (
@@ -20,6 +23,26 @@ let total = 0;
 for (const file of files) total += (await stat(file)).size;
 for (const file of pages) {
   const html = await readFile(file, "utf8");
+  assert(
+    html.includes('http-equiv="Content-Security-Policy"'),
+    `${file}: document CSP required`,
+  );
+  assert(
+    html.includes("script-src &#39;none&#39;") ||
+      html.includes("script-src 'none'"),
+    `${file}: script restriction required`,
+  );
+  if (release.site) {
+    const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+    assert(
+      canonical?.startsWith(new URL(release.base, release.site).href),
+      `${file}: canonical must use the deployed base`,
+    );
+    assert(
+      html.includes(new URL(`${release.base}social.jpg`, release.site).href),
+      `${file}: social image must use the deployed base`,
+    );
+  }
   assert(
     !/\u2014|&mdash;|&#0*8212;|&#x0*2014;/i.test(html),
     `${file}: use ordinary punctuation instead of em dashes`,
@@ -48,7 +71,17 @@ for (const file of pages) {
   for (const match of html.matchAll(/(?:href|src)="([^"\s]+)"/g)) {
     const href = match[1];
     if (!href.startsWith("/") && !href.startsWith("#")) continue;
-    const [route, anchor] = href.split("#");
+    const [rawRoute, anchor] = href.split("#");
+    if (rawRoute)
+      assert(
+        rawRoute.startsWith(release.base),
+        `${file}: link escapes hosting base: ${href}`,
+      );
+    const route = rawRoute
+      ? new URL(rawRoute, "https://example.invalid").pathname.slice(
+          release.base.length - 1,
+        )
+      : "";
     let target = route ? path.join(root, route) : file;
     if (route.endsWith("/")) target = path.join(target, "index.html");
     else if (route && !path.extname(route))
@@ -85,6 +118,19 @@ assert.equal(
   "CSV must include every date and its header",
 );
 const home = await readFile(path.join(root, "index.html"));
+if (release.site) {
+  const sitemap = await readFile(path.join(root, "sitemap.xml"), "utf8");
+  const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => match[1],
+  );
+  assert.equal(locations.length, 5, "Sitemap includes home and four projects");
+  assert(
+    locations.every((url) =>
+      url.startsWith(new URL(release.base, release.site).href),
+    ),
+    "Sitemap URLs must use the hosting base",
+  );
+}
 assert(
   home.toString().includes('id="github"'),
   "GitHub section must have an in-page destination",

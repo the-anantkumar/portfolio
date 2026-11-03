@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "check": "astro check",
-    "build": "astro build && node scripts/verify-build.mjs",
+    "build": "astro build && node scripts/write-release.mjs && node scripts/verify-build.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "serve": "astro preview --host 127.0.0.1",
     "test": "npm run test:github && node scripts/verify-build.mjs",
