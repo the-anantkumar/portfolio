@@ -1,0 +1,251 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import GitHubSection from "../components/GitHubSection.astro";
+import Base from "../layouts/Base.astro";
+import ProjectVisual from "../components/ProjectVisual.astro";
+import { withBase } from "../lib/paths";
+const home = (await getEntry("pages", "home"))!;
+const about = (await getEntry("pages", "about"))!;
+const experience = (await getEntry("pages", "experience"))!;
+const { Content: HomeContent } = await render(home);
+const { Content: AboutContent } = await render(about);
+const projects = (
+  await getCollection("projects", ({ data }) => data.featured)
+).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base>
+  <section class="hero wrap" aria-labelledby="hero-heading">
+    <div class="hero-intro">
+      <span class="eyebrow"
+        ><span class="status-dot"></span> SOFTWARE ENGINEER & FOUNDER</span
+      ><span class="hero-edition">SELECTED WORK / 2026</span>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <h1 id="hero-heading">
+          {home.data.headline}<br /><em>{home.data.headlineAccent}</em>
+        </h1><p class="hero-description">{home.data.intro}</p><div
+          class="hero-actions"
+        >
+          <a class="button" href="#work"
+            >Explore my work <span aria-hidden="true">↓</span></a
+          ><a class="text-link" href="#github"
+            >GitHub activity <span aria-hidden="true">↓</span></a
+          >
+        </div>
+      </div>
+      <aside class="hero-note" aria-label="Engineering and product thinking">
+        <div class="prism-stage" aria-hidden="true">
+          <div class="prism-ring ring-a"></div><div class="prism-ring ring-b">
+          </div><div class="prism-ring ring-c"></div>
+          <svg class="prism" viewBox="0 0 360 320" fill="none">
+            <defs
+              ><linearGradient id="spectrum" x1="0" y1="0" x2="1" y2="1"
+                ><stop stop-color="#b5aeff"></stop><stop
+                  offset=".5"
+                  stop-color="#efa8d3"></stop><stop
+                  offset="1"
+                  stop-color="#eab2a1"></stop></linearGradient
+              ></defs
+            >
+            <path
+              class="incoming-light"
+              d="M0 202L148 158"
+              stroke="#b4b8dc"
+              stroke-width="1"></path>
+            <path
+              d="M177 79L102 216H253L177 79Z"
+              stroke="url(#spectrum)"
+              stroke-width="1.5"></path>
+            <path d="M148 158L212 146" stroke="#f0d9ef" stroke-width="1"></path>
+            <path
+              d="M212 146L360 161M215 151L360 180M218 156L360 199M221 161L360 218M224 166L360 237"
+              stroke="url(#spectrum)"
+              stroke-width="1.5"></path>
+          </svg>
+          <span class="prism-coordinate coordinate-top">ENGINEERING</span><span
+            class="prism-coordinate coordinate-bottom">MEETS IMAGINATION</span
+          >
+        </div>
+        <p class="prism-caption">
+          Precision in the system.<br /><em>Possibility in the product.</em>
+        </p>
+      </aside>
+    </div>
+    <div class="hero-bottom">
+      <p>
+        Currently building at <strong>Nielsen</strong>
+        <span>&</span>
+        <strong>trlr</strong>
+      </p><span>BACKEND / CLOUD / PRODUCT</span>
+    </div>
+  </section>
+
+  <section id="work" class="work wrap section" aria-labelledby="work-heading">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">01 / SELECTED WORK</span><h2 id="work-heading">
+          Different problems.<br /><em>The same care.</em>
+        </h2>
+      </div><p>
+        From a daily practice tool to production data systems.<br />A closer
+        look at what I build, and why.
+      </p>
+    </div>
+    <div class="project-list">
+      {
+        projects.map((project, i) => (
+          <article class="project-row">
+            <>
+              <div class="visual-link">
+                <ProjectVisual kind={project.data.visual} />
+              </div>
+              <div class="project-copy">
+                <>
+                  <div class="project-meta">
+                    <>
+                      <span>0{i + 1}</span>
+                      <span>{project.data.category}</span>
+                    </>
+                  </div>
+                  <h3>
+                    <a href={withBase(`projects/${project.id}/`)}>
+                      {project.data.title}
+                    </a>
+                  </h3>
+                  <p>{project.data.summary}</p>
+                  <span class="project-role">{project.data.role}</span>
+                  <ul class="tags" aria-label="Technologies">
+                    {project.data.stack.map((tag) => (
+                      <li>{tag}</li>
+                    ))}
+                  </ul>
+                  <div class="project-bottom">
+                    <>
+                      <span>{project.data.evidence}</span>
+                      <a
+                        class="text-link"
+                        href={withBase(`projects/${project.id}/`)}
+                        aria-label={`Read case study: ${project.data.title}`}
+                      >
+                        Read case study <span aria-hidden="true">↗</span>
+                      </a>
+                    </>
+                  </div>
+                </>
+              </div>
+            </>
+          </article>
+        ))
+      }
+    </div>
+    <div class="site-note">
+      <span class="tiny-square" aria-hidden="true"></span><p>
+        This portfolio is a project, too. Static, lightweight, and built for a
+        zero-cost hosting budget.
+      </p><a class="text-link" href={withBase("projects/portfolio/")}
+        >See the decisions <span aria-hidden="true">↗</span></a
+      >
+    </div>
+  </section>
+
+  <GitHubSection />
+
+  <section
+    id="experience"
+    class="experience section"
+    aria-labelledby="experience-heading"
+  >
+    <div class="wrap experience-grid">
+      <div class="experience-heading">
+        <span class="eyebrow">02 / EXPERIENCE</span><h2 id="experience-heading">
+          Built in<br /><em>the real world.</em>
+        </h2><p>
+          Learning through production constraints, research questions, and the
+          details that make software dependable.
+        </p><div class="skill-groups">
+          <span>MY TOOLKIT</span><p>
+            Python · Java · C++ · SQL<br />AWS · Airflow · Redis<br />Docker ·
+            Kubernetes · Terraform
+          </p>
+        </div>
+      </div><div class="timeline">
+        {
+          experience.data.roles?.map((role) => (
+            <article class="experience-item">
+              <>
+                <span class="experience-date">{role.dates}</span>
+                <h3>{role.company}</h3>
+                <p class="experience-role">{role.role}</p>
+                <ul>
+                  {role.points.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="about"
+    class="about wrap section"
+    aria-labelledby="about-heading"
+  >
+    <div class="about-heading">
+      <span class="eyebrow">03 / THE PERSON BEHIND THE WORK</span><h2
+        id="about-heading"
+      >
+        A little more<br /><em>than code.</em>
+      </h2><div class="music-art" aria-hidden="true">
+        <div class="music-label">ENGINEERING MIND. MUSICAL EAR.</div><div
+          class="keys"
+        >
+          {
+            Array.from({ length: 12 }, (_, i) => (
+              <span
+                class:list={{
+                  black: [0, 1, 3, 4, 5, 7, 8, 10, 11].includes(i),
+                }}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div><div class="about-copy prose">
+      <AboutContent /><div class="education">
+        <span class="eyebrow">EDUCATION</span><h3>BITS Pilani</h3><p>
+          B.E. Electronics and Instrumentation<br />M.Sc. Mathematics ·
+          2019–2024
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="contact"
+    class="contact section"
+    aria-labelledby="contact-heading"
+  >
+    <div class="wrap contact-grid">
+      <div>
+        <span class="eyebrow">04 / WHAT’S NEXT?</span><h2 id="contact-heading">
+          Have a good problem?<br /><em>Let’s build something.</em>
+        </h2><div class="contact-intro"><HomeContent /></div>
+      </div><div class="contact-links">
+        <a href={`mailto:${home.data.email}`}
+          ><span>Email me</span><span aria-hidden="true">↗</span></a
+        ><a href={home.data.linkedin}
+          ><span>Connect on LinkedIn</span><span aria-hidden="true">↗</span></a
+        ><a href="#github"
+          ><span>Explore my GitHub work</span><span aria-hidden="true">↑</span
+          ></a
+        ><p>No forms. Just a conversation.</p>
+      </div>
+    </div>
+  </section>
+</Base>

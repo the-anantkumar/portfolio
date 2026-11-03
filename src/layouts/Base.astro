@@ -1,0 +1,88 @@
+---
+import "../styles/global.css";
+import { withBase } from "../lib/paths";
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = "Anant Kumar Srivastava | Software engineer & founder",
+  description = "Backend systems, cloud infrastructure, and products built with purpose. Selected work by Anant Kumar Srivastava, software engineer at Nielsen and founder of trlr.",
+} = Astro.props;
+const canonical = Astro.site
+  ? new URL(Astro.url.pathname, Astro.site)
+  : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0c0d16" />
+    <title>{title}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta
+      property="og:image"
+      content={Astro.site
+        ? new URL(withBase("social.jpg"), Astro.site)
+        : withBase("social.jpg")}
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Anant Kumar Srivastava. Software engineer and founder."
+    />
+    <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="ambient-glow glow-violet"></div><div
+        class="ambient-glow glow-rose"
+      >
+      </div><div class="ambient-orbit"></div>
+    </div>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="header wrap">
+      <a class="brand" href={withBase()}
+        ><span class="brand-mark" aria-hidden="true">a.</span><span
+          >ANANT KUMAR<br />SRIVASTAVA</span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <a href={withBase("#work")}>Work</a><a href={withBase("#experience")}
+          >Experience</a
+        ><a href={withBase("#about")}>About</a><a
+          class="nav-contact"
+          href={withBase("#contact")}
+          >Let’s talk <span aria-hidden="true">↗</span></a
+        >
+        <label class="motion-control" title="Pause visual motion">
+          <input id="pause-motion" type="checkbox" />
+          <span class="motion-icon" aria-hidden="true">Ⅱ</span>
+          <span class="sr-only">Pause visual motion</span>
+        </label>
+      </nav>
+    </header>
+    <main id="main" tabindex="-1"><slot /></main>
+    <footer class="footer wrap">
+      <a href={withBase()} class="footer-name">Anant Kumar Srivastava</a><span
+        >Built with intention. Kept simple.</span
+      ><a href={withBase("projects/portfolio/")}
+        >About this site <span aria-hidden="true">↗</span></a
+      >
+    </footer>
+  </body>
+</html>
