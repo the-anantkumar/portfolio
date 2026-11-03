@@ -1,0 +1,71 @@
+name: Refresh GitHub contributions
+
+# GitHub requires this workflow on the default branch (main) for these triggers.
+# The implementation and the only write target remain pilot.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: github-contributions-pilot
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    # Standard runners are free for public repositories. Never run in forks/private copies.
+    if: github.repository == 'the-anantkumar/portfolio' && github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      ASTRO_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out pilot
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: pilot
+      - name: Use the pinned Node version
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Test refresh failure and update behavior
+        run: npm run test:github
+      - name: Fetch and validate the public calendar
+        run: npm run refresh:github
+      - name: Detect calendar changes
+        id: calendar
+        run: |
+          if git diff --quiet -- src/data/github.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install build dependencies
+        if: steps.calendar.outputs.changed == 'true'
+        run: npm ci
+      - name: Validate the updated site
+        if: steps.calendar.outputs.changed == 'true'
+        run: npm run check && npm run build
+      - name: Commit only the validated snapshot
+        if: steps.calendar.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- src/data/github.json
+          git commit -m "chore: refresh GitHub contribution calendar"
+          # A concurrent human push fails safely. The next run retries from fresh pilot.
+          git push origin HEAD:pilot
+      - name: Record the result
+        env:
+          CHANGED: ${{ steps.calendar.outputs.changed }}
+        run: |
+          if [ "$CHANGED" = "true" ]; then
+            echo "Updated pilot. Connected Cloudflare Pages Git integration can rebuild this commit." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Calendar unchanged. No commit or deployment requested." >> "$GITHUB_STEP_SUMMARY"
+          fi

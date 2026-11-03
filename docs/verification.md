@@ -74,4 +74,15 @@ The in-app browser preview host was unavailable, so automated Chromium screensho
 
 At the owner's request, all repository cards, per-repository statistics, metadata, and repository-refresh code were removed. The section now shows only the embedded contribution calendar and two aggregate metrics. Type checking and build checks pass; targeted no-JavaScript browser checks at 1440, 390, and 320px confirm a visible heatmap, no repository information, and no horizontal overflow. The last full Lighthouse/axe audit above predates this removal.
 
-The heatmap does not update automatically. `npm run refresh:github` refreshes the saved calendar; `npm run build` regenerates the displayed asset. Hosted output must then be redeployed. No scheduled refresh is configured.
+At this checkpoint, the heatmap was manual: `npm run refresh:github` refreshed the saved calendar and `npm run build` regenerated the displayed asset. The automation iteration below supersedes that behavior after remote activation.
+
+## Phased commits, punctuation, and automated refresh
+
+- Saved the complete static portfolio as a baseline commit, then isolated the punctuation cleanup and refresh automation in separate commits.
+- Removed em dashes from public content, date ranges, page titles, and documentation. The generated HTML check also rejects literal and HTML-encoded em dashes.
+- All 18 offline refresh tests pass. They cover exact parsing, missing/invalid data, duplicate and discontinuous dates, partial calendars, unchanged snapshots, changed counts, calendar rollover, stale calendars, network/HTTP/body failures, and local HTML input.
+- A real public GitHub fetch succeeded and returned an unchanged calendar. The script preserved the existing snapshot and did not manufacture an update.
+- Workflow YAML parses without duplicate keys. Its six-hour schedule, default-branch activation, `pilot` checkout/write target, pinned actions, minimal permissions, public-repository condition, no-change exit, build gate, and non-force push were reviewed locally. A hosted Actions run has not occurred.
+- Astro checks: zero errors, warnings, or hints. Build and test commands pass, including internal links, calendar/CSV consistency, punctuation, privacy boundaries, and size budgets. The complete output is approximately 176 KB with zero application JavaScript.
+- Chromium checks with JavaScript disabled pass at 1440, 390, and 320px: heatmap visible, two aggregate metrics, no repository cards, and no horizontal overflow.
+- SVG/CSV cache revalidation headers are included for Cloudflare. Local preview does not apply them; confirm after hosting is connected. No remote workflow activation or deployment is claimed.

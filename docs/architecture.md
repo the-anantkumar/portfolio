@@ -51,8 +51,8 @@ Free terms and quotas can change. Recheck before deployment or enabling any new 
 
 ## November visual/activity iteration
 
-A dark, continuous spectral palette replaces paper-like surfaces. Native checkbox and `:has()` provide an explicit animation pause control; reduced-motion overrides all CSS animation. The new GitHub refresh script fetches public calendar HTML only when a maintainer runs it, validates a continuous full-year date range, and persists a minimal aggregate snapshot. Builds and visitor requests do not depend on GitHub. The parser intentionally fails rather than fabricate counts if GitHub markup changes.
+A dark, continuous spectral palette replaces paper-like surfaces. Native checkbox and `:has()` provide an explicit animation pause control; reduced-motion overrides all CSS animation. The GitHub refresh script fetches public calendar HTML manually or in the scheduled workflow, validates a continuous full-year date range, and atomically persists a minimal aggregate snapshot when data changes. Builds and visitor requests do not depend on GitHub. The parser intentionally fails rather than fabricate counts if GitHub markup changes.
 
 ## Contribution-only GitHub section
 
-Repository cards, repository metadata, and their refresh script were removed at the owner's request. The section shows only aggregate contribution activity and a dated heatmap. Refresh is an explicit maintainer command followed by rebuild/deployment; no automatic schedule or visitor-triggered API fetch exists.
+Repository cards, repository metadata, and their refresh script were removed at the owner's request. The section shows only aggregate contribution activity and a dated heatmap. A GitHub Actions workflow checks every six hours once activated on the default branch, updates only `pilot`'s snapshot, and uses Pages Git integration for deployment. No visitor-triggered API fetch exists. See [the refresh runbook](github-refresh.md) for activation and failure behavior.

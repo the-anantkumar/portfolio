@@ -5,6 +5,7 @@ This repository is an Astro static site on `pilot`. There is no backend, React r
 - Preserve the zero-cost constraint: no paid services, purchased domains, model APIs, or automatic upgrades.
 - Use typed Markdown collections for public content. `src/content/projects` feeds both cards and detail pages.
 - Do not use em dashes in public copy, date ranges, or page titles. The build verifies this preference.
+- Contribution refreshes run outside the visitor request path. Keep the scheduled workflow public-repository-only, preserve the last valid snapshot on failure, and commit only changed calendar data to `pilot`.
 - Keep `.codex/`, resume source files, secrets, private product data, and infrastructure identifiers out of Git and `dist/`.
 - Only the explicitly authorized email and professional profile links belong in public contact content.
 - Keep ordinary pages script-free, accessible without JavaScript, and under documented performance budgets.

@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, and size budgets. `npm test` reruns those checks against the existing `dist/` build. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, and size budgets. `npm test` tests the calendar refresh and reruns those checks against the existing `dist/` build. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. No test makes paid requests.
 
 ## Content and structure
 
@@ -71,13 +71,15 @@ The homepage displays the contribution calendar and aggregate activity counts. G
 
 The SVG is a local, lazy-loaded static asset; daily counts are available as a CSV. Visitors make no GitHub API requests. The calendar works without JavaScript and shows its snapshot date.
 
-**The heatmap does not refresh automatically.** Update it manually with:
+**A six-hour refresh workflow is included.** It fetches the public calendar, validates it, and commits changed data to `pilot` only after the site passes its checks. Connected Cloudflare Pages Git integration then rebuilds the site. Unchanged data produces no commit or deployment; failures preserve the last good snapshot. Manual refresh still works:
 
 ```sh
 npm run refresh:github
 npm run build
 ```
 
-On hosting, publish the rebuilt output (or commit the refreshed snapshot so the connected host rebuilds). Reloading the page alone does not fetch new activity. The maintainer refresh fetches public GitHub calendar HTML without credentials; unexpected markup or network errors leave the existing snapshot intact. No schedule or background automation is configured.
+The workflow is prepared locally, **not activated by a local commit**. Push the implementation to `pilot`, add the workflow file to the repository's default branch (`main`), enable Actions, and connect Cloudflare Pages to `pilot`. See [activation, freshness, costs, and rollback](docs/github-refresh.md). No personal access token or new service secret is required.
+
+This is an automatically refreshed snapshot, not a real-time feed. Reloading a page reads the most recently deployed data; an already-open page does not poll. The displayed snapshot date changes only when the saved calendar changes.
 
 Slow ambient light and ring movement use CSS transforms. The pause control in the header stops motion; `prefers-reduced-motion` disables it automatically. No preference storage or animation JavaScript is needed.
