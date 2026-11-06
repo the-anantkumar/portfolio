@@ -1753,8 +1753,11 @@
   .heatmap-scroll {
     direction: rtl;
     overflow-x: auto;
-    padding: 4px 0;
-    scrollbar-color: #84618d #201b2b;
+    padding: 14px 12px;
+    background: #0b1220;
+    border: 1px solid #30445b;
+    border-radius: 10px;
+    scrollbar-color: #36b6bd #0b1220;
   }
   .heatmap {
     height: auto;
@@ -1764,27 +1767,28 @@
   }
   .heatmap text {
     font: 9px var(--mono);
-    fill: #b1a3c0;
+    fill: #c8d6e5;
   }
   .level-0 {
-    fill: #2c2639;
-    background: #2c2639;
+    fill: #1e3044;
+    background: #1e3044;
+    box-shadow: inset 0 0 0 1px #526881;
   }
   .level-1 {
-    fill: #68416f;
-    background: #68416f;
+    fill: #287f92;
+    background: #287f92;
   }
   .level-2 {
-    fill: #a366a0;
-    background: #a366a0;
+    fill: #36b6bd;
+    background: #36b6bd;
   }
   .level-3 {
-    fill: #d196c3;
-    background: #d196c3;
+    fill: #79ded0;
+    background: #79ded0;
   }
   .level-4 {
-    fill: #f4c8e9;
-    background: #f4c8e9;
+    fill: #e0ff97;
+    background: #e0ff97;
   }
   .heat-cell:hover {
     stroke: #fff;

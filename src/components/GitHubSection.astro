@@ -41,12 +41,12 @@ const formatDate = (date: string) =>
     >
       <img
         class="heatmap"
-        src={withBase("github-heatmap.svg")}
+        src={withBase("github-heatmap.svg?palette=teal-lime")}
         width="725"
         height="125"
         loading="lazy"
         decoding="async"
-        alt={`${snapshot.total} contributions from ${formatDate(snapshot.from)} to ${formatDate(snapshot.to)}. Brighter pink cells indicate higher activity. Exact daily counts are available in the CSV download.`}
+        alt={`${snapshot.total} contributions from ${formatDate(snapshot.from)} to ${formatDate(snapshot.to)}. Active days progress from teal through mint to lime as activity increases. Outlined slate cells indicate no contributions. Exact daily counts are available in the CSV download.`}
       />
     </div>
     <div class="heatmap-foot">
