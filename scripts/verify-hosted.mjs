@@ -41,6 +41,7 @@ const routes = [
   "projects/codeforces-potd/",
   "projects/nielsen-data-systems/",
   "projects/portfolio/",
+  "ask/",
 ];
 for (const route of routes) {
   const response = await get(route);
@@ -55,18 +56,44 @@ for (const route of routes) {
     html.includes('http-equiv="Content-Security-Policy"'),
     `${route}: document CSP`,
   );
-  assert(!/<script[\s>]/i.test(html), `${route}: no application scripts`);
+  if (route === "ask/") {
+    const policy = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1].replace(/&#39;/g, "'");
+    const scriptPolicy = policy?.match(/(?:^|;)\s*script-src\s+([^;]+)/)?.[1].trim().split(/\s+/);
+    assert(scriptPolicy?.includes("'self'"), `${route}: scripts must remain self-hosted`);
+    assert(scriptPolicy.every((source) => ["'self'", "'wasm-unsafe-eval'"].includes(source)), `${route}: no inline scripts, eval or third-party scripts`);
+    const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    assert(scripts.length > 0, `${route}: interactive bootstrap present`);
+    for (const [, attributes, body] of scripts) {
+      assert(/\btype="module"/.test(attributes), `${route}: external module required`);
+      assert.equal(body.trim(), "", `${route}: inline executable content forbidden`);
+      const src = attributes.match(/\bsrc="([^"]+)"/)?.[1];
+      assert(src, `${route}: script source required`);
+      const url = new URL(src, base);
+      assert.equal(url.origin, new URL(base).origin, `${route}: script hosted with the portfolio`);
+      assert(url.pathname.startsWith(new URL(base).pathname), `${route}: script uses deployment base`);
+      const scriptResponse = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      assert.equal(scriptResponse.status, 200, `${route}: script reachable`);
+      assert.match(scriptResponse.headers.get("content-type"), /(?:java|ecma)script/, `${route}: executable module content type`);
+      assert.deepEqual(Buffer.from(await scriptResponse.arrayBuffer()), await readFile(`dist/${url.pathname.slice(new URL(base).pathname.length)}`), `${route}: bootstrap bytes match the verified build`);
+    }
+  } else {
+    assert(!/<script[\s>]/i.test(html), `${route}: no application scripts`);
+    assert(/script-src (?:'|&#39;)none(?:'|&#39;)/.test(html), `${route}: script-src none remains enforced by document metadata`);
+  }
   assert(
     !/\u2014|&mdash;|&#8212;|&#x2014;/i.test(html),
     `${route}: no em dashes`,
   );
-  const css = html.match(/href="([^"]+\.css)"/)?.[1];
-  assert(css, `${route}: stylesheet present`);
-  assert.equal(
-    (await fetch(new URL(css, base), { signal: AbortSignal.timeout(15000) }))
-      .status,
-    200,
-  );
+  const styles = [...html.matchAll(/href="([^"]+\.css)"/g)].map((match) => match[1]);
+  assert(styles.length > 0, `${route}: stylesheet present`);
+  for (const css of new Set(styles)) {
+    assert.equal(
+      (await fetch(new URL(css, base), { signal: AbortSignal.timeout(15000) }))
+        .status,
+      200,
+      `${route}: stylesheet reachable`,
+    );
+  }
 }
 for (const asset of [
   "github-heatmap.svg",
@@ -75,6 +102,12 @@ for (const asset of [
   "robots.txt",
   "favicon.svg",
   "social.jpg",
+  "knowledge.json",
+  "search-vectors.json",
+  "ai-notices/README.txt",
+  "ai-notices/Apache-2.0.txt",
+  "ai-notices/ONNX-Runtime-LICENSE.txt",
+  "ai-notices/ONNX-Runtime-ThirdPartyNotices.txt",
 ]) {
   const response = await get(asset);
   assert.equal(response.status, 200, asset);
@@ -91,5 +124,5 @@ assert(
   "Custom 404 must be deployed",
 );
 console.log(
-  `Hosted verification passed for ${expected}: all pages, canonical URLs, CSS, CSP, calendar, CSV, sitemap, images, and custom 404 at ${base}`,
+  `Hosted verification passed for ${expected}: all pages, canonical URLs, CSS, document CSP, calendar, CSV, search corpus/vectors/bootstrap, sitemap, images, and custom 404 at ${base}`,
 );
