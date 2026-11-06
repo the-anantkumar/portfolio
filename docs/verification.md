@@ -112,3 +112,17 @@ Verified on 3 November 2026:
 - GitHub Pages uses the Actions publishing source. No Cloudflare account, purchased domain, paid plan, custom service secret, or paid API was provisioned. Hosting-specific response/cache limitations remain documented in the deployment runbook.
 
 These links record the initial production verification. Later runs identify their own source revision through `release.json` and repeat the automated checks. A scheduled trigger has been enabled; this verification does not claim to have waited for the next six-hour scheduled execution.
+
+## Optional on-device search, 7 November 2026
+
+This checkpoint is a local implementation on `pilot`, not a new production release. No backend, account, paid resource, model API, or deployment was created.
+
+- Node 24.22.2: `npm run check`, production-path `npm run build`, and `npm test` pass. All 18 calendar tests remain passing. `npm audit` reports no known vulnerabilities at this checkpoint.
+- The index command was exercised end to end. It embeds 38 public passages and 74 public test questions with the pinned q8 model. The longest passage input is 153 tokens. Normal builds verify the saved index and do not download model weights.
+- On 43 development questions, top-three evidence recall is 39/43 for word matching and 42/43 for hybrid search. Both modes pass 3/3 scope checks and 22/22 unsupported/privacy examples. On 6 separately authored challenge questions, recall is 0/6 and 3/6 respectively. Those challenges informed debugging and now form regression examples, not held-out validation. The [learning guide](ai-search-learning.md) records misses and interpretation limits.
+- The committed browser suite passes at 1440, 390, and 320px, including ordinary script-free pages, Ask with JavaScript disabled, reduced motion, keyboard navigation, results focus, all suggested questions, source links, axe WCAG A/AA checks, and no model requests before opt-in. Mocked cancellation, failure, and corpus retry preserve word matching.
+- `TEST_AI_MODEL=1 npm run test:browser` passes real browser inference, immutable model-path checks, and cached weight reload. Desktop Chromium at a 390px viewport measured 4,355 ms cold readiness, 131 ms first question, 58 ms subsequent question, and 209 ms cached model reload. These are individual local samples, not physical-phone measurements. Approximately 37.6 MB of reported cold response bodies excludes an unreported worker body; the UI discloses about 40 MB. Cached reload did not refetch Hugging Face weights but did re-serve local WebAssembly.
+- Ordinary output is 187,627 bytes. Homepage HTML/CSS is 12,303 bytes gzip; initial Ask HTML/CSS/script/corpus is 22,475 bytes gzip. Optional JavaScript is 142,814 bytes gzip, WebAssembly 14,264,838 bytes, and passage vectors 137,995 bytes. Complete static output, including upstream notices, is 15,491,762 bytes. Separate budgets preserve ordinary-page performance.
+- Screenshots under ignored `artifacts/ask-browser/` were visually inspected. No raw resumes, private documents, query logs, or model caches enter Git or the build. The public corpus uses the same source content as the visible portfolio.
+
+Hosted verification was extended to cover Ask and its static search data, but was not run against a new public release in this checkpoint. Physical-phone inference and broader unseen-question evaluation remain future work.
