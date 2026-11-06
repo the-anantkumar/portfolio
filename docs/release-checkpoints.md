@@ -23,7 +23,7 @@ Use `git show <commit>` to inspect a specific concern. To explore an older state
 
 ## Optional search on pilot
 
-The 7 November 2026 implementation is saved locally on `pilot` in the following ordered checkpoints. Each changes one to three files. Foundational and integration commits depend on one another; these are review and backtracking boundaries, not a claim that every intermediate commit is a separately deployable release. The completed set passed the checks recorded in [verification](verification.md#optional-on-device-search-7-november-2026). It has not been merged or published.
+The 7 November 2026 implementation is recorded on `pilot` in the following ordered checkpoints. Each changes one to three files. Foundational and integration commits depend on one another; these are review and backtracking boundaries, not a claim that every intermediate commit is a separately deployable release. The completed set passed the checks recorded in [verification](verification.md#optional-on-device-search-7-november-2026). It has not been merged into `main` or deployed.
 
 | Commit | Concern | Changed files |
 | --- | --- | --- |
@@ -46,3 +46,15 @@ The 7 November 2026 implementation is saved locally on `pilot` in the following 
 | `7a07390` | docs: teach embeddings retrieval and evaluation | 2 |
 | `b9e297a` | docs: document search setup and deployment boundaries | 3 |
 | `4bde7a0` | docs: record local AI search validation and limitations | 1 |
+
+## Resume checkpoint
+
+Annotated tag: `checkpoint/ai-search-v1-2026-11-07`. Development branch: `pilot`. The implementation and its validation record are complete for this checkpoint; further development is deferred at the owner's request. The tag includes this handoff note and the existing small commits, without squashing or rewriting them.
+
+Start with [the AI learning guide](ai-search-learning.md) and [the validation record](verification.md#optional-on-device-search-7-november-2026). Use Node 24. Public content and evaluation questions have matching committed vectors; ordinary builds do not need a model download.
+
+When work resumes:
+
+1. Measure inference on a physical phone, including the initial download, cached reload, cancellation, and fallback.
+2. Write fresh held-out questions before tuning retrieval. Investigate the four documented hybrid-search misses and retain existing scope and privacy checks.
+3. When ready for release, open the `pilot` to `main` PR, run CI, and complete exact-commit hosted verification after deployment. Production release remains pending.

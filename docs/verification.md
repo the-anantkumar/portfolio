@@ -115,7 +115,7 @@ These links record the initial production verification. Later runs identify thei
 
 ## Optional on-device search, 7 November 2026
 
-This checkpoint is a local implementation on `pilot`, not a new production release. No backend, account, paid resource, model API, or deployment was created.
+This checkpoint was validated locally on `pilot`, not as a new production release. Its source is marked by `checkpoint/ai-search-v1-2026-11-07`; see the [resume note](release-checkpoints.md#resume-checkpoint). No backend, account, paid resource, model API, or deployment was created.
 
 - Node 24.22.2: `npm run check`, production-path `npm run build`, and `npm test` pass. All 18 calendar tests remain passing. `npm audit` reports no known vulnerabilities at this checkpoint.
 - The index command was exercised end to end. It embeds 38 public passages and 74 public test questions with the pinned q8 model. The longest passage input is 153 tokens. Normal builds verify the saved index and do not download model weights.
