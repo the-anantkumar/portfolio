@@ -228,6 +228,7 @@
     line-height: 1.8;
   }
   .hero-actions {
+    flex-wrap: wrap;
     display: flex;
     align-items: center;
     gap: 30px;
@@ -1899,10 +1900,16 @@
   }
   @media (max-width: 700px) {
     .header {
-      height: 88px;
+      height: auto;
+      min-height: 88px;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-block: 18px;
     }
     .header nav {
-      gap: 13px;
+      gap: 12px;
+      flex-wrap: wrap;
+      max-width: 100%;
     }
     .header nav > a:nth-child(3) {
       display: none;

@@ -6,6 +6,7 @@ export const GET: APIRoute = async ({ site }) => {
   const routes = site
     ? [
         "/",
+        "/ask/",
         ...(await getCollection("projects")).map((p) => `/projects/${p.id}/`),
       ]
     : [];
