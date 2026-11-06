@@ -4,11 +4,11 @@ label: An exercise in restraint
 summary: A static, content-driven portfolio designed around a zero-cost operating constraint.
 role: Portfolio architecture & implementation
 category: Web engineering
-stack: [Astro, TypeScript, Markdown, CSS]
+stack: [Astro, TypeScript, Markdown, CSS, Transformers.js]
 order: 4
 featured: false
 visual: portfolio
-evidence: Static HTML · No application JavaScript
+evidence: Static pages · Optional on-device search
 links: []
 ---
 ## The problem
@@ -23,10 +23,12 @@ A client-rendered application would add a runtime to pages whose main job is to 
 The contact links open email or LinkedIn. The site does not claim to send a message or collect contact-form data.
 
 ## Performance contract
-The build checks an initial homepage transfer budget of 300 KB and an initial compressed JavaScript budget of 20 KB. The implementation ships no application scripts. Core navigation and case studies work without JavaScript.
+The build checks an initial homepage transfer budget of 300 KB. Ordinary pages ship no application scripts. Core navigation and case studies work without JavaScript. A separate Ask page has a 20 KB compressed initial script budget; its optional model loads only after a visitor enables meaning-based search.
 
 ## Future search
-The content is structured for later static indexing. Search can be loaded on demand. Browser-local AI remains a separate, optional experiment with explicit download costs and an ordinary-search fallback; no paid inference is connected to this site.
+The Ask page searches only these public Markdown collections and links each result to its source. Word matching works immediately. Optional meaning-based search uses a small embedding model in the visitor's browser, with an explicit first-use download and a working word-matching fallback.
+
+This retrieves original passages rather than generating new answers. Questions stay on the device, and no model API or backend is required. A future conversational model would need separate tests for factual accuracy, unsupported questions, download size, and performance on phones.
 
 ## Delivery
 GitHub Pages serves the generated files from this portfolio's public repository. GitHub Actions validates and deploys changes, including scheduled contribution-calendar updates. A custom domain, paid backend, analytics service, and model API are not required.
