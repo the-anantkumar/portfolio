@@ -1,6 +1,6 @@
 # Anant Kumar Srivastava | portfolio
 
-A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership.
+A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership. The optional `/ask/` page finds original portfolio passages, with browser-local AI search available after an explicit download choice.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and reruns those checks against the existing `dist/` build. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and search retrieval, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval using committed public evaluation vectors. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -28,9 +28,15 @@ npm run preview
 - `src/content/pages/experience.md`: employers, dates, roles, and contributions.
 - `src/content/projects/*.md`: one case study per project. Frontmatter feeds homepage cards; the body supplies the detail page.
 - `src/content.config.ts`: typed content collections; invalid content fails validation.
-- `src/pages/`: homepage, generated project routes, 404, robots, and sitemap.
+- `src/pages/`: homepage, generated project routes, Ask, 404, robots, sitemap, and static search data.
+- `src/lib/knowledge.ts`: builds the search corpus exclusively from public content collections.
+- `src/lib/retrieval.mjs`: word matching and hybrid ranking, with unsupported-request handling.
+- `src/lib/embedding-config.mjs`: pinned model revision and corpus/index compatibility checks.
+- `src/scripts/ask.ts` and `embedding-worker.ts`: optional search interface and model worker.
+- `src/data/search-vectors.json`: precomputed public passage embeddings, regenerated only by a maintainer.
 - `src/components/ProjectVisual.astro`: original CSS illustrations; these are conceptual artwork, not screenshots or user records.
-- `docs/architecture.md`: stack decisions, budgets, hosting, and future search boundaries.
+- `docs/architecture.md`: stack decisions, delivery boundaries, and the search architecture.
+- `docs/ai-search-learning.md`: a hands-on introduction to embeddings, retrieval, evaluation, and later generated answers.
 - `docs/editorial-review.md`: the three-perspective editorial review.
 
 Set `featured: true` and a numeric `order` to feature a project. The Markdown filename is its public URL slug. Keep existing slugs stable; GitHub Pages does not support server redirect rules.
@@ -50,7 +56,7 @@ Production URL: **https://the-anantkumar.github.io/portfolio/**
 | Base path (`SITE_BASE`) | `/portfolio` |
 | Static output | `dist` |
 
-No purchased domain, backend, database, model API, or Cloudflare account is needed. Use the public repository and standard GitHub-hosted runner. No paid plan or automatic upgrade is enabled. The small Pages artifact expires after one day; dependency caching is disabled. See [deployment, testing, and rollback](docs/deployment.md).
+No purchased domain, backend, database, model API, or Cloudflare account is needed. Use the public repository and standard GitHub-hosted runner. No paid plan or automatic upgrade is enabled. The Pages artifact expires after one day; dependency caching is disabled. See [deployment, testing, and rollback](docs/deployment.md).
 
 To reproduce the production build locally:
 
@@ -62,17 +68,31 @@ npm run test:browser
 
 Ordinary local builds use `/` and omit canonical URLs. Production links, assets, social previews, and the sitemap include `/portfolio/`. `dist/release.json` identifies the source commit deployed for verification.
 
-GitHub Pages does not apply `public/_headers`; that file remains an optional Cloudflare configuration for a future host migration. Every HTML page supplies a restrictive Content Security Policy and referrer policy through metadata. Response-only protections such as `frame-ancestors`, custom cache headers, and Permissions-Policy cannot be configured on Pages. Host caching may briefly delay a newly deployed asset. Future search requires a deliberate CSP change.
+GitHub Pages does not apply `public/_headers`; that file remains an optional Cloudflare configuration for a future host migration. Every HTML page supplies a restrictive Content Security Policy and referrer policy through metadata. The six ordinary pages remain script-free. Only Ask enables application scripts and its model worker. Document CSP is not a network boundary for that worker; see [worker and hosting limits](docs/architecture.md#worker-and-hosting-limits). Response-only protections such as `frame-ancestors`, custom cache headers, and Permissions-Policy cannot be configured on Pages. Host caching may briefly delay a newly deployed asset.
 
 ## Privacy and claims
 
-The public email and LinkedIn are authorized contact channels. The phone number and raw resume are excluded. `.codex/`, local environment files, and audit artifacts are ignored. Do not put private source notes in `public/`, published Markdown, or repository documentation. There are no cookies set by this application, analytics integrations, form submissions, or query logs. Hosting providers still process normal HTTP requests; this is not a claim that infrastructure collects no data.
+The public email and LinkedIn are authorized contact channels. The phone number and raw resume are excluded. `.codex/`, local environment files, and audit artifacts are ignored. Do not put private source notes in `public/`, published Markdown, or repository documentation. There are no cookies set by this application, analytics integrations, server form submissions, or query logs. Ask questions stay in browser memory and are not placed in URLs or persistent storage. Optional model files may be cached by the browser. Hosting and model-download providers still process normal HTTP requests; this is not a claim that infrastructure collects no data.
 
 Store metrics are dated snapshots. Portfolio narratives distinguish independent products from employer work and do not claim measured AI superiority. Review `docs/editorial-review.md` before adding new metrics.
 
-## Future search
+## Ask and optional AI search
 
-Search and AI are intentionally deferred. Add Pagefind first, loaded on demand. Browser-local semantic retrieval can follow only after model license, download, hosting-size, device-support, and zero-cost checks. Do not introduce a paid model API, expose a key, or connect to trlr's inference backend.
+Ask starts with lightweight word matching. It returns related complete public passages and source links; it does not generate answers or verify the premise of a question. Visitors can enable meaning-based search using a small embedding model that runs on their device. No model download happens before that choice. If loading fails or is canceled, word matching remains available. Without JavaScript, Ask offers useful portfolio links.
+
+This needs no backend, API key, Hugging Face account, or paid inference service. The model and runtime add about 40 MB of uncompressed assets on first use; actual network transfer and load time depend on compression, cache, and device. Browser cache can be evicted. Ordinary pages never download the model or search scripts.
+
+When public search content changes, regenerate its vectors explicitly:
+
+```sh
+npm run index:search
+npm run check
+npm run build
+npm test
+npm run test:browser
+```
+
+The indexing command downloads the pinned public model as needed and updates passage vectors plus vectors for public evaluation questions. Normal builds use committed vectors, verify their content hash, and fail if the index is stale. They do not download models. Review index changes with the corresponding content change. Full upstream license files are published under `public/ai-notices/`. The learning guide explains the [pipeline, evaluation commands, and limits](docs/ai-search-learning.md).
 
 ## GitHub activity and motion
 
