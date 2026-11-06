@@ -1,0 +1,109 @@
+---
+import Base from "../layouts/Base.astro";
+import { withBase } from "../lib/paths";
+import "../styles/ask.css";
+const examples = [
+  "What has Anant built at Nielsen?",
+  "Tell me about trlr and his founder work",
+  "What experience does he have with cloud infrastructure?",
+];
+---
+
+<Base
+  title="Ask about my work | Anant Kumar Srivastava"
+  description="Find relevant passages about Anant’s engineering experience, projects, and founder work. Explore the sources behind every result."
+  interactive={true}
+>
+  <section class="ask-page wrap" aria-labelledby="ask-heading">
+    <header class="ask-intro">
+      <span class="eyebrow">A DIFFERENT WAY IN</span>
+      <h1 id="ask-heading">Your question.<br /><em>My work, in context.</em></h1>
+      <p>
+        Looking for something specific? Find the parts of my portfolio that
+        matter to you, with a source you can explore.
+      </p>
+    </header>
+
+    <div
+      id="ask-app"
+      data-knowledge-url={withBase("knowledge.json")}
+      data-vectors-url={withBase("search-vectors.json")}
+    >
+      <form id="ask-form" class="ask-panel" hidden>
+        <label for="ask-question">What would you like to know?</label>
+        <textarea
+          id="ask-question"
+          rows="3"
+          maxlength="500"
+          required
+          autocomplete="off"
+          spellcheck="false"
+          aria-describedby="ask-question-help"
+          placeholder="For example, what has Anant built in production?"
+        ></textarea>
+        <div class="ask-form-footer">
+          <p id="ask-question-help">Up to 500 characters. Questions stay in this browser.</p>
+          <button class="button" type="submit">Find relevant passages <span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="ask-examples" aria-label="Try a question">
+          <span>Try a question</span>
+          {examples.map((question) => (
+            <button type="button" data-ask-example={question}>{question}</button>
+          ))}
+        </div>
+      </form>
+
+      <div id="ask-enhancement" class="ask-enhancement" hidden>
+        <div class="ask-enhancement-copy">
+          <span class="ask-mode" id="ask-mode">WORD MATCHING</span>
+          <h2>Same idea. Different words.</h2>
+          <p>
+            Optional AI search uses a small embedding model to match meaning.
+            It finds original portfolio passages; it does not write answers.
+          </p>
+          <p class="ask-download-note" id="semantic-help">
+            About 40 MB on first use, including model files from Hugging Face.
+            Runs in your browser. Your questions are not sent to a server. Loading and
+            speed depend on your device.{" "}
+            <a href={withBase("ai-notices/README.txt")}>Model and software notices</a>.
+          </p>
+        </div>
+        <div class="ask-enhancement-actions">
+          <button id="semantic-enable" class="ask-secondary" type="button" aria-describedby="semantic-help">Enable meaning-based search</button>
+          <button id="semantic-cancel" class="ask-secondary" type="button" hidden>Cancel download</button>
+          <p id="semantic-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+      </div>
+
+      <p id="ask-status" class="ask-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <section id="ask-results" class="ask-results" aria-labelledby="ask-result-heading" aria-busy="false" hidden>
+        <div class="ask-results-heading">
+          <h2 id="ask-result-heading" tabindex="-1">From the portfolio</h2>
+          <p id="ask-result-summary"></p>
+        </div>
+        <ol id="ask-result-list"></ol>
+        <p class="ask-result-note">These are original passages, not generated answers. Each source gives the fuller context.</p>
+        <button id="ask-another" class="ask-secondary" type="button">Ask another question</button>
+      </section>
+    </div>
+
+    <aside id="ask-browse" class="ask-browse" aria-labelledby="ask-browse-heading">
+      <div>
+        <span class="eyebrow">FOLLOW YOUR CURIOSITY</span>
+        <h2 id="ask-browse-heading">Or take the scenic route.</h2>
+        <p>Engineering at Nielsen. Founder work at trlr. Products built around real problems.</p>
+        <noscript><p>Search needs JavaScript. Every portfolio page is available through the links below.</p></noscript>
+      </div>
+      <nav aria-label="Browse the portfolio">
+        <a href={withBase("#work")}>Selected work <span aria-hidden="true">↗</span></a>
+        <a href={withBase("#experience")}>Experience <span aria-hidden="true">↗</span></a>
+        <a href={withBase("#about")}>About me <span aria-hidden="true">↗</span></a>
+        <a href={withBase("#contact")}>Get in touch <span aria-hidden="true">↗</span></a>
+      </nav>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  import "../scripts/ask";
+</script>
