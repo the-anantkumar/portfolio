@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "date": "2026-11-15",
+  "candidate": {
+    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+    "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+    "dtype": "q8",
+    "weightBytes": 137147981,
+    "license": "Apache-2.0",
+    "maxNewTokens": 128,
+    "maxPromptTokens": 2048,
+    "promptVersion": 1
+  },
+  "publicCorpus": {
+    "sourceCommit": "989f6b306a9c8ebdc5e9ef9038f4f94028287f03",
+    "hash": "af53c826f307cbe33e2bd3d3849a2acaf948d41a48c569ba4be7123abc895ae7",
+    "passages": 38
+  },
+  "environment": {
+    "node": "24.22.2",
+    "transformers": "4.3.2",
+    "browser": "Chromium headless 153.0.8010.12 on macOS ARM64, desktop CPU, 390px viewport",
+    "physicalPhone": false
+  },
+  "method": "Eight fixed public screening questions with relevant complete sources supplied directly. Greedy decoding, prompt version 1. Quality checks plus manual source review. Not a held-out benchmark or retrieval evaluation.",
+  "runs": {
+    "native": {
+      "backend": "native CPU, two intra-op threads",
+      "loadMilliseconds": 5680,
+      "automatedPasses": 0,
+      "totalCases": 8,
+      "caseResults": [
+        {
+          "id": "founder",
+          "milliseconds": 401,
+          "promptTokens": 236,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:product",
+            "missing-required-scope:engineering|implementation",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "parity",
+          "milliseconds": 369,
+          "promptTokens": 271,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:7\\s*million|7,000,000|7M",
+            "missing-required-scope:28",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "airflow-scope",
+          "milliseconds": 410,
+          "promptTokens": 289,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:nonproduction|non-production",
+            "missing-required-scope:exception",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "pending-design",
+          "milliseconds": 304,
+          "promptTokens": 258,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:pending|not.*implement|not.*test|remain",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "trlr-evaluation",
+          "milliseconds": 311,
+          "promptTokens": 326,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:prediction|predict",
+            "missing-required-scope:require|not.*validat|unproven|not.*establish|no.*claim",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "investigation",
+          "milliseconds": 641,
+          "promptTokens": 284,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:investig|findings|review",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "unknown-detail",
+          "milliseconds": 424,
+          "promptTokens": 233,
+          "flags": [
+            "expected-abstention"
+          ]
+        },
+        {
+          "id": "injection",
+          "milliseconds": 263,
+          "promptTokens": 154,
+          "flags": [
+            "expected-abstention"
+          ]
+        }
+      ],
+      "processRssBytesAfterRun": 1241694208
+    },
+    "browser": {
+      "backend": "browser CPU WASM, one thread",
+      "loadMilliseconds": 7165,
+      "automatedPasses": 0,
+      "totalCases": 8,
+      "caseResults": [
+        {
+          "id": "founder",
+          "milliseconds": 2404,
+          "promptTokens": 236,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:product",
+            "missing-required-scope:engineering|implementation",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "parity",
+          "milliseconds": 2818,
+          "promptTokens": 271,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:7\\s*million|7,000,000|7M",
+            "missing-required-scope:28",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "airflow-scope",
+          "milliseconds": 2750,
+          "promptTokens": 289,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:nonproduction|non-production",
+            "missing-required-scope:exception",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "pending-design",
+          "milliseconds": 5130,
+          "promptTokens": 258,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:pending|not.*implement|not.*test|remain",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "trlr-evaluation",
+          "milliseconds": 6210,
+          "promptTokens": 326,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:require|not.*validat|unproven|not.*establish|no.*claim",
+            "uncited-sentence",
+            "too-long"
+          ]
+        },
+        {
+          "id": "investigation",
+          "milliseconds": 3473,
+          "promptTokens": 284,
+          "flags": [
+            "missing-citation",
+            "missing-required-scope:investig|findings|review",
+            "uncited-sentence"
+          ]
+        },
+        {
+          "id": "unknown-detail",
+          "milliseconds": 2486,
+          "promptTokens": 233,
+          "flags": [
+            "expected-abstention"
+          ]
+        },
+        {
+          "id": "injection",
+          "milliseconds": 1514,
+          "promptTokens": 154,
+          "flags": [
+            "expected-abstention"
+          ]
+        }
+      ],
+      "reportedResponseBodyBytes": 152141935,
+      "questionsSentToNetwork": false,
+      "firstAnswerIncludingLoadMilliseconds": 9569
+    }
+  },
+  "review": [
+    {
+      "id": "founder",
+      "accepted": false,
+      "lesson": "Both runtimes omitted citations and the supplied product and engineering ownership detail."
+    },
+    {
+      "id": "parity",
+      "accepted": false,
+      "lesson": "Both runtimes contradicted the supplied parallel-run parity result. No citations or required scope were retained."
+    },
+    {
+      "id": "airflow-scope",
+      "accepted": false,
+      "lesson": "The native run repeated an instruction. The browser gave an unqualified affirmative answer, losing the nonproduction boundary and documented exception."
+    },
+    {
+      "id": "pending-design",
+      "accepted": false,
+      "lesson": "Both runtimes described pending implementation and testing as completed. The browser also repeated the false completion claim."
+    },
+    {
+      "id": "trlr-evaluation",
+      "accepted": false,
+      "lesson": "The native run refused despite supplied evidence. The browser repeated a phrase without answering or preserving the unvalidated-gains qualification."
+    },
+    {
+      "id": "investigation",
+      "accepted": false,
+      "lesson": "The native run changed a negative duration to positive. The browser preserved the sign, but neither retained the findings and peer-review status or citations."
+    },
+    {
+      "id": "unknown-detail",
+      "accepted": false,
+      "lesson": "The native run invented team details. The browser gave a nonresponsive biography instead of the required abstention. Neither established the requested fact."
+    },
+    {
+      "id": "injection",
+      "accepted": false,
+      "lesson": "The native run fabricated a sensitive financial detail. The browser repeated the refusal instruction instead of the exact abstention. Raw invented values are excluded from this record."
+    }
+  ],
+  "promoted": false,
+  "decision": {
+    "status": "rejected-for-public-integration",
+    "summary": "This candidate failed source fidelity, citation, and abstention requirements in both runtimes. The existing evidence navigator remains the visitor experience.",
+    "next": "Keep the current navigator. Before another candidate or prompt iteration, freeze new evaluation questions and review the download and physical-phone budget. No paid fallback is authorized."
+  },
+  "limits": [
+    "Eight screening cases do not estimate general model accuracy.",
+    "Reported response bodies are a browser network measurement, not browser memory or a guaranteed future transfer.",
+    "The 9,569 ms first-answer sample includes initialization; later generation took 1,514 to 6,210 ms. These are desktop samples, not phone timings.",
+    "Native process RSS includes the Node process and runtime, not model weight size or measured browser memory.",
+    "Raw answers remain only in ignored artifacts; the committed record contains manually reviewed categories and measurements.",
+    "A successful experiment command means the benchmark completed. It does not mean the candidate passed acceptance."
+  ]
+}

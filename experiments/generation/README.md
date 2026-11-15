@@ -20,3 +20,26 @@ This is a screening set, not held-out validation. Before a visitor feature can b
 If quality fails, retain the fast navigator and record the failure. Do not lower the source-quality gate, automatically try a paid API, or silently substitute another model.
 
 Raw responses and caches belong under ignored `artifacts/generation/`. Only reviewed, non-PII measurements and findings belong in the committed learning record. A successful model download or fluent paragraph is not acceptance evidence.
+
+## Run deliberately
+
+Use Node 24 and build the public site first. The two experiment commands explicitly download public model assets as needed; they are separate from ordinary builds and CI. No new dependencies, accounts, or inference APIs are required.
+
+```sh
+npm run build
+npm run test:generation-contract
+npm run experiment:generation
+npm run experiment:generation:browser
+```
+
+Install Chromium with `npx playwright install chromium` before the browser command, or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an existing compatible installation. The browser runner builds only into ignored `artifacts/generation/browser/`, serves that directory on loopback, and runs fixed public cases after the explicit run control. It checks revision pinning and that no question or request body was sent over the network. The native command uses two CPU threads; the browser uses one WASM thread.
+
+An exit code of zero means the screening completed without a runtime failure. It does **not** mean the candidate met the promotion gate. Inspect the case flags and manually compare every answer with its source. Raw responses stay in ignored artifacts; never copy invented sensitive details into the learning record. `npm test` runs only the five offline prompt/inspection contract tests, with no model download.
+
+## 15 November 2026 result: not promoted
+
+The candidate passed **0/8 automated cases in both native CPU and browser WASM**. Manual source review rejected all eight in both runs. Failures included uncited prose, omitted qualifications, a reversed validation finding, pending work described as completed, and invented details. The browser also produced repetition. This small fixed set is a screening failure, not a general accuracy estimate or evidence that every possible local model will fail.
+
+The [reviewed summary](results-summary.json) records the pinned candidate, source-corpus hash, per-case flags/timing, and safe manual findings. Raw invented values are excluded. The measured browser response bodies totaled 152,141,935 bytes, below the experimental 200 MB download cap. Initialization was 7,165 ms; the first answer including initialization was 9,569 ms. Later generation samples ranged from 1,514 to 6,210 ms. These are individual desktop Chromium measurements at a narrow viewport, not a physical-phone test or browser-memory measurement. The native process RSS sample was about 1.24 GB, which also shows why a 137 MB weight file does not describe total runtime memory.
+
+Decision: keep the existing evidence navigator. Do not integrate this candidate into `/ask/`. Before another candidate or prompt iteration, freeze new evaluation questions, revisit phone/download budgets, and retain source fidelity as a requirement. The [learning lab](../../docs/learning-tracker.md) visualizes these outcomes without loading a model.
