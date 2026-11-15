@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and search retrieval, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval using committed public evaluation vectors. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and search retrieval, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -78,7 +78,7 @@ Store metrics are dated snapshots. Portfolio narratives distinguish independent 
 
 ## Ask and optional AI search
 
-Ask starts with lightweight word matching. It returns related complete public passages and source links; it does not generate answers or verify the premise of a question. Visitors can enable meaning-based search using a small embedding model that runs on their device. No model download happens before that choice. If loading fails or is canceled, word matching remains available. Without JavaScript, Ask offers useful portfolio links.
+Ask starts with lightweight word matching. It returns related complete public passages and source links; it does not generate answers or verify the premise of a question. Visitors can enable meaning-based search using a small embedding model that runs on their device. No model download happens before that choice. If loading fails or is canceled, word matching remains available. No-match feedback explains the public-content boundary or offers a path to the AI download disclosure. Questions about product assumptions preserve the source’s outcome and qualifications too. Without JavaScript, Ask offers useful portfolio links.
 
 This needs no backend, API key, Hugging Face account, or paid inference service. The model and runtime add about 40 MB of uncompressed assets on first use; actual network transfer and load time depend on compression, cache, and device. Browser cache can be evicted. Ordinary pages never download the model or search scripts.
 
@@ -92,7 +92,7 @@ npm test
 npm run test:browser
 ```
 
-The indexing command downloads the pinned public model as needed and updates passage vectors plus vectors for public evaluation questions. Normal builds use committed vectors, verify their content hash, and fail if the index is stale. They do not download models. Review index changes with the corresponding content change. Full upstream license files are published under `public/ai-notices/`. The learning guide explains the [pipeline, evaluation commands, and limits](docs/ai-search-learning.md).
+The indexing command downloads the pinned public model as needed and updates passage vectors plus vectors for both public evaluation-question suites. Normal builds use committed vectors, verify their content hash and preprocessing version, and fail if the index is stale. They do not download models. Review index changes with the corresponding content change. Full upstream license files are published under `public/ai-notices/`. The learning guide explains the [pipeline, evaluation commands, and limits](docs/ai-search-learning.md).
 
 ## GitHub activity and motion
 
@@ -112,3 +112,7 @@ No personal access token or service secret is required. [Refresh operations and 
 This is an automatically refreshed snapshot. Reloading the page reads deployed data; an already-open page does not poll. The displayed snapshot date changes only when the saved calendar changes. GitHub contribution processing, the schedule, deployment, and CDN caching all affect freshness.
 
 Slow ambient light and ring movement use CSS transforms. The pause control in the header stops motion; `prefers-reduced-motion` disables it automatically. No preference storage or animation JavaScript is needed.
+
+## Search validation on pilot
+
+The November 15 iteration resolves the four initial hybrid-search misses. `TEST_AI_MODEL=1 npm run test:browser` explicitly downloads the public model and tests all 90 questions through the browser worker, including source identity, original passage text, unsupported requests, and complete evidence. The default browser suite stays independent of external model hosting. See [the learning guide](docs/ai-search-learning.md#november-15-improve-the-evidence-before-changing-the-model) for measurements and their limits. Physical-phone validation and production release remain pending.

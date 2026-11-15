@@ -35,16 +35,16 @@ Only `src/content/pages` and `src/content/projects` feed search. `src/lib/knowle
 
 Production uses `SITE_URL=https://the-anantkumar.github.io` and `SITE_BASE=/portfolio`; local builds default to `/` without a canonical origin. A shared path helper prefixes authored links and public assets. Build checks reject links outside the hosting base and validate sitemap/social URLs. Every document includes CSP and referrer metadata because GitHub Pages does not apply the optional Cloudflare `public/_headers` file. Ask alone enables its same-origin application scripts and worker. Host cache behavior and response-only security headers remain outside application control. The committed build verifier is the executable source for exact asset budgets.
 
-Current local build measurements and enforced limits are separate from real network transfer. KB and MB below use decimal bytes; gzip estimates assume compression rather than a particular host response.
+Local build measurements from 15 November 2026 and enforced limits are separate from real network transfer. KB and MB below use decimal bytes; gzip estimates assume compression rather than a particular host response.
 
 | Asset group | Current measured size, rounded where marked | Enforced cap |
 | --- | --- | --- |
-| Ordinary site output, excluding optional search assets | About 188 KB | 300 KB |
-| Ask HTML, CSS, bootstrap, and corpus | About 22 KB gzip | 60 KB gzip |
-| Ask bootstrap JavaScript | About 5 KB gzip | 20 KB gzip |
+| Ordinary site output, excluding optional search assets | About 187 KB | 300 KB |
+| Ask HTML, CSS, bootstrap, and corpus | About 23 KB gzip | 60 KB gzip |
+| Ask bootstrap JavaScript | About 6.4 KB gzip | 20 KB gzip |
 | Optional inference JavaScript | About 143 KB gzip | 250 KB gzip |
 | Same-origin WebAssembly | 14,264,838 bytes | 16 MB |
-| Public passage vectors | 137,995 bytes | 200 KB |
+| Public passage vectors | 138,012 bytes | 200 KB |
 | Full upstream license notices | 351,753 bytes | 400 KB |
 | Complete published artifact | About 15.5 MB | 17 MB |
 
@@ -68,9 +68,13 @@ Both indexing and browser inference construct `AutoModel`, `AutoTokenizer`, and 
 
 `npm run index:search` is an explicit maintainer operation using native CPU inference under Node 24. It embeds public content and public evaluation questions, checks passage token lengths, and writes versioned vector files. Normal builds verify the pinned configuration and corpus hash against committed data. No scheduled workflow generates embeddings or downloads model weights. Questions are not sent to an inference service or saved in URLs, logs, or persistent storage. The browser may cache model assets, but eviction is possible. Canceling terminates the worker and restores word matching. After the corpus has loaded, word matching needs no further network access in the current page session.
 
-The current 74-question regression suite reports development top-three evidence recall of 39/43 (90.70%) for word matching and 42/43 (97.67%) for hybrid retrieval. Both modes preserve all 3 scope cases and reject all 22 unsupported examples, comprising 15 development and 7 challenge cases. On 6 independently written answerable challenge questions, word matching finds 0/6 and hybrid retrieval finds 3/6. These questions were written before fixes but then used during debugging, so they are now regression examples, not held-out evidence. The results measure retrieval, not answer accuracy or guaranteed abstention on unseen questions.
+The search checks now cover 90 questions: 74 existing regression cases and 16 reserved questions written before the November 15 changes. Native CPU evaluation finds the expected evidence in the top three for 43/43 development, 6/6 challenge, and 8/8 reserved answerable questions in hybrid mode. Word matching finds 40/43, 1/6, and 3/8 respectively. Both modes pass 5 scope and 28 unsupported/privacy checks. Actual browser WASM inference also passes all 57 answerable, 5 scope, and 28 unsupported examples. These measure retrieval on this small collection, not answer-generation accuracy or guaranteed behavior on unseen questions.
 
-The fixes normalize validation word variants, constrain named-employer questions to that employer's evidence, prioritize precise word matches, and permit a bounded semantic fallback when the leading match is clearly separated. Thresholds are ranking choices, not truth tests. Remaining hybrid misses include LinkedIn-profile wording, a paraphrase about checking millions of records, a question requiring the complete product hypothesis and outcome, and generic portfolio wording about ownership from idea to release. See [the learning and evaluation guide](ai-search-learning.md).
+Public contact labels include the available contact channels. Query preprocessing version 2 removes locator phrases such as “in this portfolio” before both lexical and semantic matching, while leaving direct site-architecture questions intact. The index generator and worker share the same preprocessing and model metadata; a version mismatch rejects stale vectors. Model weights remain unchanged.
+
+A bounded fallback can use two leading sections from the same source when their scores are separated from other sources and the question shares substantive words. This handles small native CPU versus WASM quantization differences without reducing the global similarity threshold. Questions about a product assumption or predictions retain both its problem and current-outcome sections when the source supplies both. `expectedAll` fixtures require that complete bundle; returning part of it fails completeness, while abstaining remains a recall miss.
+
+The 16 reserved questions were frozen in `e7be182` before ranking changes. Their first run followed a ranking freeze; results were then visible before a follow-up fix for an existing real-browser regression. They were not used to tune that fix, but final repeated results must not be presented as a fully blind independent benchmark. See [the learning and evaluation guide](ai-search-learning.md) for the initial checkpoint and current measurements.
 
 Generated answers would require a separate generative model and new factuality, citation, refusal, latency, and download tests. They are outside the current implementation. No paid inference, API key, or trlr backend is introduced.
 

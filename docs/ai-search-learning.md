@@ -63,7 +63,7 @@ One practical dependency lesson: passing a model revision is not enough if a lib
 
 ## Download, privacy, and failure behavior
 
-No model or inference runtime downloads until the visitor opts in. The optional assets total about 40 MB uncompressed: about 23 MB of weights, 14 MB of WebAssembly, and worker/runtime files. Compression and cache change the bytes transferred; device speed affects inference. The current Ask HTML, CSS, bootstrap, and corpus total about 22 KB gzip before optional model use. See the [measured artifact sizes and enforced budgets](architecture.md#performance-and-delivery-contract) for the separate size categories.
+No model or inference runtime downloads until the visitor opts in. The optional assets total about 40 MB uncompressed: about 23 MB of weights, 14 MB of WebAssembly, and worker/runtime files. Compression and cache change the bytes transferred; device speed affects inference. The current Ask HTML, CSS, bootstrap, and corpus total about 23 KB gzip before optional model use. See the [measured artifact sizes and enforced budgets](architecture.md#performance-and-delivery-contract) for the separate size categories.
 
 The committed browser smoke test on 2026-11-07 measured a 4,355 ms cold model load, a 131 ms first question, a 58 ms subsequent question, and a 209 ms model reload using cached weights. It reported roughly 37.6 MB of cold response bodies, excluding a worker response size that Chromium reported as zero. Keep the rounded 40 MB disclosure. These are individual samples on desktop Chromium at a 390px viewport, not physical-phone measurements or latency percentiles. A warm reload made no Hugging Face weight requests, but the local server re-served WebAssembly; cached weights do not guarantee zero network transfer.
 
@@ -89,7 +89,7 @@ node scripts/evaluate-search.mjs
 npm run test:search
 ```
 
-The local repository evaluation on **2026-11-07**, using `npm run test:search` and the [committed question cases](../scripts/search-cases.json), contains **74 questions**. A retrieval hit means that at least one expected original passage appears among the top three results:
+The initial checkpoint evaluation on **2026-11-07**, using `npm run test:search` and the [committed question cases](../scripts/search-cases.json), contains **74 questions**. A retrieval hit means that at least one expected original passage appears among the top three results:
 
 | Question group | Word matching | Hybrid retrieval |
 | --- | --- | --- |
@@ -102,11 +102,53 @@ The unsupported group contains 15 development and 7 challenge questions. Challen
 
 For example, we fixed matching between “validate” and “validation,” kept Nielsen-specific questions within Nielsen evidence, and gave precise word matches priority. A bounded semantic fallback can recover a paraphrase when its leading match is clearly separated from the alternatives. This improved the measured cases without treating a similarity threshold as proof of truth.
 
-Hybrid retrieval still misses the LinkedIn-profile question and three challenge cases: “checking millions of records,” the complete product assumption and what remains unproven, and generic portfolio wording about taking an idea through release. A related paragraph can be an incomplete result when a question needs both a product hypothesis and its outcome. These misses make the next improvement concrete: inspect the missing evidence and ranking before changing the model or adding generation.
+At that initial checkpoint, hybrid retrieval missed the LinkedIn-profile question and three challenge cases: “checking millions of records,” the complete product assumption and what remains unproven, and generic portfolio wording about taking an idea through release. A related paragraph can be an incomplete result when a question needs both a product hypothesis and its outcome. These misses make the next improvement concrete: inspect the missing evidence and ranking before changing the model or adding generation.
 
 These figures are top-three evidence recall, not generated-answer accuracy. They do not prove that every returned passage is relevant or that all unsupported questions will be rejected. The 22 passing rejection examples are regression checks, not a guarantee about unseen requests.
 
 Try adding questions in your own words before changing ranking. Include a question whose answer is absent, a paraphrase, and a misleading premise. Check whether the result keeps “nonproduction,” “evaluated runs,” or “implementation pending” where those limits matter. Keep new questions aside while tuning, then run them as a held-out check. Repeatedly tuning against one small fixture set can overfit it.
+
+## November 15: improve the evidence before changing the model
+
+We kept the same model and weights. The improvements are in how we describe, match, and return the public evidence:
+
+- Public contact titles name the available email and LinkedIn channels. A question about a profile can now match the source's label as well as its body.
+- “Records” and “rows” share a lexical term. The displayed quote keeps the original measurement and its qualifications.
+- “In this portfolio” describes the search location. Query preprocessing removes that locator phrase, so it does not dominate the embedding. A direct question such as “Why does this portfolio use Astro?” is preserved. Both the browser worker and indexing script use preprocessing version 2.
+- A product hypothesis and its current outcome stay together. Showing an assumption while omitting “still requires measurement” would weaken the evidence. The retriever adds the original problem and outcome sections, each with its own source link.
+- No-match feedback distinguishes public-content boundaries from weak word overlap. The optional AI help control focuses the download disclosure; it never starts a download automatically. Editing the question hides the previous results.
+
+This is an example of improving an AI product through content and retrieval engineering without retraining its model.
+
+### Measure completeness and unseen wording
+
+The evaluator accepts `expectedAll` for questions that require multiple sources. Finding one of those sources is insufficient. A partial bundle fails the completeness check. Returning nothing is counted as a recall miss, rather than being treated as a fabricated or partial answer.
+
+We froze 16 fresh questions in commit `e7be182`, before the ranking changes. The first evaluation ran after freezing the initial revision. A later browser check exposed a failure on an existing regression question, and required a source-group fallback. The reserved results were already visible by that point, though they were not used to choose the fallback. Final reruns are regression evidence; collect another unseen set before the next tuning round.
+
+Results on **2026-11-15**, from `npm run test:search`:
+
+| Group | Word matching | Hybrid retrieval |
+| --- | --- | --- |
+| Development, 43 answerable | 40/43 | 43/43 |
+| Previous challenge, 6 answerable | 1/6 | 6/6 |
+| Reserved, 8 answerable | 3/8 | 8/8 |
+| Scope, 5 questions | 5/5 | 5/5 |
+| Unsupported/privacy, 28 questions | 28/28 rejected | 28/28 rejected |
+
+The hybrid path returns both required passages for the two completeness cases. Word matching abstains on those cases. Hits mean expected evidence appears in the top three; these figures do not establish that every returned passage is relevant or that future questions will work equally well.
+
+Run just the reserved set with `npm run test:search:holdout`. Its file name is retained for provenance; it is now a reusable regression set. `npm run index:search` regenerates vectors for both suites, and ordinary `npm test` runs both using committed vectors without downloading a model.
+
+### Run the browser's actual model too
+
+Native CPU and browser WebAssembly use different quantized inference kernels. A diagnostic on the product-assumption question produced vectors with cosine agreement around 0.992, yet the leading source's score shifted from about 0.409 to 0.390. That crossed the old 0.4 eligibility cutoff. A good native evaluation therefore did not establish that the browser returned the same evidence.
+
+The bounded fallback now considers whether the two leading sections belong to the same source and are separated from other sources, with meaningful word overlap. The global cutoff remains unchanged. This is a ranking heuristic, not a factual-confidence measure.
+
+`TEST_AI_MODEL=1 npm run test:browser` now exercises all 90 questions through the real browser worker, checks original text and source identity, and requires complete evidence. On desktop Chromium at a 390px viewport it passed 57/57 answerable questions, 5/5 scope cases, and 28/28 unsupported cases. The same run measured 3,350 ms cold model readiness, 141 ms for the first question, 48 ms for a subsequent question, and 310 ms to reload using cached weights. Reported cold response bodies were about 37.6 MB, excluding an unreported worker body. These are individual desktop samples, not physical-phone results or latency percentiles.
+
+Physical-phone testing remains outstanding. Use a secure preview of the same revision or phone-localhost USB forwarding, then record the device, browser version, initial download, cached reload, question time, cancellation, and word-matching fallback. Do not infer those results from a narrow desktop viewport.
 
 ## What generated answers would add later
 
