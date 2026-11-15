@@ -16,6 +16,7 @@ if (root) {
   const results = root.querySelector<HTMLElement>("#ask-results")!;
   const list = root.querySelector<HTMLOListElement>("#ask-result-list")!;
   const summary = root.querySelector<HTMLElement>("#ask-result-summary")!;
+  const exploreMeaning = root.querySelector<HTMLButtonElement>("#ask-explore-meaning")!;
   const enhancement = root.querySelector<HTMLElement>("#ask-enhancement")!;
   const enable = root.querySelector<HTMLButtonElement>("#semantic-enable")!;
   const cancel = root.querySelector<HTMLButtonElement>("#semantic-cancel")!;
@@ -137,12 +138,13 @@ if (root) {
     });
   }
 
-  function showResults(matches: { passage: KnowledgePassage; score: number }[], semantic: boolean) {
+  function showResults(matches: { passage: KnowledgePassage; score: number }[], semantic: boolean, reason?: string) {
     const fragment = document.createDocumentFragment();
     for (const { passage } of matches) {
       const item = document.createElement("li");
       const article = document.createElement("article");
       article.className = "ask-result";
+      article.dataset.passageId = passage.id;
       const context = document.createElement("p");
       context.className = "ask-result-context";
       context.textContent = passage.context;
@@ -161,12 +163,23 @@ if (root) {
     }
     list.replaceChildren(fragment);
     results.hidden = false;
+    const explanations: Record<string, string> = {
+      private: "This search covers public professional information. Private details and confidential records are not indexed.",
+      "unpublished-technology": "The public portfolio does not document the requested technology experience. Try an employer, project, or published skill.",
+      "unsupported-claim": "These sources do not establish that claim. Try asking what was evaluated and what remains unverified.",
+      "unsupported-request": "Ask about Anant’s public work, experience, or projects.",
+      "dated-evidence-only": "Search uses published snapshots. Check the source pages for measurement dates and the contribution calendar’s capture date.",
+    };
+    const noMatch = explanations[reason ?? ""] ?? (semantic
+      ? "No relevant passage was found. Try a project, employer, skill, or a more specific question."
+      : "Word matching did not find enough overlap. Try different words, or explore optional meaning-based search.");
+    exploreMeaning.hidden = matches.length > 0 || semanticState !== "off" || reason !== "insufficient-evidence";
     summary.textContent = matches.length
       ? `${matches.length} relevant ${matches.length === 1 ? "passage" : "passages"}, found with ${semantic ? "meaning and word matching" : "word matching"}.`
-      : "No supported match. Try a project, employer, skill, or a more specific question.";
+      : `No supported match. ${noMatch}`;
     status.textContent = matches.length
       ? `${matches.length} ${matches.length === 1 ? "passage is" : "passages are"} ready below, using ${semantic ? "meaning and word matching" : "word matching"}. Open a source for the full context.`
-      : "No supported match in the public portfolio. I cannot verify an answer from these sources.";
+      : `No supported match. ${noMatch}`;
     // Results follow optional model controls. Bring them into view immediately
     // after a deliberate search, including for keyboard and phone visitors.
     root!.querySelector<HTMLElement>("#ask-result-heading")!.focus({ preventScroll: true });
@@ -204,7 +217,7 @@ if (root) {
       const response = searchPassages(text, corpus.passages, semantic
         ? { queryVector, vectors: vectors!.vectors }
         : undefined);
-      showResults(response.kind === "results" ? response.results.slice(0, 3) : [], semantic);
+      showResults(response.kind === "results" ? response.results.slice(0, 3) : [], semantic, response.reason);
     } catch {
       if (current !== searchSequence) return;
       status.textContent = "Search data could not be loaded. Try again, or explore the portfolio links below.";
@@ -296,6 +309,8 @@ if (root) {
     searchSequence += 1;
     rejectPending();
     results.setAttribute("aria-busy", "false");
+    results.hidden = true;
+    list.replaceChildren();
     status.textContent = "";
   });
   root.querySelectorAll<HTMLButtonElement>("[data-ask-example]").forEach((button) => {
@@ -306,6 +321,11 @@ if (root) {
     });
   });
   enable.addEventListener("click", () => { void enableMeaningSearch(); });
+  exploreMeaning.addEventListener("click", () => {
+    // Show the download disclosure before the separate opt-in action.
+    enable.focus();
+    enhancement.scrollIntoView({ block: "center", behavior: "instant" });
+  });
   root.querySelector("#ask-another")!.addEventListener("click", () => {
     question.focus();
     question.select();
