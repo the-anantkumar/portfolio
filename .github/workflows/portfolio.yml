@@ -100,7 +100,7 @@ jobs:
       - name: Install dependencies and Chromium
         run: npm ci && npx playwright install --with-deps chromium
       - name: Check types, build, and test
-        run: npm run check && npm run build && npm test && npm run test:browser
+        run: npm run check && npm run build && npm test && npm run test:browser && npm run test:learn
       - name: Record verified revision
         id: revision
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

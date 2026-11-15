@@ -1,0 +1,55 @@
+import assert from "node:assert/strict";
+import { pathToFileURL } from "node:url";
+import { resolve } from "node:path";
+import { mkdir } from "node:fs/promises";
+import { chromium } from "playwright";
+import AxeBuilder from "@axe-core/playwright";
+const browser = await chromium.launch({ ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
+await mkdir("artifacts/learning/screenshots", { recursive: true });
+try {
+  for (const width of [1440, 390, 320]) {
+    const context = await browser.newContext({ viewport: { width, height: 950 }, reducedMotion: "reduce" });
+    const page = await context.newPage();
+    const requests = [];
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("request", (request) => { if (/^https?:/.test(request.url())) requests.push(request.url()); });
+    await page.goto(pathToFileURL(resolve("artifacts/learning/index.html")).href);
+    assert.equal(await page.locator("[data-component]").count(), 14);
+    assert.match(await page.locator("#review-count").innerText(), /^0 \/ 14/);
+    await page.locator('[data-component="hybrid"]').focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await page.locator("#component-title").innerText(), "Hybrid evidence retrieval");
+    assert.equal(await page.locator(":focus").getAttribute("id"), "component-title");
+    await page.locator("#review-component").check();
+    await page.reload();
+    assert.match(await page.locator("#review-count").innerText(), /^1 \/ 14/);
+    await page.locator('[data-component="hybrid"]').click();
+    assert(await page.locator("#review-component").isChecked());
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("portfolio-learning-reviewed-v1")));
+    assert.deepEqual(stored, ["hybrid"], "Only explicit owner component IDs are persisted");
+    await page.locator("#example").selectOption("challenge-product-assumption");
+    assert.match(await page.locator("#trace-results").innerText(), /No supported match/);
+    await page.locator("#hybrid-mode").click();
+    assert.match(await page.locator("#trace-results").innerText(), /Current outcome/);
+    assert(await page.locator("#trace-results blockquote").filter({ hasText: "still require further measurement" }).count() > 0);
+    assert(await page.locator("#trace-results a").count() > 0);
+    assert.match(await page.locator("#experiment-summary").innerText(), /0\/8 browser cases/);
+    assert.equal(await page.locator("#experiment-results article").count(), 8);
+    await page.locator("#example").selectOption("private-phone");
+    assert.match(await page.locator("#trace-results").innerText(), /No supported match/);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px learning lab overflow`);
+    const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+    assert.deepEqual(axe.violations.map(({ id, nodes }) => ({ id, targets: nodes.map((node) => node.target) })), []);
+    assert.deepEqual(requests, [], "Opening and exploring the standalone lab must make no network requests");
+    assert.deepEqual(errors, []);
+    await page.screenshot({ path: `artifacts/learning/screenshots/lab-${width}.png`, fullPage: true });
+    await context.close();
+  }
+  const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 900 } });
+  const page = await noJS.newPage();
+  await page.goto(pathToFileURL(resolve("artifacts/learning/index.html")).href);
+  assert(await page.locator("noscript a").isVisible(), "A script-disabled browser can reach the Markdown study path");
+  await noJS.close();
+  console.log("Learning lab passed: component map, saved traces, explicit owner review persistence, keyboard focus, offline load, no-JavaScript study link, three viewport sizes, and axe.");
+} finally { await browser.close(); }
