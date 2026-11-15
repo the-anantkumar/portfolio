@@ -1,5 +1,7 @@
 import { searchPassages } from "../lib/retrieval.mjs";
 import { verifyVectors } from "../lib/embedding-config.mjs";
+import { TOPICS, groupMatches, followupsFor, selectPassages, sourceTemplateId } from "../lib/navigator.mjs";
+import type { NavigationAction } from "../lib/navigator.mjs";
 import type {
   EmbeddingMessage,
   KnowledgeCorpus,
@@ -17,7 +19,9 @@ if (root) {
   const list = root.querySelector<HTMLOListElement>("#ask-result-list")!;
   const summary = root.querySelector<HTMLElement>("#ask-result-summary")!;
   const exploreMeaning = root.querySelector<HTMLButtonElement>("#ask-explore-meaning")!;
-  const enhancement = root.querySelector<HTMLElement>("#ask-enhancement")!;
+  const enhancement = root.querySelector<HTMLDetailsElement>("#ask-enhancement")!;
+  const followups = root.querySelector<HTMLElement>("#ask-followups")!;
+  const followupList = root.querySelector<HTMLElement>("#ask-followup-list")!;
   const enable = root.querySelector<HTMLButtonElement>("#semantic-enable")!;
   const cancel = root.querySelector<HTMLButtonElement>("#semantic-cancel")!;
   const semanticStatus = root.querySelector<HTMLElement>("#semantic-status")!;
@@ -138,30 +142,59 @@ if (root) {
     });
   }
 
-  function showResults(matches: { passage: KnowledgePassage; score: number }[], semantic: boolean, reason?: string) {
+  function setTopic(id = "") {
+    root!.querySelectorAll<HTMLButtonElement>("[data-ask-topic]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.askTopic === id));
+    });
+  }
+
+  function showResults(matches: { passage: KnowledgePassage; score: number }[], semantic: boolean, reason?: string, guided = false) {
     const fragment = document.createDocumentFragment();
-    for (const { passage } of matches) {
+    const groups = groupMatches(matches);
+    for (const group of groups) {
       const item = document.createElement("li");
-      const article = document.createElement("article");
-      article.className = "ask-result";
-      article.dataset.passageId = passage.id;
-      const context = document.createElement("p");
-      context.className = "ask-result-context";
-      context.textContent = passage.context;
-      const title = document.createElement("h3");
-      title.textContent = passage.title;
-      const text = document.createElement("p");
-      text.className = "ask-result-text";
-      text.textContent = passage.text;
-      const link = document.createElement("a");
-      link.className = "ask-source-link";
-      link.href = passage.url;
-      link.textContent = `Read source: ${passage.title}`;
-      article.append(context, title, text, link);
-      item.append(article);
+      const template = document.getElementById(sourceTemplateId(group.key)) as HTMLTemplateElement | null;
+      if (!template) throw new Error("Public source card missing");
+      const card = template.content.cloneNode(true) as DocumentFragment;
+      const evidence = card.querySelector<HTMLElement>(".ask-card-evidence")!;
+      card.querySelector(".ask-evidence-count")!.textContent = String(group.matches.length);
+      card.querySelector(".ask-matched-sections")!.textContent = `Matched: ${group.matches.map(({ passage }) => passage.title.split(": ").slice(1).join(": ") || passage.title).join(" · ")}`;
+      for (const { passage } of group.matches) {
+        const section = document.createElement("section");
+        section.className = "ask-evidence-passage";
+        section.dataset.passageId = passage.id;
+        const title = document.createElement("h4");
+        title.textContent = passage.title;
+        const text = document.createElement("p");
+        text.className = "ask-result-text";
+        text.textContent = passage.text;
+        const link = document.createElement("a");
+        link.className = "ask-source-link";
+        link.href = passage.url;
+        link.textContent = `Read source: ${passage.title}`;
+        section.append(title, text, link);
+        evidence.append(section);
+      }
+      item.append(card);
       fragment.append(item);
     }
     list.replaceChildren(fragment);
+    followupList.replaceChildren();
+    followups.hidden = groups.length === 0;
+    if (groups.length) {
+      const current = new Set(matches.map(({ passage }) => passage.id));
+      const actions = followupsFor(groups[0].key).filter((action) => !action.passages.every((id) => current.has(id))).slice(0, 3);
+      followups.hidden = actions.length === 0;
+      for (const action of actions) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "ask-secondary";
+        button.dataset.askFollowup = action.id;
+        button.textContent = action.question;
+        button.addEventListener("click", () => { void navigate(action); });
+        followupList.append(button);
+      }
+    }
     results.hidden = false;
     const explanations: Record<string, string> = {
       private: "This search covers public professional information. Private details and confidential records are not indexed.",
@@ -175,10 +208,10 @@ if (root) {
       : "Word matching did not find enough overlap. Try different words, or explore optional meaning-based search.");
     exploreMeaning.hidden = matches.length > 0 || semanticState !== "off" || reason !== "insufficient-evidence";
     summary.textContent = matches.length
-      ? `${matches.length} relevant ${matches.length === 1 ? "passage" : "passages"}, found with ${semantic ? "meaning and word matching" : "word matching"}.`
+      ? `${groups.length} ${groups.length === 1 ? "source" : "sources"} · ${matches.length} ${matches.length === 1 ? "passage" : "passages"} · ${guided ? "Guided exploration" : semantic ? "Meaning + word matching" : "Word matching"}`
       : `No supported match. ${noMatch}`;
     status.textContent = matches.length
-      ? `${matches.length} ${matches.length === 1 ? "passage is" : "passages are"} ready below, using ${semantic ? "meaning and word matching" : "word matching"}. Open a source for the full context.`
+      ? `${groups.length} ${groups.length === 1 ? "source is" : "sources are"} ready below${guided ? " from the selected topic" : `, using ${semantic ? "meaning and word matching" : "word matching"}`}. Expand matched evidence to read the original passages.`
       : `No supported match. ${noMatch}`;
     // Results follow optional model controls. Bring them into view immediately
     // after a deliberate search, including for keyboard and phone visitors.
@@ -186,9 +219,31 @@ if (root) {
     results.scrollIntoView({ block: "start", behavior: "instant" });
   }
 
+  async function navigate(selection: NavigationAction, topicId = "") {
+    const current = ++searchSequence;
+    rejectPending();
+    setTopic(topicId);
+    question.value = selection.question;
+    results.hidden = true;
+    followups.hidden = true;
+    results.setAttribute("aria-busy", "true");
+    status.textContent = "Opening public portfolio evidence…";
+    try {
+      const corpus = await getCorpus();
+      if (current !== searchSequence) return;
+      showResults(selectPassages(selection, corpus.passages), false, undefined, true);
+    } catch {
+      if (current === searchSequence) status.textContent = "Search data could not be loaded. Try again, or explore the portfolio links below.";
+    } finally {
+      if (current === searchSequence) results.setAttribute("aria-busy", "false");
+    }
+  }
+
   async function search() {
     const current = ++searchSequence;
     rejectPending();
+    setTopic();
+    followups.hidden = true;
     const text = question.value.trim();
     if (!text || text.length > 500) {
       status.textContent = text.length > 500
@@ -228,6 +283,7 @@ if (root) {
 
   async function enableMeaningSearch() {
     if (semanticState !== "off") return;
+    enhancement.open = true;
     const generation = ++lifecycle;
     semanticState = "loading";
     enable.hidden = true;
@@ -311,7 +367,15 @@ if (root) {
     results.setAttribute("aria-busy", "false");
     results.hidden = true;
     list.replaceChildren();
+    followups.hidden = true;
+    setTopic();
     status.textContent = "";
+  });
+  root.querySelectorAll<HTMLButtonElement>("[data-ask-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const topic = TOPICS.find((entry) => entry.id === button.dataset.askTopic);
+      if (topic) void navigate(topic, topic.id);
+    });
   });
   root.querySelectorAll<HTMLButtonElement>("[data-ask-example]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -323,6 +387,7 @@ if (root) {
   enable.addEventListener("click", () => { void enableMeaningSearch(); });
   exploreMeaning.addEventListener("click", () => {
     // Show the download disclosure before the separate opt-in action.
+    enhancement.open = true;
     enable.focus();
     enhancement.scrollIntoView({ block: "center", behavior: "instant" });
   });

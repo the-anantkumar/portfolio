@@ -2,6 +2,26 @@
 import Base from "../layouts/Base.astro";
 import { withBase } from "../lib/paths";
 import "../styles/ask.css";
+import { getCollection, getEntry } from "astro:content";
+import { getKnowledge } from "../lib/knowledge";
+import { TOPICS, sourceTemplateId, validateNavigator } from "../lib/navigator.mjs";
+const knowledge = await getKnowledge();
+const experience = (await getEntry("pages", "experience"))!;
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+const sources = [
+  ...projects.map(({ id, data }) => ({ key: `project/${id}`, title: data.title, role: data.role,
+    summary: data.summary, stack: data.stack, url: withBase(`projects/${id}/`), action: "Open case study" })),
+  ...(experience.data.roles ?? []).filter((role) => role.company !== "Nielsen Media").map((role) => ({
+    key: `experience/${role.company.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+    title: role.company, role: `${role.role} · Employer work`, summary: role.focus,
+    stack: [] as string[], url: withBase("#experience"), action: "View experience",
+  })),
+  ...[
+    { key: "page/about", title: "About Anant", role: "Education & interests", url: withBase("#about"), action: "Read about me" },
+    { key: "page/home/contact", title: "Let’s talk", role: "Opportunities & public contact", url: withBase("#contact"), action: "Get in touch" },
+  ].map((source) => ({ ...source, stack: [] as string[], summary: knowledge.passages.find((passage) => passage.id === source.key)!.text.split("\n\n")[0] })),
+];
+validateNavigator(knowledge.passages, sources);
 const examples = [
   "What has Anant built at Nielsen?",
   "Tell me about trlr and his founder work",
@@ -10,18 +30,17 @@ const examples = [
 ---
 
 <Base
-  title="Ask about my work | Anant Kumar Srivastava"
+  title="Explore my work | Anant Kumar Srivastava"
   description="Find relevant passages about Anant’s engineering experience, projects, and founder work. Explore the sources behind every result."
   interactive={true}
 >
   <section class="ask-page wrap" aria-labelledby="ask-heading">
+    <a class="ask-return" href={withBase()}>← Back to the portfolio</a>
     <header class="ask-intro">
-      <span class="eyebrow">A DIFFERENT WAY IN</span>
-      <h1 id="ask-heading">Your question.<br /><em>My work, in context.</em></h1>
-      <p>
-        Looking for something specific? Find the parts of my portfolio that
-        matter to you, with a source you can explore.
-      </p>
+      <div class="ask-orbits" aria-hidden="true"><i></i><i></i><i></i><span>a.</span></div>
+      <span class="eyebrow">ANANT / PORTFOLIO NAVIGATOR</span>
+      <h1 id="ask-heading">What would you<br /><em>like to know?</em></h1>
+      <p>Engineering at Nielsen. Founder work at trlr.<br />Pick a direction, or bring your own question.</p>
     </header>
 
     <div
@@ -33,17 +52,24 @@ const examples = [
         <label for="ask-question">What would you like to know?</label>
         <textarea
           id="ask-question"
-          rows="3"
+          rows="2"
           maxlength="500"
           required
           autocomplete="off"
           spellcheck="false"
           aria-describedby="ask-question-help"
-          placeholder="For example, what has Anant built in production?"
+          placeholder="What has Anant built in production?"
         ></textarea>
         <div class="ask-form-footer">
           <p id="ask-question-help">Up to 500 characters. Questions stay in this browser.</p>
           <button class="button" type="submit">Find relevant passages <span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="ask-topic-dock" role="group" aria-label="Explore a topic">
+          {TOPICS.map((topic) => (
+            <button type="button" data-ask-topic={topic.id} aria-pressed="false" aria-controls="ask-results">
+              <span class="ask-topic-icon" aria-hidden="true">{topic.icon}</span><span>{topic.label}</span>
+            </button>
+          ))}
         </div>
         <div class="ask-examples" aria-label="Try a question">
           <span>Try a question</span>
@@ -53,10 +79,11 @@ const examples = [
         </div>
       </form>
 
-      <div id="ask-enhancement" class="ask-enhancement" hidden>
+      <details id="ask-enhancement" class="ask-enhancement" hidden>
+        <summary><span class="ask-model-dot" aria-hidden="true"></span>Optional meaning-based search<span class="ask-mode" id="ask-mode">WORD MATCHING</span><span class="ask-disclosure-mark" aria-hidden="true">+</span></summary>
+        <div class="ask-enhancement-body">
         <div class="ask-enhancement-copy">
-          <span class="ask-mode" id="ask-mode">WORD MATCHING</span>
-          <h2>Same idea. Different words.</h2>
+          <h2>Find the idea behind the words.</h2>
           <p>
             Optional AI search uses a small embedding model to match meaning.
             It finds original portfolio passages; it does not write answers.
@@ -73,7 +100,8 @@ const examples = [
           <button id="semantic-cancel" class="ask-secondary" type="button" hidden>Cancel download</button>
           <p id="semantic-status" role="status" aria-live="polite" aria-atomic="true"></p>
         </div>
-      </div>
+        </div>
+      </details>
 
       <p id="ask-status" class="ask-status" role="status" aria-live="polite" aria-atomic="true"></p>
       <section id="ask-results" class="ask-results" aria-labelledby="ask-result-heading" aria-busy="false" hidden>
@@ -83,7 +111,8 @@ const examples = [
         </div>
         <ol id="ask-result-list"></ol>
         <button id="ask-explore-meaning" class="ask-secondary" type="button" hidden>Explore meaning-based search</button>
-        <p class="ask-result-note">These are original passages, not generated answers. Each source gives the fuller context.</p>
+        <p class="ask-result-note">Card summaries come from the portfolio. Expand matched evidence for the full original text.</p>
+        <div id="ask-followups" class="ask-followups" role="group" aria-label="Keep exploring" hidden><span class="eyebrow">KEEP EXPLORING</span><div id="ask-followup-list"></div><p>Guided questions open related public evidence.</p></div>
         <button id="ask-another" class="ask-secondary" type="button">Ask another question</button>
       </section>
     </div>
@@ -91,7 +120,7 @@ const examples = [
     <aside id="ask-browse" class="ask-browse" aria-labelledby="ask-browse-heading">
       <div>
         <span class="eyebrow">FOLLOW YOUR CURIOSITY</span>
-        <h2 id="ask-browse-heading">Or take the scenic route.</h2>
+        <h2 id="ask-browse-heading">Browse at your own pace.</h2>
         <p>Engineering at Nielsen. Founder work at trlr. Products built around real problems.</p>
         <noscript><p>Search needs JavaScript. Every portfolio page is available through the links below.</p></noscript>
       </div>
@@ -102,6 +131,19 @@ const examples = [
         <a href={withBase("#contact")}>Get in touch <span aria-hidden="true">↗</span></a>
       </nav>
     </aside>
+    {sources.map((source) => (
+      <template id={sourceTemplateId(source.key)}>
+        <article class="ask-result" data-source-key={source.key}>
+          <p class="ask-card-role">{source.role}</p>
+          <h3>{source.title}</h3>
+          <p class="ask-card-summary">{source.summary}</p>
+          {source.stack.length > 0 && <ul class="ask-card-stack" aria-label="Technologies">{source.stack.slice(0, 4).map((technology) => <li>{technology}</li>)}</ul>}
+          <p class="ask-matched-sections"></p>
+          <details class="ask-evidence"><summary>Read matched evidence <span class="ask-evidence-count"></span><span aria-hidden="true">+</span></summary><div class="ask-card-evidence"></div></details>
+          <a class="ask-case-link" href={source.url}>{source.action}<span aria-hidden="true">↗</span></a>
+        </article>
+      </template>
+    ))}
   </section>
 </Base>
 
