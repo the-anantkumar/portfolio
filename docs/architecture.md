@@ -40,8 +40,8 @@ Local build measurements from 15 November 2026 and enforced limits are separate 
 | Asset group | Current measured size, rounded where marked | Enforced cap |
 | --- | --- | --- |
 | Ordinary site output, excluding optional search assets | About 187 KB | 300 KB |
-| Ask HTML, CSS, bootstrap, and corpus | About 23 KB gzip | 60 KB gzip |
-| Ask bootstrap JavaScript | About 6.4 KB gzip | 20 KB gzip |
+| Ask HTML, CSS, bootstrap, and corpus | About 27.4 KB gzip | 60 KB gzip |
+| Ask bootstrap JavaScript | About 7.9 KB gzip | 20 KB gzip |
 | Optional inference JavaScript | About 143 KB gzip | 250 KB gzip |
 | Same-origin WebAssembly | 14,264,838 bytes | 16 MB |
 | Public passage vectors | 138,012 bytes | 200 KB |
@@ -77,6 +77,16 @@ A bounded fallback can use two leading sections from the same source when their 
 The 16 reserved questions were frozen in `e7be182` before ranking changes. Their first run followed a ranking freeze; results were then visible before a follow-up fix for an existing real-browser regression. They were not used to tune that fix, but final repeated results must not be presented as a fully blind independent benchmark. See [the learning and evaluation guide](ai-search-learning.md) for the initial checkpoint and current measurements.
 
 Generated answers would require a separate generative model and new factuality, citation, refusal, latency, and download tests. They are outside the current implementation. No paid inference, API key, or trlr backend is introduced.
+
+## Portfolio navigator presentation
+
+The [navigator PRD](portfolio-navigator-prd.md) defines the next layer above retrieval. `/ask/` renders source-card templates from the existing typed public collections. Each card has its published role, summary, technologies where applicable, and a link to the actual case study or page section. Runtime evidence is inserted with DOM text APIs and keeps every original paragraph and source anchor inside a native disclosure. Summaries are authored navigation previews, not generated answers.
+
+`src/lib/navigator.mjs` defines six topic selections and contextual follow-up targets using public passage IDs. The build rejects missing targets, missing source cards, and ambiguous template IDs. Nielsen experience maps to its employer case-study card; founder work keeps its own source group. Grouping preserves passage order within a source and does not alter the original evidence.
+
+Topic actions and guided follow-ups select explicit public passages without invoking the model, including when semantic search has already been enabled. Typed questions keep the original retrieval boundary checks. A monotonically increasing request sequence prevents an older topic or typed question from overwriting a later selection. No visitor history is persisted.
+
+The model disclosure starts collapsed and contains the download explanation and enable control. No-match help opens that disclosure and focuses the control; enabling remains a separate action. Ordinary pages, the contribution refresh workflow, model revision, embedding data, and inference-runtime budgets are unchanged. The complete initial Ask HTML/CSS/controller/corpus now measures 27,431 bytes gzip, below its 60 KB cap. The browser suite checks native evidence disclosures, all topics, follow-ups, and request races in addition to the 90-question retrieval contract.
 
 ## References
 

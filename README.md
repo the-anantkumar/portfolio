@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh and search retrieval, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh, search retrieval, and navigator source handling, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -31,11 +31,13 @@ npm run preview
 - `src/pages/`: homepage, generated project routes, Ask, 404, robots, sitemap, and static search data.
 - `src/lib/knowledge.ts`: builds the search corpus exclusively from public content collections.
 - `src/lib/retrieval.mjs`: word matching and hybrid ranking, with unsupported-request handling.
+- `src/lib/navigator.mjs`: validated topic selections, source grouping, and contextual follow-ups.
 - `src/lib/embedding-config.mjs`: pinned model revision and corpus/index compatibility checks.
 - `src/scripts/ask.ts` and `embedding-worker.ts`: optional search interface and model worker.
 - `src/data/search-vectors.json`: precomputed public passage embeddings, regenerated only by a maintainer.
 - `src/components/ProjectVisual.astro`: original CSS illustrations; these are conceptual artwork, not screenshots or user records.
 - `docs/architecture.md`: stack decisions, delivery boundaries, and the search architecture.
+- `docs/portfolio-navigator-prd.md`: product scope, acceptance criteria, and implementation evidence for the navigator.
 - `docs/ai-search-learning.md`: a hands-on introduction to embeddings, retrieval, evaluation, and later generated answers.
 - `docs/editorial-review.md`: the three-perspective editorial review.
 
@@ -116,3 +118,11 @@ Slow ambient light and ring movement use CSS transforms. The pause control in th
 ## Search validation on pilot
 
 The November 15 iteration resolves the four initial hybrid-search misses. `TEST_AI_MODEL=1 npm run test:browser` explicitly downloads the public model and tests all 90 questions through the browser worker, including source identity, original passage text, unsupported requests, and complete evidence. The default browser suite stays independent of external model hosting. See [the learning guide](docs/ai-search-learning.md#november-15-improve-the-evidence-before-changing-the-model) for measurements and their limits. Physical-phone validation and production release remain pending.
+
+## Portfolio navigator
+
+The `/ask/` experience now has six topic controls, compact source cards, expandable full evidence, and contextual follow-up questions. Topic navigation works without a model. Card summaries come from the same typed public collections as the rest of the portfolio. Nielsen experience and case-study passages share a card while keeping employer work separate from founder work.
+
+Guided questions select explicit public sources. Free-text questions continue to use word matching and optional on-device semantic retrieval. The model disclosure starts collapsed; opening it does not start a download. There is no generated-answer or conversational-memory feature in this release.
+
+The [PRD](docs/portfolio-navigator-prd.md) records the reviewed scope and acceptance criteria. `npm run test:navigator` verifies grouping, complete product evaluation evidence, source integrity, and deduplication; it is included in `npm test`. Browser checks also cover all topics, guided follow-ups, evidence disclosures, and races between topics and typed questions. The [verification record](docs/verification.md#portfolio-navigator-15-november-2026) includes the real-model run and performance measurements.

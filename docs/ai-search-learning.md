@@ -162,3 +162,20 @@ Question -> retrieve public passages -> give passages to an LLM
 That would require a separate decision about model download or genuinely free inference, plus tests for unsupported claims, invented facts, citation correctness, prompt injection, latency, and failure fallback. A citation alone does not prove an answer is supported by its source. No RAG or LLM generation is implemented here yet.
 
 For now, the practical learning loop is: inspect the corpus, ask a question, inspect the returned evidence, add a test for what went wrong, and make one measured retrieval improvement.
+
+## Portfolio navigator
+
+The interface now has two deliberate ways to reach the same public evidence. A topic or guided follow-up selects known sources directly; a free-text question uses retrieval. Both render compact source cards whose summaries are already authored in the public portfolio. Each card contains expandable complete original evidence and source links.
+
+| Path | How it chooses evidence | Model needed |
+| --- | --- | --- |
+| Topic and guided follow-up | Explicit public passage IDs validated during the build | No |
+| Word matching | Shared vocabulary and the existing ranking rules | No |
+| Meaning-based search | A local question embedding plus word matching | Optional opt-in download |
+| Generated answer | A future model would compose prose from retrieved evidence | Separate experiment |
+
+For example, the guided question about trlr's hypothesis opens both the problem and current outcome. It cannot silently select only the optimistic half of the story. A free-text question still needs to find that evidence through ranking. These paths share source text but have different selection behavior, and the interface labels guided exploration explicitly.
+
+This distinction is useful product engineering: a known destination can be fast and predictable, while AI helps when a visitor brings unfamiliar wording. Neither path needs a backend or persistent visitor history. Changing from a topic to a typed question also tests ordinary asynchronous application design: a slow earlier result must never overwrite the visitor's newer action.
+
+The [PRD](portfolio-navigator-prd.md) defines the accepted scope, and [the verification record](verification.md#portfolio-navigator-15-november-2026) records its browser and source-integrity checks. Natural-language answer generation remains a later decision.
