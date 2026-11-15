@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh, search retrieval, and navigator source handling, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh, search retrieval, navigator source handling, and the offline generation contract, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -39,6 +39,8 @@ npm run preview
 - `docs/architecture.md`: stack decisions, delivery boundaries, and the search architecture.
 - `docs/portfolio-navigator-prd.md`: product scope, acceptance criteria, and implementation evidence for the navigator.
 - `docs/ai-search-learning.md`: a hands-on introduction to embeddings, retrieval, evaluation, and later generated answers.
+- `docs/learning-tracker.md` and `.json`: component map, input/output boundaries, exercises, and dated experiment outcomes.
+- `experiments/generation/`: isolated local answer-generation screening, excluded from the published site.
 - `docs/editorial-review.md`: the three-perspective editorial review.
 
 Set `featured: true` and a numeric `order` to feature a project. The Markdown filename is its public URL slug. Keep existing slugs stable; GitHub Pages does not support server redirect rules.
@@ -126,3 +128,9 @@ The `/ask/` experience now has six topic controls, compact source cards, expanda
 Guided questions select explicit public sources. Free-text questions continue to use word matching and optional on-device semantic retrieval. The model disclosure starts collapsed; opening it does not start a download. There is no generated-answer or conversational-memory feature in this release.
 
 The [PRD](docs/portfolio-navigator-prd.md) records the reviewed scope and acceptance criteria. `npm run test:navigator` verifies grouping, complete product evaluation evidence, source integrity, and deduplication; it is included in `npm test`. Browser checks also cover all topics, guided follow-ups, evidence disclosures, and races between topics and typed questions. The [verification record](docs/verification.md#portfolio-navigator-15-november-2026) includes the real-model run and performance measurements.
+
+## Revisit what was built
+
+Start with [the learning tracker](docs/learning-tracker.md). After a site build, run `npm run learn` and open `http://127.0.0.1:4382/`. The local lab maps 14 components to code, compares six prepared word/hybrid search traces, and explains the first generation candidate's failures. It downloads no model and is never copied into `dist/`. `npm run learn:build` creates an offline standalone HTML file under ignored `artifacts/learning/`; `npm run test:learn` checks mobile layouts, keyboard focus, local review state, offline operation, and accessibility in Chromium.
+
+Your reviewed-component markers are local browser state and begin unchecked. Implementation status does not claim personal understanding. The [first generation experiment](experiments/generation/README.md) failed its eight-case native and browser screen, so generated prose is not enabled for visitors. Its model downloads are explicit developer commands, separate from normal builds and tests.

@@ -159,7 +159,7 @@ Question -> retrieve public passages -> give passages to an LLM
          -> generated answer with verified citations
 ```
 
-That would require a separate decision about model download or genuinely free inference, plus tests for unsupported claims, invented facts, citation correctness, prompt injection, latency, and failure fallback. A citation alone does not prove an answer is supported by its source. No RAG or LLM generation is implemented here yet.
+That would require a separate decision about model download or genuinely free inference, plus tests for unsupported claims, invented facts, citation correctness, prompt injection, latency, and failure fallback. A citation alone does not prove an answer is supported by its source. No RAG or LLM generation is enabled for visitors. A separate local screening experiment is recorded below.
 
 For now, the practical learning loop is: inspect the corpus, ask a question, inspect the returned evidence, add a test for what went wrong, and make one measured retrieval improvement.
 
@@ -179,3 +179,13 @@ For example, the guided question about trlr's hypothesis opens both the problem 
 This distinction is useful product engineering: a known destination can be fast and predictable, while AI helps when a visitor brings unfamiliar wording. Neither path needs a backend or persistent visitor history. Changing from a topic to a typed question also tests ordinary asynchronous application design: a slow earlier result must never overwrite the visitor's newer action.
 
 The [PRD](portfolio-navigator-prd.md) defines the accepted scope, and [the verification record](verification.md#portfolio-navigator-15-november-2026) records its browser and source-integrity checks. Natural-language answer generation remains a later decision.
+
+## Revisit components and learn from a failed generation candidate
+
+Use [the learning tracker](learning-tracker.md) as the study path. `npm run learn` opens a local component explorer after you build the site; follow its loopback URL. Each component has inputs, outputs, implementation links, a small exercise, and an explanation to practice. Six saved examples run the actual retriever with committed question vectors during lab generation. Replaying them does not embed a new question or download a model. A checkbox records only your own review action, not a claim of mastery.
+
+On 15 November we screened a separate 135-million-parameter instruction model. An embedding model turns text into numbers for comparison; this instruction model predicts new tokens from a prompt. We supplied the correct public sources directly to separate generation quality from retrieval quality. The candidate passed 0/8 automated checks in native and browser runs, and manual review confirmed source-fidelity failures. It changed pending work into completed work and contradicted a validation result. A better search score cannot fix that transformation.
+
+This is why RAG needs separate gates: finding evidence, preserving its meaning when writing, and running acceptably on real devices. Citation syntax checks are useful but cannot establish that a sentence follows from its source. The browser also behaved differently from the native runtime on some cases, so a native-only test would have hidden repetition and scope failures. A 137 MB quantized weight file also does not describe total download or working memory. Quantization stores weights at lower precision; it does not guarantee accurate answers or phone suitability.
+
+Read the [contract and reproduction commands](../experiments/generation/README.md) and [safe reviewed findings](../experiments/generation/results-summary.json). The eight questions are a screening set, not an unseen benchmark. The candidate was rejected, and the fast evidence navigator remains the visitor feature. The next candidate or prompt needs fresh questions frozen before tuning and a measured physical-phone budget. No paid service or hosted inference account was introduced.

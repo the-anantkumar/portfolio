@@ -88,6 +88,12 @@ Topic actions and guided follow-ups select explicit public passages without invo
 
 The model disclosure starts collapsed and contains the download explanation and enable control. No-match help opens that disclosure and focuses the control; enabling remains a separate action. Ordinary pages, the contribution refresh workflow, model revision, embedding data, and inference-runtime budgets are unchanged. The complete initial Ask HTML/CSS/controller/corpus now measures 27,431 bytes gzip, below its 60 KB cap. The browser suite checks native evidence disclosures, all topics, follow-ups, and request races in addition to the 90-question retrieval contract.
 
+## Local learning and generation screening
+
+`docs/learning-tracker.json` describes component boundaries, implementation status, exercises, and dated milestones. `scripts/learning-lab.mjs` validates those file references and the existing public corpus/vector hashes, then runs the actual retriever for six saved evaluation questions. A standalone HTML explorer is generated under ignored `artifacts/learning/`. Its loopback server serves only that document. The explorer has no model download or API; optional review markers contain component IDs only in the owner's browser. It is not an additional public route and is excluded from the Pages artifact.
+
+`experiments/generation/` isolates a pinned instruction model from the public search runtime. Native CPU and browser WASM runners supply fixed questions with complete relevant public passages, reject oversized prompts, and inspect generated citations, scope, and abstention before manual review. Raw drafts and caches stay in ignored artifacts. The first candidate failed all eight automated screening cases in both runtimes, with confirmed semantic errors, and is not integrated into `/ask/`. Routine CI tests the offline contract and the model-free learning lab; model screening requires an explicit developer command. See [the reviewed decision](../experiments/generation/results-summary.json).
+
 ## References
 
 - [Astro's static-first design](https://docs.astro.build/en/concepts/why-astro/)
