@@ -58,3 +58,26 @@ When work resumes:
 1. Measure inference on a physical phone, including the initial download, cached reload, cancellation, and fallback.
 2. Write fresh held-out questions before tuning retrieval. Investigate the four documented hybrid-search misses and retain existing scope and privacy checks.
 3. When ready for release, open the `pilot` to `main` PR, run CI, and complete exact-commit hosted verification after deployment. Production release remains pending.
+
+## Search quality checkpoint, 15 November 2026
+
+Annotated tag: `checkpoint/ai-search-v2-2026-11-15`. Branch: `pilot`. This resumes the November 7 checkpoint. The original tag and phased history are preserved. Production merge and deployment remain pending.
+
+Merge `271f2c9` first brought the scheduled contribution snapshots from `main` into development. Implementation work then used the following small commits. As before, these are ordered review/backtracking boundaries; dependent intermediate commits are not standalone releases.
+
+| Commit | Concern | Changed files |
+| --- | --- | --- |
+| `e7be182` | test: freeze fresh portfolio search questions before ranking changes | 3 |
+| `f984ba3` | test: measure complete evidence and separate holdout results | 1 |
+| `6f18b59` | feat: normalize search context consistently in browser and index | 3 |
+| `e10f7fb` | content: label public contact evidence and refresh passage embeddings | 2 |
+| `ede21b8` | test: refresh query vectors for the pinned preprocessing version | 2 |
+| `ab24077` | fix: retrieve complete product evidence and resolve known search gaps | 3 |
+| `5164bdb` | feat: explain search misses and guide optional AI opt-in | 2 |
+| `42bb92f` | fix: validate grouped source matching in the actual browser runtime | 2 |
+| `e48e655` | test: include the reserved question set in routine search checks | 1 |
+| `313e4ec` | docs: teach complete retrieval and browser runtime evaluation | 3 |
+
+The checkpoint also includes this handoff and the [November 15 validation record](verification.md#search-quality-iteration-15-november-2026). All code changes are covered by type, build, retrieval, and browser checks. `npm test` evaluates both question suites using committed vectors; `TEST_AI_MODEL=1 npm run test:browser` runs all 90 questions through the actual browser model.
+
+Next work: measure physical-phone behavior, write a new unseen question set before further ranking changes, and prepare a `pilot` to `main` PR when the feature is ready for release. Generated answers still require their own model, cost, factuality, citation, and performance decision. The current feature retrieves original public passages.
