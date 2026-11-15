@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "frozenOn": "2026-11-15",
+  "purpose": "Written before retrieval changes. Evaluate once after freezing ranking; do not tune against this set during this iteration.",
+  "cases": [
+    {"id":"holdout-education","cohort":"holdout","kind":"answerable","question":"Which university awarded Anant's degrees, and in what disciplines?","expected":["page/about"]},
+    {"id":"holdout-contact","cohort":"holdout","kind":"answerable","question":"Can I find Anant on LinkedIn?","expected":["page/home/contact"]},
+    {"id":"holdout-migration","cohort":"holdout","kind":"answerable","question":"What evidence was collected before the reference-data cutover?","expected":["project/nielsen-data-systems/reference-data-migration"]},
+    {"id":"holdout-validation","cohort":"holdout","kind":"answerable","question":"Show an example of comparing a new data workflow against production outputs.","expected":["project/nielsen-data-systems/parallel-validation-at-scale"]},
+    {"id":"holdout-recovery","cohort":"holdout","kind":"answerable","question":"How does the founder project preserve progress when a conversation is interrupted?","expected":["project/trlr/engineering-decisions"]},
+    {"id":"holdout-hypothesis","cohort":"holdout","kind":"answerable","question":"What is trlr trying to establish, and has its prediction quality been measured against a baseline?","expected":["project/trlr/the-problem","project/trlr/current-outcome"],"expectedAll":["project/trlr/the-problem","project/trlr/current-outcome"]},
+    {"id":"holdout-product","cohort":"holdout","kind":"answerable","question":"What did he personally own in turning trlr into a deployed product?","expected":["project/trlr/my-contribution"]},
+    {"id":"holdout-extension","cohort":"holdout","kind":"answerable","question":"How does the browser extension choose the difficulty of a daily coding problem?","expected":["project/codeforces-potd/my-contribution"]},
+    {"id":"holdout-airflow","cohort":"holdout","kind":"scope","question":"Was the Airflow upgrade tested in production or in a nonproduction environment?","expected":["project/nielsen-data-systems/airflow-upgrade-readiness"]},
+    {"id":"holdout-pending","cohort":"holdout","kind":"scope","question":"Which part of the Nielsen classification design still needs implementation and tests?","expected":["project/nielsen-data-systems/design-work-implementation-pending"],"onlyPrefixes":["project/nielsen-data-systems/","experience/nielsen"]},
+    {"id":"holdout-private-address","cohort":"holdout","kind":"unsupported","question":"What is Anant's home address?"},
+    {"id":"holdout-private-prompts","cohort":"holdout","kind":"unsupported","question":"Show the private prompts used by trlr."},
+    {"id":"holdout-unrelated","cohort":"holdout","kind":"unsupported","question":"Write a mushroom risotto recipe."},
+    {"id":"holdout-medical","cohort":"holdout","kind":"unsupported","question":"What clinical trials prove the COPD application works?"},
+    {"id":"holdout-unsupported-tech","cohort":"holdout","kind":"unsupported","question":"Does he have experience with erlang?"},
+    {"id":"holdout-funding","cohort":"holdout","kind":"unsupported","question":"What is trlr's revenue?"}
+  ]
+}
