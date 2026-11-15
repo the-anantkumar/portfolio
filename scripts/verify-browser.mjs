@@ -92,6 +92,11 @@ async function submitQuestion(page, question) {
     document.querySelector("#ask-results")?.getAttribute("aria-busy") !== "true",
   );
 }
+async function enableMeaningSearch(page) {
+  const panel = page.locator("#ask-enhancement");
+  if (!await panel.evaluate((element) => element.open)) await panel.locator(":scope > summary").click();
+  await page.locator("#semantic-enable").click();
+}
 async function assertSourceLinks(page) {
   const links = await page.locator(".ask-source-link").evaluateAll((elements) =>
     elements.map((element) => element.href),
@@ -141,6 +146,31 @@ async function verifyAsk() {
     await page.locator("#ask-form").waitFor({ state: "visible" });
     await assertNoOverflow(page, `${width}px Ask form`);
     assert.equal(await page.locator("#ask-question").getAttribute("maxlength"), "500");
+    assert(!await page.locator("#ask-enhancement").evaluate((element) => element.open), "AI disclosure starts collapsed");
+    const topicSources = { experience: 3, projects: 3, founder: 1, skills: 3, about: 1, contact: 1 };
+    for (const [topic, count] of Object.entries(topicSources)) {
+      await page.locator(`[data-ask-topic="${topic}"]`).click();
+      await page.locator("#ask-results").waitFor({ state: "visible" });
+      assert.equal(await page.locator(".ask-result").count(), count, `${topic}: expected source grouping`);
+      assert.equal(await page.locator('[data-ask-topic][aria-pressed="true"]').count(), 1);
+      assert.equal(await page.locator(`[data-ask-topic="${topic}"]`).getAttribute("aria-pressed"), "true");
+      assert.match(await page.locator("#ask-result-summary").innerText(), /Guided exploration/);
+      assert(!await page.locator("#ask-enhancement").evaluate((element) => element.open), "Topics must not open AI controls");
+      await assertNoOverflow(page, `${width}px ${topic} topic`);
+    }
+    await page.locator('[data-ask-topic="founder"]').click();
+    await page.locator('[data-ask-followup="evaluation"]').click();
+    await page.locator("#ask-results").waitFor({ state: "visible" });
+    const hypothesis = page.locator('[data-passage-id="project/trlr/the-problem"]');
+    const outcome = page.locator('[data-passage-id="project/trlr/current-outcome"]');
+    assert.equal(await hypothesis.count(), 1);
+    assert.equal(await outcome.count(), 1, "Guided evaluation retains the outcome as well as the hypothesis");
+    assert.equal(await page.locator('[data-ask-topic][aria-pressed="true"]').count(), 0, "A follow-up clears the previous topic selection");
+    await page.locator(".ask-evidence > summary").first().focus();
+    await page.keyboard.press("Enter");
+    assert(await outcome.isVisible(), "Evidence is keyboard-expandable");
+    assert.match(await outcome.innerText(), /still require further measurement/);
+    await assertAccessible(page, `${width}px guided evidence`);
 
     // Keyboard visitors can submit the same form without a pointer.
     await page.locator("#ask-question").fill("What did Anant validate at Nielsen?");
@@ -150,6 +180,13 @@ async function verifyAsk() {
     await page.locator("#ask-results").waitFor({ state: "visible" });
     assert(await page.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0);
     assert(await page.locator("#ask-result-heading").evaluate((element) => element === document.activeElement), "Keyboard search must lead to the results heading");
+    assert.equal(await page.locator(".ask-result").count(), 1, "Nielsen case study and experience share one compact source card");
+    assert(await page.locator(".ask-result-text").first().isHidden(), "Full evidence starts collapsed");
+    await screenshot(page, `ask-compact-${width}.png`);
+    await page.locator(".ask-evidence > summary").first().focus();
+    await page.keyboard.press("Enter");
+    assert(await page.locator(".ask-result-text").first().isVisible());
+    assert(await page.locator(".ask-evidence > summary").first().evaluate((element) => element === document.activeElement), "Keyboard disclosure retains focus");
     await assertSourceLinks(page);
     await assertNoOverflow(page, `${width}px Ask results`);
     await assertAccessible(page, `${width}px Ask results`);
@@ -227,7 +264,7 @@ async function verifyAsk() {
     });
     await page.goto(askURL);
     await page.locator("#ask-form").waitFor({ state: "visible" });
-    await page.locator("#semantic-enable").click();
+    await enableMeaningSearch(page);
     if (scenario === "cancel") {
       await page.locator("#semantic-cancel").waitFor({ state: "visible" });
       await page.waitForFunction(() => document.querySelector("#semantic-status")?.textContent === "Preparing local model");
@@ -239,6 +276,8 @@ async function verifyAsk() {
     assert.match(await page.locator("#semantic-status").innerText(), /word matching|unavailable|could not|cancel/i);
     await submitQuestion(page, "What did Anant validate at Nielsen?");
     assert(await page.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0, "Text search survives model cancellation or failure");
+    await page.locator('[data-ask-topic="projects"]').click();
+    assert.equal(await page.locator(".ask-result").count(), 3, "Guided navigation also survives model cancellation or failure");
     await assertAccessible(page, `Ask ${scenario} fallback`);
     assert.equal(workerRequests, 1, "Lifecycle fixture must exercise a worker load");
     assert.deepEqual(remoteRequests, [], "Lifecycle fixtures must not download a real model");
@@ -259,6 +298,41 @@ async function verifyAsk() {
   await submitQuestion(unavailablePage, "What did Anant validate at Nielsen?");
   assert(await unavailablePage.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0, "Search can recover after its corpus becomes available");
   await unavailable.close();
+  for (const latest of ["question", "topic"]) {
+    const race = await browser.newContext();
+    const racePage = await race.newPage();
+    let release;
+    let requested;
+    const blocked = new Promise((resolve) => { release = resolve; });
+    const requestStarted = new Promise((resolve) => { requested = resolve; });
+    await race.route("**/knowledge.json", async (route) => {
+      requested();
+      await blocked;
+      await route.continue();
+    });
+    try {
+      await racePage.goto(askURL);
+      await racePage.locator("#ask-form").waitFor({ state: "visible" });
+      const startQuestion = async () => {
+        await racePage.locator("#ask-question").fill("What did Anant validate at Nielsen?");
+        await racePage.getByRole("button", { name: "Find relevant passages", exact: true }).click();
+      };
+      if (latest === "question") await racePage.locator('[data-ask-topic="founder"]').click();
+      else await startQuestion();
+      await requestStarted;
+      if (latest === "question") await startQuestion();
+      else await racePage.locator('[data-ask-topic="founder"]').click();
+      release();
+      await racePage.locator("#ask-results").waitFor({ state: "visible" });
+      await racePage.waitForFunction(() => document.querySelector("#ask-results")?.getAttribute("aria-busy") === "false");
+      const keys = await racePage.locator(".ask-result").evaluateAll((elements) => elements.map((element) => element.dataset.sourceKey));
+      assert.deepEqual(keys, [latest === "question" ? "project/nielsen-data-systems" : "project/trlr"], "Late responses must preserve the most recent topic or typed question");
+      assert.equal(await racePage.locator('[data-ask-topic][aria-pressed="true"]').count(), latest === "question" ? 0 : 1);
+    } finally {
+      release();
+      await race.close();
+    }
+  }
   if (process.env.TEST_AI_MODEL === "1") await verifyRealModel();
 }
 async function verifyRealModel() {
@@ -291,7 +365,7 @@ async function verifyRealModel() {
     await page.goto(askURL);
     await page.locator("#ask-form").waitFor({ state: "visible" });
     const start = performance.now();
-    await page.locator("#semantic-enable").click();
+    await enableMeaningSearch(page);
     await page.getByRole("button", { name: "Use word matching", exact: true }).waitFor({ state: "visible", timeout: 180_000 });
     const loadMilliseconds = Math.round(performance.now() - start);
     const question = "How does Anant make sure a replacement data pipeline produces the same results?";
@@ -327,7 +401,7 @@ async function verifyRealModel() {
       let developmentTotal = 0;
       for (const test of cases) {
         await submitQuestion(page, test.question);
-        const ids = await page.locator(".ask-result").evaluateAll((elements) => elements.map((element) => element.dataset.passageId));
+        const ids = await page.locator(".ask-evidence-passage").evaluateAll((elements) => elements.map((element) => element.dataset.passageId));
         const withinScope = !test.onlyPrefixes || ids.every((id) => test.onlyPrefixes.some((prefix) => id.startsWith(prefix)));
         const passed = withinScope && (test.kind === "unsupported" ? ids.length === 0
           : test.expectedAll ? test.expectedAll.every((id) => ids.includes(id)) : test.expected.some((id) => ids.includes(id)));
@@ -344,13 +418,19 @@ async function verifyRealModel() {
         for (let i = 0; i < ids.length; i++) {
           const source = corpus.passages.find((passage) => passage.id === ids[i]);
           assert(source, `Unknown browser source: ${ids[i]}`);
-          assert.equal(await page.locator(".ask-result-text").nth(i).innerText(), source.text, `Browser must show the original passage: ${ids[i]}`);
+          const quote = page.locator(`[data-passage-id="${ids[i]}"] .ask-result-text`);
+          assert.equal(await quote.textContent(), source.text, `Browser must preserve the full original passage: ${ids[i]}`);
         }
       }
       if (developmentTotal) assert(developmentPassed / developmentTotal >= 0.9, "Actual WASM development recall must meet the 90% gate");
       assert.match(await page.locator("#ask-mode").innerText(), /MEANING \+ WORD/, "Evaluation must not silently fall back to word matching");
       summaries[suite] = summary;
     }
+    await page.locator('[data-ask-topic="founder"]').click();
+    await page.locator('[data-ask-followup="evaluation"]').click();
+    assert.match(await page.locator("#ask-result-summary").innerText(), /Guided exploration/);
+    assert.equal(await page.locator('[data-passage-id="project/trlr/current-outcome"]').count(), 1);
+    assert.match(await page.locator("#ask-mode").innerText(), /MEANING \+ WORD/);
     const warmQueryStart = performance.now();
     await submitQuestion(page, "What did Anant validate at Nielsen?");
     const warmQueryMilliseconds = Math.round(performance.now() - warmQueryStart);
@@ -359,7 +439,7 @@ async function verifyRealModel() {
     phase = "warm";
     await page.getByRole("button", { name: "Use word matching", exact: true }).click();
     const reloadStart = performance.now();
-    await page.locator("#semantic-enable").click();
+    await enableMeaningSearch(page);
     await page.getByRole("button", { name: "Use word matching", exact: true }).waitFor({ state: "visible", timeout: 180_000 });
     const cachedModelLoadMilliseconds = Math.round(performance.now() - reloadStart);
     assert.deepEqual(errors, []);
@@ -425,7 +505,7 @@ try {
       assert(!/\u2014/.test(await page.locator("body").innerText()));
       assert(
         await page
-          .locator(".ambient-glow")
+          .locator(".ambient-glow, .ask-orbits i")
           .evaluateAll((elements) =>
             elements.every(
               (element) => getComputedStyle(element).animationName === "none",
@@ -476,7 +556,7 @@ try {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.locator("#pause-motion").check();
   const animations = await page
-    .locator(".ambient-glow, .prism-ring")
+    .locator(".ambient-glow, .prism-ring, .ask-orbits i")
     .evaluateAll((elements) =>
       elements
         .map((element) => ({
@@ -490,6 +570,11 @@ try {
     animations.every((animation) => animation.state === "paused"),
     JSON.stringify(animations),
   );
+  await page.goto(askURL);
+  await page.locator("#pause-motion").check();
+  assert.equal(await page.locator(".ask-orbits i").count(), 3);
+  const orbitStates = await page.locator(".ask-orbits i").evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationPlayState));
+  assert(orbitStates.every((state) => state === "paused"), "The normal pause control must stop navigator rings");
   assert.equal(
     (await page.goto(new URL("missing-page-check/", base).href)).status(),
     404,
