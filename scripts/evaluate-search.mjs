@@ -11,12 +11,13 @@ const flags = new Map();
 while (args.length) {
   const key = args.shift();
   const value = args.shift();
-  assert(["--vectors", "--query-vectors", "--min-similarity", "--minimum-recall"].includes(key) && value, `Unknown or incomplete option: ${key}`);
+  assert(["--cases", "--vectors", "--query-vectors", "--min-similarity", "--minimum-recall"].includes(key) && value, `Unknown or incomplete option: ${key}`);
   flags.set(key, value);
 }
 const readJson = async (path) => JSON.parse(await readFile(path, "utf8"));
 const corpus = await readJson(resolve(corpusPath));
-const fixturePath = fileURLToPath(new URL("./search-cases.json", import.meta.url));
+const fixturePath = flags.has("--cases") ? resolve(flags.get("--cases"))
+  : fileURLToPath(new URL("./search-cases.json", import.meta.url));
 const { cases } = await readJson(fixturePath);
 assert.equal(corpus.version, 1);
 assert(Array.isArray(corpus.passages) && corpus.passages.length > 0, "The public knowledge corpus is empty");
@@ -44,14 +45,21 @@ for (const passage of corpus.passages) {
   }
 }
 for (const test of cases) {
-  assert(["development", "challenge"].includes(test.cohort ?? "development"), `Unknown evaluation cohort: ${test.id}`);
+  assert(["development", "challenge", "holdout"].includes(test.cohort ?? "development"), `Unknown evaluation cohort: ${test.id}`);
+  assert(["answerable", "scope", "unsupported"].includes(test.kind), `Unknown question kind: ${test.id}`);
   if (test.kind !== "unsupported") {
     assert(test.expected?.length > 0, `Missing expected evidence: ${test.id}`);
     for (const id of test.expected) assert(passageIds.has(id), `Fixture references missing evidence: ${id}`);
+    if (test.expectedAll) {
+      assert(test.expectedAll.length > 0 && test.expectedAll.every((id) => test.expected.includes(id)), `Invalid required evidence: ${test.id}`);
+    }
   }
 }
-assert(cases.filter((test) => test.kind === "answerable" && test.cohort !== "challenge").length >= 30);
-assert(cases.filter((test) => test.kind === "unsupported").length >= 10);
+if (!flags.has("--cases")) {
+  assert(cases.filter((test) => test.kind === "answerable" && test.cohort !== "challenge").length >= 30);
+  assert(cases.filter((test) => test.kind === "unsupported").length >= 10);
+}
+assert(cases.length > 0, "Evaluation questions must not be empty");
 assert.equal(new Set(cases.map((test) => test.id)).size, cases.length);
 const options = {};
 let queryVectors;
@@ -74,8 +82,8 @@ const minimumRecall = Number(flags.get("--minimum-recall") ?? 0.9);
 assert(minimumRecall >= 0 && minimumRecall <= 1, "Minimum recall must be between zero and one");
 let failed = false;
 for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
-  const counts = () => ({ answerable: { passed: 0, total: 0 }, scope: { passed: 0, total: 0 }, unsupported: { passed: 0, total: 0 }, misses: [] });
-  const cohorts = { development: counts(), challenge: counts() };
+  const counts = () => ({ answerable: { passed: 0, total: 0 }, scope: { passed: 0, total: 0 }, unsupported: { passed: 0, total: 0 }, completeness: { passed: 0, total: 0 }, misses: [] });
+  const cohorts = Object.fromEntries([...new Set(cases.map((test) => test.cohort ?? "development"))].map((name) => [name, counts()]));
   for (const test of cases) {
     const groups = cohorts[test.cohort ?? "development"];
     const result = searchPassages(test.question, corpus.passages, mode === "hybrid" ? { ...options, queryVector: queryVectors[test.id] } : {});
@@ -83,10 +91,14 @@ for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
     const withinScope = !test.onlyPrefixes || ids.every((id) => test.onlyPrefixes.some((prefix) => id.startsWith(prefix)));
     const passed = withinScope && (test.kind === "unsupported"
       ? result.kind === "unsupported"
-      : test.expected.some((id) => ids.includes(id)));
+      : (test.expectedAll ? test.expectedAll.every((id) => ids.includes(id)) : test.expected.some((id) => ids.includes(id))));
+    if (test.expectedAll) {
+      groups.completeness.total++;
+      if (passed) groups.completeness.passed++;
+    }
     groups[test.kind].total++;
     if (passed) groups[test.kind].passed++;
-    else groups.misses.push({ id: test.id, expected: test.expected ?? "unsupported", actual: ids.length ? ids : result.reason });
+    else groups.misses.push({ id: test.id, expected: test.expectedAll ?? test.expected ?? "unsupported", requiresAll: Boolean(test.expectedAll), actual: ids.length ? ids : result.reason });
     if (!withinScope) failed = true;
     // Returned evidence must be the original complete passage, including scope
     // qualifications. This assertion does not evaluate generated text.
@@ -97,11 +109,11 @@ for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
     ...groups,
   }]));
   console.log(JSON.stringify({ mode, passages: corpus.passages.length, ...summaries }, null, 2));
-  if (summaries.development.top3Recall < minimumRecall) failed = true;
+  if (summaries.development?.top3Recall < minimumRecall) failed = true;
   for (const groups of Object.values(cohorts)) {
     if (groups.scope.passed !== groups.scope.total || groups.unsupported.passed !== groups.unsupported.total) failed = true;
   }
 }
-console.log("The recall gate applies to development questions. Challenge recall is reported separately; all scope and unsupported checks in both cohorts must pass.");
+console.log("The recall gate applies to development questions. Challenge and holdout recall are reported separately; scope and unsupported checks in every cohort must pass. expectedAll requires every named source, so a partial answer is a miss.");
 if (!queryVectors) console.log("Semantic retrieval has not been evaluated. This run measures the lexical fallback only.");
 if (failed) process.exitCode = 1;
