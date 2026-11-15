@@ -98,3 +98,26 @@ Annotated tag: `checkpoint/portfolio-navigator-v1-2026-11-15`. Branch: `pilot`. 
 The checkpoint also contains the completed PRD acceptance record and this handoff. These are ordered review and backtracking boundaries, not independently deployable intermediate releases. Existing search-quality tags and commits remain intact.
 
 Before production release, measure the model on a physical phone and complete PR CI plus hosted verification. Before adding generated answers or open-ended conversation memory, formulate their own scope and evaluate factuality, citations, download cost, phone performance, and zero-cost operation.
+
+## Learning lab and first generation screen
+
+Annotated tag: `checkpoint/learning-lab-v1-2026-11-15`. Branch: `pilot`. The [learning tracker](learning-tracker.md) now has a local interactive companion, component boundaries, code links, exercises, saved search traces, and manually controlled review markers. The first local generation candidate was evaluated and rejected; it is not a public feature. The [verification record](verification.md#learning-lab-and-generation-screening-15-november-2026) contains the checks, measurements, and limits.
+
+| Commit | Concern | Changed files |
+| --- | --- | --- |
+| `8a656d6` | Define pinned generation candidate, fixed cases, and promotion gates | 3 |
+| `cdc5c3d` | Start the component tracker and native generation screening | 3 |
+| `61bb77f` | Isolate the explicit browser experiment interface | 3 |
+| `4731320` | Run pinned browser WASM screening and network checks | 2 |
+| `c6583af` | Add offline generation contracts and developer commands | 3 |
+| `7c3b3f5` | Record reviewed candidate rejection and reproducible measurements | 2 |
+| `dcfd04f` | Build the offline component explorer and actual saved retrieval traces | 2 |
+| `91a90b8` | Verify the learning lab and add its model-free CI check | 2 |
+| `2c33806` | Update learning outcomes and the ongoing tracker maintenance rule | 3 |
+| `4ef40c1` | Teach component boundaries and the generation failure lessons | 3 |
+
+The tag also contains this handoff and its dated verification entry. These are ordered review/backtracking boundaries; dependent intermediate commits are not separate deployable releases. All previous checkpoint tags remain intact. No production merge or deployment occurred.
+
+To revisit, use Node 24, run `npm run build`, then `npm run learn`, and open the printed loopback URL. `npm run learn:build` generates the standalone offline document under ignored `artifacts/learning/`. Replay is prepared retrieval evidence, not live inference. Your review markers belong only to your local browser and start unchecked.
+
+Next work: retain the fast evidence navigator, measure the embedding model on a physical phone, and freeze fresh evaluation questions before any further generation candidate or prompt tuning. A candidate must preserve source meaning and pass manual citation/scope review before any visitor integration is proposed. A completed benchmark command does not imply acceptance. Production release still needs PR CI and exact-commit hosted verification.
