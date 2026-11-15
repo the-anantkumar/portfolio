@@ -21,3 +21,4 @@ This repository is an Astro static site published from `main`; `pilot` is the de
 - Search indexes only public typed collections. Run `npm run index:search` after indexed content or evaluation-question changes; ordinary builds and scheduled refreshes verify committed vectors without downloading models.
 - Preserve the pinned model revision, source links, query privacy, separate performance budgets, and the upstream notices under `public/ai-notices/`. License texts remain verbatim.
 - Run `npm run test:search` for retrieval changes. `TEST_AI_MODEL=1 npm run test:browser` explicitly exercises the real public model download; default browser checks stay independent of model hosting.
+- After meaningful implementation or experiment phases, update `docs/learning-tracker.json`, its Markdown study path, and dated verification/checkpoint evidence. Keep built, experimental, and planned states distinct; only the owner marks personal review progress.
