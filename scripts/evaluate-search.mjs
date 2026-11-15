@@ -82,7 +82,7 @@ const minimumRecall = Number(flags.get("--minimum-recall") ?? 0.9);
 assert(minimumRecall >= 0 && minimumRecall <= 1, "Minimum recall must be between zero and one");
 let failed = false;
 for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
-  const counts = () => ({ answerable: { passed: 0, total: 0 }, scope: { passed: 0, total: 0 }, unsupported: { passed: 0, total: 0 }, completeness: { passed: 0, total: 0 }, misses: [] });
+  const counts = () => ({ answerable: { passed: 0, total: 0 }, scope: { passed: 0, total: 0 }, unsupported: { passed: 0, total: 0 }, completeness: { passed: 0, partial: 0, total: 0 }, misses: [] });
   const cohorts = Object.fromEntries([...new Set(cases.map((test) => test.cohort ?? "development"))].map((name) => [name, counts()]));
   for (const test of cases) {
     const groups = cohorts[test.cohort ?? "development"];
@@ -95,6 +95,7 @@ for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
     if (test.expectedAll) {
       groups.completeness.total++;
       if (passed) groups.completeness.passed++;
+      else if (test.expectedAll.some((id) => ids.includes(id))) groups.completeness.partial++;
     }
     groups[test.kind].total++;
     if (passed) groups[test.kind].passed++;
@@ -112,8 +113,11 @@ for (const mode of queryVectors ? ["lexical", "hybrid"] : ["lexical"]) {
   if (summaries.development?.top3Recall < minimumRecall) failed = true;
   for (const groups of Object.values(cohorts)) {
     if (groups.scope.passed !== groups.scope.total || groups.unsupported.passed !== groups.unsupported.total) failed = true;
+    // Abstention is already a recall miss. Returning part of a required bundle
+    // without its qualification is a separate completeness regression.
+    if (groups.completeness.partial > 0) failed = true;
   }
 }
-console.log("The recall gate applies to development questions. Challenge and holdout recall are reported separately; scope and unsupported checks in every cohort must pass. expectedAll requires every named source, so a partial answer is a miss.");
+console.log("The recall gate applies to development questions. Challenge and holdout recall are reported separately; scope and unsupported checks in every cohort must pass. expectedAll requires every named source; abstention is a recall miss and partial evidence fails the completeness check.");
 if (!queryVectors) console.log("Semantic retrieval has not been evaluated. This run measures the lexical fallback only.");
 if (failed) process.exitCode = 1;

@@ -1,7 +1,8 @@
 // Ranking is evidence retrieval, never an answer generator. Scores are ranking
 // signals, not probabilities or factual-confidence percentages.
+import { queryEmbeddingText } from "./embedding-config.mjs";
 const STOP_WORDS = new Set(
-  "a an the and or of to in on at for from with by as is are was were be been being do does did have has had can could would should will may might i me my you your he him his it its they them their this that these those there what which who when where why how tell show give explain describe list find summarize summarise outline compare please about during before after through into over under within without between across around throughout along while than then also".split(" "),
+  "a an the and or of to in on at for from with by as is are was were be been being do does did have has had can could would should will may might i me my you your he him his it its they them their this that these those there what which who when where why how tell show give explain describe list find summarize summarise outline compare please about during before after through into over under within without between across around throughout along while than then also concrete example examples".split(" "),
 );
 
 function stem(word) {
@@ -15,6 +16,9 @@ function stem(word) {
   else if (word.length > 4 && word.endsWith("ed")) word = word.slice(0, -2);
   if (word.length > 4 && /([b-df-hj-np-tv-z])\1$/.test(word) && !/(?:ss|ll)$/.test(word)) word = word.slice(0, -1);
   if (word.length > 4 && word.endsWith("e")) word = word.slice(0, -1);
+  // These are alternate names for data entries. This expands vocabulary only;
+  // the displayed passage always retains the original term and measurement.
+  if (word === "record") word = "row";
   return word;
 }
 
@@ -80,6 +84,20 @@ function unsupported(reason) {
   return { kind: "unsupported", results: [], reason };
 }
 
+function completeProjectContext(question, matches, passages, limit) {
+  if (!/\b(?:assumptions?|hypothes(?:is|es)|unproven|predictions?)\b/i.test(question)) return matches;
+  const project = matches[0]?.passage.id.match(/^(project\/[^/]+)\//)?.[1];
+  if (!project) return matches;
+  const problem = passages.find((passage) => passage.id === `${project}/the-problem`);
+  const outcome = passages.find((passage) => passage.id === `${project}/current-outcome`);
+  if (!problem || !outcome) return matches;
+  // A product assumption without its outcome can imply success that has not
+  // been measured. Preserve both original sections within the result limit.
+  const sources = [problem, outcome, ...matches.map(({ passage }) => passage)];
+  return [...new Map(sources.map((passage) => [passage.id, passage])).values()]
+    .slice(0, limit).map((passage) => ({ passage, score: matches[0].score }));
+}
+
 function boundary(question) {
   if (question.length > 500) return "question-too-long";
   if (/\b(?:phone|telephone|mobile\s+number|home\s+address|street\s+address|date\s+of\s+birth|birthday|salary|compensation|password|credential|api\s*key|secret|passport|aadhar|aadhaar)\b/i.test(question)) return "private";
@@ -114,7 +132,7 @@ export function searchPassages(question, passages, options = {}) {
   if (blocked) return unsupported(blocked);
   const personTerms = new Set(terms(passages.find((passage) => passage.id === "page/home/intro")?.text.split("\n")[0] ?? ""));
   if (asksAboutUnknownNamedTechnology(question, passages, personTerms)) return unsupported("unpublished-technology");
-  const questionTerms = terms(question);
+  const questionTerms = terms(queryEmbeddingText(question));
   const substantiveTerms = questionTerms.filter((term) => !personTerms.has(term));
   const query = substantiveTerms.length ? substantiveTerms : questionTerms;
   if (!query.length) return unsupported("empty-question");
@@ -191,5 +209,5 @@ export function searchPassages(question, passages, options = {}) {
         : (result.similarity === undefined ? 0 : 1 / (20 + semanticOrder.indexOf(result))) + 0.35 / (20 + lexicalOrder.indexOf(result))
       : result.lexical,
   })).sort((a, b) => b.score - a.score || a.passage.id.localeCompare(b.passage.id)).slice(0, limit);
-  return results.length ? { kind: "results", results } : unsupported("insufficient-evidence");
+  return results.length ? { kind: "results", results: completeProjectContext(question, results, scoped, limit) } : unsupported("insufficient-evidence");
 }
