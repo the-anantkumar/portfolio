@@ -182,6 +182,19 @@ export function searchPassages(question, passages, options = {}) {
   const minimumSimilarity = options.minSimilarity ?? 0.4;
   const scopedSemantic = semanticOrder.filter((result) => allowedIds.has(result.passage.id));
   const leading = scopedSemantic[0];
+  const sourceGroup = (result) => result?.passage.id.match(/^(?:project|experience)\/[^/]+/)?.[0];
+  const group = sourceGroup(leading);
+  const nextSource = scopedSemantic.find((result) => sourceGroup(result) !== group);
+  // Native CPU and browser WASM quantized kernels can produce slightly
+  // different vectors. Two leading sections of the same source can establish
+  // a topic even when neither individually crosses the main cutoff. Admit
+  // only the leading passage, with substantive word overlap and separation
+  // from other sources; do not lower the global eligibility threshold.
+  const groupedLead = options.minSimilarity === undefined && group
+    && leading.similarity >= 0.35 && scopedSemantic[1]?.similarity >= 0.35
+    && sourceGroup(scopedSemantic[1]) === group
+    && leading.similarity - (nextSource?.similarity ?? 0) >= 0.03
+    && leading.matched >= 2;
   // A modest semantic score can still be useful when one source clearly leads
   // and shares several substantive terms. This admits one source, not a broad
   // set of lower-scoring related topics. Explicit thresholds disable fallback.
@@ -196,7 +209,7 @@ export function searchPassages(question, passages, options = {}) {
     // as a technology name or a measurement. It adds paraphrase matches.
     return lexicalEvidence
       || (useSemantic && result.similarity !== undefined && result.similarity >= minimumSimilarity)
-      || (clearLead && result === leading);
+      || ((clearLead || groupedLead) && result === leading);
   });
   const results = eligible.map((result) => ({
     passage: result.passage,

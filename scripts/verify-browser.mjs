@@ -159,8 +159,17 @@ async function verifyAsk() {
 
     await submitQuestion(page, "What is Anant's private phone number?");
     assert.match(await page.locator("#ask-result-summary").innerText(), /No supported match/i);
+    assert.match(await page.locator("#ask-result-summary").innerText(), /public professional information/i);
+    assert(await page.locator("#ask-explore-meaning").isHidden(), "Private questions must not encourage a model download");
     assert.equal(await page.locator(".ask-source-link").count(), 0);
     await assertAccessible(page, `${width}px Ask unsupported question`);
+
+    await submitQuestion(page, "Where did Anant study and what subjects did he study?");
+    await page.locator("#ask-explore-meaning").click();
+    assert(await page.locator("#semantic-enable").evaluate((element) => element === document.activeElement), "No-match help must lead to the download disclosure and opt-in control");
+    assert(await page.locator("#semantic-cancel").isHidden(), "Exploring AI must not start a download");
+    await page.locator("#ask-question").fill("Tell me about trlr");
+    assert(await page.locator("#ask-results").isHidden(), "Editing a question must hide evidence from the previous question");
 
     await submitQuestion(page, 'Nielsen <img src=x onerror="alert(1)">');
     assert.equal(await page.locator("#ask-results img, #ask-results script").count(), 0);
@@ -292,9 +301,56 @@ async function verifyRealModel() {
     const queryMilliseconds = Math.round(performance.now() - queryStart);
     assert(await page.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0);
     await assertSourceLinks(page);
+    for (const [query, anchors] of [
+      ["Where is his LinkedIn profile?", ["#contact"]],
+      ["Can you show a concrete example of checking millions of records before a change?", ["#parallel-validation-at-scale"]],
+      ["Which project makes its core product assumption explicit, and what remains unproven?", ["#the-problem", "#current-outcome"]],
+      ["Which project in this portfolio shows taking an idea through implementation and release?", ["#my-contribution"]],
+    ]) {
+      await submitQuestion(page, query);
+      for (const anchor of anchors) {
+        assert(await page.locator(`.ask-source-link[href$="${anchor}"]`).count() > 0, `Real model needs complete evidence for: ${query}`);
+      }
+    }
     await assertNoOverflow(page, "Real model mobile viewport");
     await assertAccessible(page, "Real model results");
     await screenshot(page, "ask-real-model-390.png");
+    // Exercise the same labeled questions through the actual WASM worker.
+    // Native CPU vectors alone cannot establish browser retrieval quality.
+    const suites = ["search", "search-holdout"];
+    const summaries = {};
+    const corpus = JSON.parse(await readFile(path.join(root, "knowledge.json"), "utf8"));
+    for (const suite of suites) {
+      const { cases } = JSON.parse(await readFile(`scripts/${suite}-cases.json`, "utf8"));
+      const summary = { answerable: { passed: 0, total: 0 }, scope: { passed: 0, total: 0 }, unsupported: { passed: 0, total: 0 }, misses: [] };
+      let developmentPassed = 0;
+      let developmentTotal = 0;
+      for (const test of cases) {
+        await submitQuestion(page, test.question);
+        const ids = await page.locator(".ask-result").evaluateAll((elements) => elements.map((element) => element.dataset.passageId));
+        const withinScope = !test.onlyPrefixes || ids.every((id) => test.onlyPrefixes.some((prefix) => id.startsWith(prefix)));
+        const passed = withinScope && (test.kind === "unsupported" ? ids.length === 0
+          : test.expectedAll ? test.expectedAll.every((id) => ids.includes(id)) : test.expected.some((id) => ids.includes(id)));
+        summary[test.kind].total++;
+        if (passed) summary[test.kind].passed++;
+        else summary.misses.push({ id: test.id, sources: ids });
+        if ((test.cohort ?? "development") === "development" && test.kind === "answerable") {
+          developmentTotal++;
+          if (passed) developmentPassed++;
+        }
+        assert(withinScope, `Browser evidence escapes employer scope: ${test.id}`);
+        if (test.kind !== "answerable") assert(passed, `Browser scope/unsupported regression: ${test.id}`);
+        if (test.expectedAll && test.expectedAll.some((id) => ids.includes(id))) assert(passed, `Browser must preserve complete evidence: ${test.id}`);
+        for (let i = 0; i < ids.length; i++) {
+          const source = corpus.passages.find((passage) => passage.id === ids[i]);
+          assert(source, `Unknown browser source: ${ids[i]}`);
+          assert.equal(await page.locator(".ask-result-text").nth(i).innerText(), source.text, `Browser must show the original passage: ${ids[i]}`);
+        }
+      }
+      if (developmentTotal) assert(developmentPassed / developmentTotal >= 0.9, "Actual WASM development recall must meet the 90% gate");
+      assert.match(await page.locator("#ask-mode").innerText(), /MEANING \+ WORD/, "Evaluation must not silently fall back to word matching");
+      summaries[suite] = summary;
+    }
     const warmQueryStart = performance.now();
     await submitQuestion(page, "What did Anant validate at Nielsen?");
     const warmQueryMilliseconds = Math.round(performance.now() - warmQueryStart);
@@ -321,6 +377,7 @@ async function verifyRealModel() {
     const assets = await Promise.all(transfers);
     console.log(JSON.stringify({
       aiSmoke: "passed",
+      browserRetrieval: summaries,
       device: "Chromium desktop, 390px mobile viewport (not a physical phone)",
       loadMilliseconds,
       queryMilliseconds,
