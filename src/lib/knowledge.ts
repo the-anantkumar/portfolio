@@ -62,7 +62,7 @@ export async function getKnowledge(): Promise<Knowledge> {
   });
   passages.push({
     id: "page/home/contact",
-    title: "Opportunities and public contact",
+    title: ["Opportunities and public contact", home.data.email && "Email", home.data.linkedin && "LinkedIn profile"].filter(Boolean).join(" · "),
     text: [
       plainText(home.body ?? ""),
       home.data.email ? `Email: ${home.data.email}` : "",
