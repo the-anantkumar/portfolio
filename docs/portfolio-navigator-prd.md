@@ -2,7 +2,7 @@
 
 Help hiring teams explore Anant's experience, projects, and founder work through questions and direct topic navigation. The next release turns the existing evidence search into an approachable portfolio navigator. Visitors should reach a useful source quickly on a phone, without needing to download an AI model.
 
-Status: ready for implementation on `pilot`, 15 November 2026. The scope review below supports proceeding within the existing authorization. Production deployment is a separate release step.
+Status: implemented and locally verified on `pilot`, 15 November 2026. The scope review supported proceeding within the existing authorization. Production deployment is a separate release step.
 
 ## Audience and problem
 
@@ -73,3 +73,17 @@ Decision: proceed with this navigator release. Physical-phone inference and prod
 4. Connect guided navigation, follow-ups, compact search rendering, and model controls.
 5. Run retrieval, browser, accessibility, motion, privacy, and performance checks; inspect screenshots and fix failures.
 6. Update the learning and verification records, push the remaining small commits, and mark a checkpoint on `pilot`.
+
+## Implementation evidence
+
+All acceptance criteria for the local implementation pass. The [verification record](verification.md#portfolio-navigator-15-november-2026) records the measurements and remaining release tasks.
+
+| Requirement | Evidence |
+| --- | --- |
+| Topics, source grouping, and complete follow-ups | Four navigator tests plus all six topic and guided-evaluation browser flows |
+| Full original evidence and exact sources | Existing 90-question real-browser run verifies original text, source IDs, and complete evidence after grouping |
+| Responsive, keyboard, motion, and no-JavaScript behavior | 1440/390/320px browser checks, axe, native disclosure controls, ring pause, and no-JavaScript browse links |
+| Privacy, opt-in, failure, and request ordering | No external request before opt-in; cancellation, failure, corpus retry, and both topic/question response-race scenarios |
+| Performance | Ask initial HTML/CSS/controller/corpus 27,431 bytes gzip; bootstrap 7,897 bytes gzip; all separate caps pass |
+
+Desktop and mobile-viewport screenshots were visually inspected. Physical-phone inference and production hosted verification remain pending; the implementation adds no inference service or generated-answer feature.
