@@ -6,7 +6,15 @@ export const EMBEDDING = Object.freeze({
   dimensions: 384,
   pooling: "mean",
   normalize: true,
+  queryVersion: 2,
 });
+
+// A location phrase describes where to search, not the subject being sought.
+// Keep actual site questions (for example, "Why does this portfolio use Astro?").
+export const queryEmbeddingText = (question) => question
+  .replace(/\b(?:in|within|across|from)\s+(?:this|the|his|your)\s+portfolio\b/gi, " ")
+  .replace(/\s+/g, " ")
+  .trim();
 
 export const embeddingText = (passage) =>
   `${passage.title}\n${passage.context}\n${passage.text}`;

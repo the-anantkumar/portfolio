@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
 import { env, AutoModel, AutoTokenizer, FeatureExtractionPipeline } from "@huggingface/transformers";
-import { EMBEDDING, corpusHash, embeddingText, verifyVectors } from "../src/lib/embedding-config.mjs";
+import { EMBEDDING, corpusHash, embeddingText, queryEmbeddingText, verifyVectors } from "../src/lib/embedding-config.mjs";
 
 // This is an explicit maintainer command, never a scheduled/ordinary build.
 // The only inputs are the public Astro corpus and public evaluation questions.
@@ -47,7 +47,7 @@ await atomicJSON("src/data/search-vectors.json", index);
 for (const { name, cases } of suites) {
   const queryVectors = {};
   for (const test of cases) {
-    const tensor = await model(test.question, { pooling: EMBEDDING.pooling, normalize: EMBEDDING.normalize });
+    const tensor = await model(queryEmbeddingText(test.question), { pooling: EMBEDDING.pooling, normalize: EMBEDDING.normalize });
     queryVectors[test.id] = Array.from(tensor.data, (value) => Number(value.toFixed(6)));
   }
   // No timestamps: identical inputs do not create a spurious source change.

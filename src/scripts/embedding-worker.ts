@@ -2,7 +2,7 @@
 import { env, AutoModel, AutoTokenizer, FeatureExtractionPipeline } from "@huggingface/transformers";
 import wasmURL from "onnxruntime-web/ort-wasm-simd-threaded.wasm?url";
 import factoryURL from "onnxruntime-web/ort-wasm-simd-threaded.mjs?url";
-import { EMBEDDING } from "../lib/embedding-config.mjs";
+import { EMBEDDING, queryEmbeddingText } from "../lib/embedding-config.mjs";
 
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 env.allowLocalModels = false;
@@ -65,7 +65,7 @@ scope.addEventListener("message", (event: MessageEvent) => {
     queue = queue.then(async () => {
       try {
         const model = await loadModel();
-        const tensor = await model(message.text, { pooling: EMBEDDING.pooling, normalize: true });
+        const tensor = await model(queryEmbeddingText(message.text), { pooling: EMBEDDING.pooling, normalize: true });
         scope.postMessage({ type: "embedding", id: message.id, vector: Array.from(tensor.data) });
       } catch {
         scope.postMessage({ type: "error", id: message.id, message: "Meaning search could not complete." });
