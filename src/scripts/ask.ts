@@ -1,3 +1,4 @@
+import { createRag } from "./rag";
 import { searchPassages } from "../lib/retrieval.mjs";
 import { verifyVectors } from "../lib/embedding-config.mjs";
 import { TOPICS, groupMatches, followupsFor, selectPassages, sourceTemplateId } from "../lib/navigator.mjs";
@@ -12,6 +13,7 @@ import type {
 const root = document.querySelector<HTMLElement>("#ask-app");
 
 if (root) {
+  const rag = createRag(root);
   const form = root.querySelector<HTMLFormElement>("#ask-form")!;
   const question = root.querySelector<HTMLTextAreaElement>("#ask-question")!;
   const status = root.querySelector<HTMLElement>("#ask-status")!;
@@ -179,6 +181,7 @@ if (root) {
       fragment.append(item);
     }
     list.replaceChildren(fragment);
+    rag.evidence(question.value.trim(), matches.map(({ passage }) => passage));
     followupList.replaceChildren();
     followups.hidden = groups.length === 0;
     if (groups.length) {
@@ -220,6 +223,7 @@ if (root) {
   }
 
   async function navigate(selection: NavigationAction, topicId = "") {
+    rag.reset();
     const current = ++searchSequence;
     rejectPending();
     setTopic(topicId);
@@ -240,6 +244,7 @@ if (root) {
   }
 
   async function search() {
+    rag.reset();
     const current = ++searchSequence;
     rejectPending();
     setTopic();
@@ -362,6 +367,7 @@ if (root) {
     void search();
   });
   question.addEventListener("input", () => {
+    rag.reset();
     searchSequence += 1;
     rejectPending();
     results.setAttribute("aria-busy", "false");
@@ -403,6 +409,7 @@ if (root) {
     enable.focus();
   });
   window.addEventListener("pagehide", () => {
+    rag.reset();
     searchSequence += 1;
     useWordMatching("Word matching is ready.");
   });
