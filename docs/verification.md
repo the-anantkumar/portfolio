@@ -229,3 +229,49 @@ The homepage initial transfer fell from 12,305 to 10,330 compressed bytes. No ne
 Historical RAG replay now reads `experiments/rag/corpus-2026-11-17.json`, whose hash equals the original recorded experiment hash. Current search traces still validate against the current corpus and vectors. The earlier measured RAG results remain unchanged: browser 14/20 screening and 4/8 fresh cases, with model acceptance and physical-phone inference pending.
 
 Local screenshot manifests and logs are under ignored `artifacts/design-polish/`. Accepted images are frozen in its `verified/` subdirectory with a SHA256 manifest. Font readiness, paint settling, and restored scroll position avoid unreliable immediate headless captures. They are not published with the portfolio. Release remains pending: PR CI, owner-approved merge to `main`, and exact-commit hosted verification. No production deployment was performed.
+
+## Minimal editorial redesign, 17 November 2026
+
+Baseline: `593d093` on `pilot`. Complete checkpoint: `checkpoint/minimal-editorial-v1-2026-11-17`. The working tree was clean before this task. The new owner brief supersedes the earlier dark spectral direction; historical verification above describes those earlier revisions.
+
+The implemented direction uses a near-white continuous canvas, charcoal text, restrained green, one local sans-serif stack, semantic typography, and shared spacing. The full name and factual introduction lead directly into an open Nielsen feature. Independent work remains separate; native experience disclosures retain every original contribution. Case studies use readable prose and open public workflow diagrams. Ask presents a clear field, a few examples, complete source evidence, and secondary opt-in controls. Ambient animation, prism, glows, and the obsolete pause control are removed. The favicon and share image match the site.
+
+Rendered evidence was captured with the existing production-path preview and inspected throughout:
+
+- `CAPTURE_WIDTHS=1440,768,390,320 node scripts/capture-design.mjs minimal-before`: 40 states, each with viewport and full-page images, before edits.
+- `minimal-foundation`: reviewed shared foundation and homepage before applying the design to cases and Ask.
+- `CAPTURE_WIDTHS=1440,768,390,320 node scripts/capture-design.mjs minimal-after`: the same 40 states after implementation and final refinements.
+- Final review covers the homepage, four cases, Ask entry, relevant evidence, no-match, model disclosures, and focus. The 320 px name spacing, lightest active calendar shade, introductory Ask space, and tablet architecture layout were corrected during review.
+- Representative accepted images are copied to ignored `artifacts/design-polish/minimal-verified/` with a SHA256 manifest. All captures and test logs remain outside Git and `dist/`.
+
+The Ask field begins at 363 px instead of 425 px on desktop, 344 instead of 425 px at 768 px, 345 instead of 375 px at 390 px, and 426 instead of 471 px at 320 px. These are layout measurements from the captured viewports, not user-research or conversion claims.
+
+Verification under Node 24.22.2 and Chromium 1254:
+
+| Check | Result |
+| --- | --- |
+| `npm run check` | 55 files, zero errors, warnings, or hints; repeated after final visual refinements |
+| Production-path `npm run build` | Seven pages, valid internal links/anchors, policies, publication boundaries, punctuation, committed-vector integrity, and performance budgets |
+| `npm test` | Existing calendar, word/hybrid retrieval, navigator, generation contract, RAG source-validation, and built-output gates pass |
+| `npm run test:browser` | Four widths; script-disabled navigation; exact original contribution disclosures by keyboard; focus; no overflow; axe; no ambient animation; reduced-motion transitions/scrolling; evidence/source journey; topics/follow-ups; query privacy; opt-ins, cancellation, and recovery |
+| Final browser rerun | Passed after shortening Ask and refining the tablet diagram |
+| `npm run test:rag:browser` | Exact quotations/citations, malformed-selection fallback, private preflight, stale edits, cancellation, cache controls, mobile and accessibility checks |
+| `npm run test:learn` | 18 components, six saved retrieval traces, 28 historical RAG cases, owner-controlled review state, keyboard, offline/no-JavaScript paths, and accessibility |
+| `git diff --check` | Clean |
+
+Final build measurements:
+
+| Artifact | Bytes | Existing cap |
+| --- | ---: | ---: |
+| Homepage initial HTML + CSS, gzip estimate | 8,191 | 300,000 |
+| Ask HTML + CSS + bootstrap + corpus, gzip estimate | 26,724 | 60,000 |
+| Ask bootstrap, gzip estimate | 11,089 | 20,000 |
+| Ordinary output | 172,725 | 300,000 |
+| Combined optional runtime, gzip estimate | 281,469 | 500,000 |
+| Self-hosted WASM | 14,264,838 | 16,000,000 |
+| Public passage vectors | 138,018 | 200,000 |
+| Complete output | 16,016,312 | 17,000,000 |
+
+The homepage estimate was 10,330 bytes at the baseline. These are artifact/gzip measurements, not network or physical-device performance guarantees. The code and content under `src/scripts`, `src/lib`, `src/content`, and `src/data`, along with `.github` workflows, are unchanged. No reindex or model download was needed. Existing experimental selector quality and physical-phone inference limits remain unchanged.
+
+No unresolved visual or functional defect was found in the reviewed Chromium states. Physical-device inference was not tested and the selector is not promoted. Publishing remains a separate release step: review `pilot`, complete PR CI, authorize a merge to `main`, then verify the exact hosted revision. No production deployment, service, account, dependency, or paid resource was introduced.

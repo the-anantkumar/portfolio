@@ -192,3 +192,45 @@ Local previews use `npm run preview -- --port 4321` after a production-path buil
 Verified: all routes and public boundaries, 1440/390/320 layouts, keyboard/no-JavaScript navigation, reduced motion and pause controls, axe checks, source integrity, optional-model failure/cancellation, 90/90 existing semantic browser evaluation questions, model-free RAG lifecycle, and the updated offline learning lab. Historical RAG results replay against their original frozen public corpus instead of a later editorial revision.
 
 Launch remains separate: review the complete `pilot` diff, run release PR CI, approve the merge to `main`, and verify the exact hosted revision after the existing workflow publishes it. The static deployment workflow and contribution refresh are unchanged. No new account, service, billing resource, or domain is needed.
+
+## Minimal editorial redesign, 17 November 2026
+
+Complete checkpoint: `checkpoint/minimal-editorial-v1-2026-11-17` on `pilot`. Baseline: `593d093`. This replaces the spectral presentation with the current [light editorial brief](design-polish.md). The earlier tag remains available for comparison. No merge or production deployment occurred.
+
+Small commits preserve review and backtracking boundaries. Each changes one to three files; intermediate design commits depend on later component updates. Use the final checkpoint for the fully checked site.
+
+| Commit | Concern | Files |
+| --- | --- | ---: |
+| `45675c7` | New visual direction and reproduction guide | 1 |
+| `95d7f57` | Shared light canvas, typography, spacing, navigation | 2 |
+| `0f9ec96` | Identity-led homepage and open work hierarchy | 1 |
+| `ed34e4f` | Readable contribution-calendar palette | 2 |
+| `a98a815` | Open public workflow diagrams | 1 |
+| `2a503b2` | Case-study reading scale and composition | 1 |
+| `01a478a` | Focused Ask entry and open source evidence | 2 |
+| `e24381f` | Site icon | 1 |
+| `a6bff73` | Social image and reproducible rendering | 3 |
+| `5e78a9c` | Tablet, native disclosure, and motion regression coverage | 1 |
+| `b532e48` | Current site/search architecture guidance | 3 |
+| `ac17368` | Learning map and study exercises | 2 |
+
+The final documentation commit adds this inventory and the dated verification results. See [verification](verification.md#minimal-editorial-redesign-17-november-2026) for the passing checks, exact budgets, and limitations. Ask retrieval, indexed content, pinned models, snapshot data, and delivery workflows remain unchanged. The answer selector is still experimental; the owner alone marks learning progress.
+
+Changed-file inventory:
+
+- Shared foundation and homepage: `src/styles/global.css`, `src/layouts/Base.astro`, `src/pages/index.astro`.
+- Workflows and case studies: `src/components/ProjectVisual.astro`, `src/styles/case-study.css`.
+- Ask presentation: `src/pages/ask.astro`, `src/styles/ask.css`.
+- Contribution figure: `src/components/GitHubSection.astro`, `src/pages/github-heatmap.svg.ts`.
+- Identity assets: `public/favicon.svg`, `public/social.svg`, `public/social.jpg`, `scripts/render-social.mjs`.
+- Browser checks: `scripts/verify-browser.mjs`.
+- Current documentation and learning: `README.md`, `docs/design-polish.md`, `docs/architecture.md`, `docs/portfolio-navigator-prd.md`, `docs/learning-tracker.json`, `docs/learning-tracker.md`, `docs/verification.md`, `docs/release-checkpoints.md`.
+
+Local preview: `http://localhost:4321/portfolio/`. Reproduce with Node 24:
+
+```sh
+SITE_URL=https://the-anantkumar.github.io SITE_BASE=/portfolio npm run build
+npm run preview -- --port 4321
+```
+
+Before/after screenshots are in ignored `artifacts/design-polish/minimal-before/` and `minimal-after/`; accepted representative copies and hashes are in `minimal-verified/`. These artifacts are intentionally excluded from the public repository and site. Review and authorize the release PR to `main` when ready to publish.
