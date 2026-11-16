@@ -3,123 +3,229 @@ interface Props {
   kind: "trlr" | "codeforces" | "nielsen" | "portfolio";
 }
 const { kind } = Astro.props;
+const outlines = {
+  nielsen: {
+    label: "Parallel validation",
+    title: "Make the change measurable.",
+    steps: [
+      { title: "Compare", text: "Production and test outputs" },
+      { title: "Check", text: "Quality checks across the evaluated rows" },
+      { title: "Verify", text: "Parity and measured variances" },
+    ],
+    note: "A simplified view of one evaluated run. The case study explains the results and their scope.",
+  },
+  codeforces: {
+    label: "The daily practice loop",
+    title: "Less choosing. More practicing.",
+    steps: [
+      { title: "Your level", text: "A user's Codeforces rating" },
+      { title: "One problem", text: "A personalized daily recommendation" },
+      { title: "Keep going", text: "A practice calendar and solved-problem recognition" },
+    ],
+    note: "An outline of the published workflow, not a product screenshot or a user's activity.",
+  },
+  trlr: {
+    label: "Product question → engineering work",
+    title: "From conversation to a hypothesis.",
+    steps: [
+      { title: "Conversation", text: "Build context through a working experience" },
+      { title: "Continuity", text: "Durable state, validation and recovery" },
+      { title: "Evaluation", text: "Compare the product hypothesis against a baseline" },
+    ],
+    note: "A public outline of the work. The application is deployed; prediction superiority remains unvalidated.",
+  },
+};
+const outline = kind === "portfolio" ? undefined : outlines[kind];
 ---
 
-<div class:list={["project-visual", `visual-${kind}`]} aria-hidden="true">
+<figure class:list={["project-visual", `visual-${kind}`]}>
   {
-    kind === "trlr" && (
-      <div class="trlr-art">
-        <>
-          <span class="art-caption">A MORE PERSONAL KIND OF AI</span>
-          <div class="orbit orbit-one" />
-          <div class="orbit orbit-two" />
-          <div class="orbit orbit-three" />
-          <span class="trlr-word">
-            trlr<span>↗</span>
-          </span>
-          <div class="art-bottom">
-            <>
-              <span>Conversation → Understanding</span>
-              <span>01 / EXPLORING</span>
-            </>
+    outline ? (
+      <>
+        <div class="visual-heading">
+          <span class="visual-label">{outline.label}</span>
+          <p class="visual-title">{outline.title}</p>
+        </div>
+        <ol class="workflow-steps">
+          {outline.steps.map((step, index) => (
+            <li>
+              <span class="workflow-number" aria-hidden="true">0{index + 1}</span>
+              <div>
+                <strong>{step.title}</strong>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <figcaption>{outline.note}</figcaption>
+      </>
+    ) : (
+      <>
+        <div class="visual-heading">
+          <span class="visual-label">One content source. Two ways to explore.</span>
+          <p class="visual-title">Read the work. Ask for the evidence.</p>
+        </div>
+        <div class="portfolio-paths">
+          <div class="portfolio-path">
+            <span class="path-status">Built</span>
+            <strong>The portfolio</strong>
+            <p>Public Markdown → static HTML</p>
+            <span class="path-detail">Read and navigate without JavaScript.</span>
           </div>
-        </>
-      </div>
+          <div class="portfolio-path">
+            <span class="path-status">Built</span>
+            <strong>Ask</strong>
+            <p>Question → matching passages → original sources</p>
+            <span class="path-detail">Word matching first. Meaning-based search is a separate opt-in.</span>
+          </div>
+          <div class="portfolio-path path-experimental">
+            <span class="path-status">Experimental · optional</span>
+            <strong>AI-selected answers</strong>
+            <p>Retrieved passages → local selection → original quotations</p>
+            <span class="path-detail">A separate model download. Selection quality is still under evaluation.</span>
+          </div>
+        </div>
+        <figcaption>A public architecture outline. Questions stay on the device; the answer mode does not write new factual prose.</figcaption>
+      </>
     )
   }
-  {
-    kind === "codeforces" && (
-      <div class="calendar-art">
-        <>
-          <div class="calendar-head">
-            <>
-              <span class="cf-logo">
-                <>
-                  <i />
-                  <i />
-                  <i />
-                </>
-              </span>
-              <span>
-                One problem.
-                <>
-                  <br />
-                  <strong>Every day.</strong>
-                </>
-              </span>
-              <span class="calendar-arrow">↗</span>
-            </>
-          </div>
-          <div class="calendar-grid">
-            {Array.from({ length: 28 }, (_, i) => (
-              <span
-                class:list={{
-                  done: [1, 2, 4, 5, 8, 9, 10, 12, 15, 16, 17, 18].includes(i),
-                  today: i === 19,
-                }}
-              >
-                {i === 19 ? "↗" : i + 1}
-              </span>
-            ))}
-          </div>
-          <div class="calendar-foot">
-            <>
-              <span>CODEFORCES POTD</span>
-              <span>Find your rhythm.</span>
-            </>
-          </div>
-        </>
-      </div>
-    )
+</figure>
+
+<style>
+  .project-visual {
+    container-type: inline-size;
+    margin: 0;
+    padding: 28px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    color: var(--ink);
+    background: linear-gradient(145deg, #b88fcb0b, #b88fcb02);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
   }
-  {
-    kind === "nielsen" && (
-      <div class="systems-art">
-        <>
-          <span class="art-caption">FROM EVENT TO OUTCOME</span>
-          <div class="system-line">
-            <>
-              <span>01</span>
-              <strong>Ingest</strong>
-              <small>Message queues</small>
-            </>
-          </div>
-          <span class="system-connector">↓</span>
-          <div class="system-line">
-            <>
-              <span>02</span>
-              <strong>Process</strong>
-              <small>Python + orchestration</small>
-            </>
-          </div>
-          <span class="system-connector">↓</span>
-          <div class="system-line">
-            <>
-              <span>03</span>
-              <strong>Persist</strong>
-              <small>Durable storage</small>
-            </>
-          </div>
-          <span class="system-foot">A conceptual view of the workflow</span>
-        </>
-      </div>
-    )
+  .visual-label {
+    display: block;
+    font: 11px/1.6 var(--mono);
+    letter-spacing: 0.03em;
+    color: var(--muted);
   }
-  {
-    kind === "portfolio" && (
-      <div class="portfolio-art">
-        <>
-          <span class="art-caption">LESS TO LOAD. MORE TO SAY.</span>
-          <span class="static-word">
-            Static.
-            <>
-              <br />
-              <em>By design.</em>
-            </>
-          </span>
-          <span>Markdown → HTML → Your browser</span>
-        </>
-      </div>
-    )
+  .visual-title {
+    font: 500 clamp(1.35rem, 2.8cqi, 1.65rem)/1.3 var(--display);
+    letter-spacing: -0.035em;
+    margin-top: 10px;
+    max-width: 24ch;
+    text-wrap: balance;
   }
-</div>
+  .workflow-steps {
+    list-style: none;
+    margin: 28px 0 22px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .workflow-steps li {
+    min-width: 0;
+    border-top: 1px solid #8c6fa55c;
+    padding-top: 12px;
+  }
+  .workflow-number {
+    display: block;
+    font: 11px/1.5 var(--mono);
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .workflow-steps strong {
+    font: 500 18px/1.3 var(--display);
+    letter-spacing: -0.025em;
+  }
+  .workflow-steps p {
+    font-size: 13px;
+    line-height: 1.65;
+    margin-top: 7px;
+    color: var(--muted);
+  }
+  figcaption {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 65ch;
+  }
+  .portfolio-paths {
+    margin: 24px 0 22px;
+    display: grid;
+    gap: 19px;
+  }
+  .portfolio-path {
+    padding-left: 15px;
+    border-left: 1px solid #8c6fa55c;
+  }
+  .portfolio-path > strong {
+    display: block;
+    font: 500 18px/1.4 var(--display);
+    margin-block: 6px;
+  }
+  .path-status {
+    font: 10px/1.5 var(--mono);
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .portfolio-path p {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .path-detail {
+    display: block;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 6px;
+    color: var(--muted);
+  }
+  .path-experimental {
+    border-left-style: dashed;
+  }
+  :global(.featured-project) > .project-visual {
+    padding: 0 0 0 28px;
+    border: 0;
+    border-left: 1px solid #8c6fa55c;
+    border-radius: 0;
+    background: transparent;
+  }
+  @container (max-width: 360px) {
+    .workflow-steps {
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-top: 24px;
+    }
+    .workflow-steps li {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      gap: 8px;
+      padding-block: 14px;
+    }
+    .workflow-steps li:last-child {
+      padding-bottom: 0;
+    }
+    .workflow-number {
+      margin-top: 3px;
+      margin-bottom: 0;
+    }
+    .workflow-steps p {
+      margin-top: 4px;
+    }
+  }
+  @media (max-width: 600px) {
+    .project-visual {
+      padding: 22px;
+    }
+  }
+  @media (max-width: 700px) {
+    :global(.featured-project) > .project-visual {
+      padding: 24px 0 0;
+      border-left: 0;
+      border-top: 1px solid #8c6fa55c;
+    }
+  }
+</style>
