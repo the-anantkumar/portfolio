@@ -69,7 +69,13 @@ export function createRag(root: HTMLElement) {
             const role = document.createElement("p"); role.className = "rag-attribution"; role.textContent = passage.context;
             const quote = document.createElement("blockquote"); quote.textContent = passage.text;
             const link = document.createElement("a"); link.href = passage.url; link.textContent = `[${index + 1}] ${passage.title}`;
-            article.append(role, quote, link); content.append(article);
+            if (index === 0) article.append(role, quote, link);
+            else {
+              const details = document.createElement("details");
+              const summary = document.createElement("summary"); summary.textContent = `Additional source: ${passage.title}`;
+              details.append(summary, role, quote); article.append(details, link);
+            }
+            content.append(article);
           }
           answerStatus.textContent = result.repaired ? "Original wording, selected by a local language model. The companion outcome is included to preserve its qualification." : "Original wording, selected by a local language model. Check the linked sources for context.";
         } catch { answerStatus.textContent = "The model output did not pass source checks. Original evidence is available below."; }

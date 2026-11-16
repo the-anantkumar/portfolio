@@ -139,3 +139,5 @@ body:has(#pause-motion:checked) .ask-orbits i { animation-play-state: paused; }
 .rag-attribution { color: #c9b9d3; font-size: 11px; }
 .rag-quote blockquote { margin: 12px 0; white-space: pre-line; color: #eae3f1; font-size: 14px; line-height: 1.8; }
 .rag-quote a { font-size: 12px; overflow-wrap: anywhere; }
+
+.rag-quote summary { min-height: 44px; cursor: pointer; color: #ddc5e6; font-size: 13px; padding-block: 10px; }
