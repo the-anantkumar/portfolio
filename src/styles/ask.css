@@ -132,3 +132,10 @@ body:has(#pause-motion:checked) .ask-orbits i { animation-play-state: paused; }
   .ask-browse { margin-top: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { .ask-orbits i { animation: none; } .ask-page button { transition: none; } }
+
+/* Decorative orbital rings carry no text information. */
+.ask-orbits span { display: none; }
+.rag-quote { padding-block: 16px; border-top: 1px solid #ac88bf30; }
+.rag-attribution { color: #c9b9d3; font-size: 11px; }
+.rag-quote blockquote { margin: 12px 0; white-space: pre-line; color: #eae3f1; font-size: 14px; line-height: 1.8; }
+.rag-quote a { font-size: 12px; overflow-wrap: anywhere; }

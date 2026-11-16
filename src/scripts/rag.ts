@@ -11,14 +11,17 @@ export function createRag(root: HTMLElement) {
   const panel = el("rag-answer-panel"), content = el("rag-answer-content");
   let worker: Worker | undefined;
   let state: "off" | "loading" | "ready" | "generating" = "off";
+  let clearing = false;
   let sequence = 0, timer: ReturnType<typeof setTimeout> | undefined;
   let context: { question: string; passages: KnowledgePassage[] } | undefined;
   function controls() {
+    enable.disabled = clearing;
+    panel.hidden = !context || state === "off" || state === "loading";
     enable.hidden = state !== "off"; stop.hidden = state === "off";
     stop.textContent = state === "loading" ? "Cancel answer download" : state === "generating" ? "Stop answer" : "Disable AI answers";
     generate.disabled = state !== "ready" || !context;
     generate.hidden = state === "off" || state === "loading";
-    clear.disabled = state !== "off";
+    clear.disabled = state !== "off" || clearing;
   }
   function shutdown(message: string) {
     sequence++; clearTimeout(timer); worker?.terminate(); worker = undefined; state = "off";
@@ -31,7 +34,9 @@ export function createRag(root: HTMLElement) {
   }
   function evidence(question: string, passages: KnowledgePassage[]) {
     reset();
-    const result = prepareRag(question, passages);
+    if (!question || !passages.length) return;
+    let result;
+    try { result = prepareRag(question, passages); } catch { return; }
     if (result.kind !== "ready") return;
     context = { question: result.question, passages: result.passages.map(p => ({...p})) };
     panel.hidden = false;
@@ -39,7 +44,7 @@ export function createRag(root: HTMLElement) {
     controls();
   }
   enable.addEventListener("click", () => {
-    if (state !== "off") return;
+    if (state !== "off" || clearing) return;
     disclosure.open = true; state = "loading"; controls(); stop.focus();
     status.textContent = "Preparing the answer model. Evidence search remains available.";
     const instance = new Worker(new URL("./rag-worker.ts", import.meta.url), { type: "module" }); worker = instance;
@@ -81,10 +86,11 @@ export function createRag(root: HTMLElement) {
   });
   stop.addEventListener("click", () => { shutdown("AI answers are off. Evidence search is ready."); content.replaceChildren(); answerStatus.textContent = "Answer stopped. Original evidence is available below."; enable.focus(); });
   clear.addEventListener("click", async () => {
-    shutdown("Removing the answer model cache…"); clear.disabled = true;
+    clearing = true;
+    shutdown("Removing the answer model cache…");
     try { await caches.delete(RAG_MODEL.cacheKey); status.textContent = "Answer model cache removed from this browser. A future opt-in will download it again."; }
     catch { status.textContent = "Cache removal is unavailable here. You can clear this site's data in browser settings."; }
-    controls();
+    clearing = false; controls();
   });
   window.addEventListener("pagehide", () => { reset(); shutdown("AI answers are off."); });
   disclosure.hidden = false; controls();
