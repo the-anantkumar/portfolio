@@ -25,7 +25,9 @@ The contact links open email or LinkedIn. The site does not claim to send a mess
 ## Performance contract
 The build checks an initial homepage transfer budget of 300 KB. Ordinary pages ship no application scripts. Core navigation and case studies work without JavaScript. A separate Ask page has a 20 KB compressed initial script budget; its optional model loads only after a visitor enables meaning-based search.
 
-## Future search
+<span id="future-search"></span>
+
+## Search today and next
 The Ask page searches only these public Markdown collections and links each result to its source. Word matching works immediately. Optional meaning-based search uses a small embedding model in the visitor's browser, with an explicit first-use download and a working word-matching fallback.
 
 Search retrieves original public passages. An experimental, separately enabled local language model can select complete passages for a cited answer. The application preserves their original wording and qualifications; it does not display model-written factual prose. Questions stay on the device, and no model API or backend is required. Selection quality and physical-phone performance remain evaluation concerns.

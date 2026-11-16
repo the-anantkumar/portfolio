@@ -33,7 +33,7 @@ export const FOLLOWUPS = {
   ],
   "project/portfolio": [
     action("architecture", "How is this portfolio built?", [p("portfolio", "architecture")]),
-    action("search", "How does optional search fit this portfolio?", [p("portfolio", "future-search")]),
+    action("search", "How does optional search fit this portfolio?", [p("portfolio", "search-today-and-next")]),
     action("delivery", "How is the portfolio hosted?", [p("portfolio", "delivery")]),
   ],
 };
