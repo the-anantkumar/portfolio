@@ -190,6 +190,10 @@ if (root) {
     }
     list.replaceChildren(fragment);
     results.classList.toggle("ask-no-match", groups.length === 0);
+    status.classList.toggle("sr-only", groups.length === 0);
+    root!.querySelector<HTMLElement>("#ask-result-heading")!.textContent = groups.length
+      ? "Relevant evidence"
+      : "No matching evidence";
     rag.evidence(question.value.trim(), matches.map(({ passage }) => passage));
     followupList.replaceChildren();
     followups.hidden = groups.length === 0;
@@ -232,6 +236,7 @@ if (root) {
   }
 
   async function navigate(selection: NavigationAction, topicId = "") {
+    status.classList.remove("sr-only");
     rag.reset();
     const current = ++searchSequence;
     rejectPending();
@@ -253,6 +258,7 @@ if (root) {
   }
 
   async function search() {
+    status.classList.remove("sr-only");
     rag.reset();
     const current = ++searchSequence;
     rejectPending();

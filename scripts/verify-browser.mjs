@@ -228,6 +228,8 @@ async function verifyAsk() {
     await page.locator("#ask-form").waitFor({ state: "visible" });
 
     await submitQuestion(page, "What is Anant's private phone number?");
+    assert.equal(await page.locator("#ask-result-heading").innerText(), "No matching evidence");
+    assert(await page.locator(".ask-results-return").isHidden(), "Empty results must not offer a return to nonexistent evidence");
     assert.match(await page.locator("#ask-result-summary").innerText(), /No supported match/i);
     assert.match(await page.locator("#ask-result-summary").innerText(), /public professional information/i);
     assert(await page.locator("#ask-explore-meaning").isHidden(), "Private questions must not encourage a model download");

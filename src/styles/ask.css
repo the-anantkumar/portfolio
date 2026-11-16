@@ -449,7 +449,7 @@
   color: #dfbde2;
   font-size: 13px;
 }
-#ask-app:has(#ask-results:not([hidden])) .ask-results-return {
+#ask-app:has(#ask-results:not([hidden]):not(.ask-no-match)) .ask-results-return {
   display: inline-flex;
 }
 .ask-enhancement {
