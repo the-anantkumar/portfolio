@@ -4,6 +4,8 @@ import type { CollectionEntry } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
 import { withBase } from "../../lib/paths";
+import "../../styles/case-study.css";
+
 export async function getStaticPaths() {
   return (await getCollection("projects")).map((project) => ({
     params: { slug: project.id },
@@ -15,6 +17,7 @@ interface Props {
 }
 const { project } = Astro.props;
 const { Content, headings } = await render(project);
+const sections = headings.filter((heading) => heading.depth === 2);
 const projects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order,
 );
@@ -22,6 +25,11 @@ const next =
   projects[
     (projects.findIndex((p) => p.id === project.id) + 1) % projects.length
   ];
+const scopeNotes: Record<string, string> = {
+  "nielsen-data-systems": "Employer work within a wider team. Results below apply to the evaluated runs and checked data.",
+  trlr: "Founder work. The application is deployed; prediction superiority remains unvalidated.",
+  portfolio: "Built: public-source search and guided navigation. Experimental: local AI selection of original passages.",
+};
 ---
 
 <Base
@@ -29,57 +37,71 @@ const next =
   description={project.data.summary}
 >
   <article class="case wrap">
-    <a class="back-link" href={withBase("#work")}>← All selected work</a>
-    <div class="case-header">
-      <span class="eyebrow">{project.data.label}</span><h1>
-        {project.data.title}
-      </h1><p class="case-summary">{project.data.summary}</p><div
-        class="case-facts"
-      >
-        <div><span>ROLE</span><p>{project.data.role}</p></div><div>
-          <span>BUILT WITH</span><p>{project.data.stack.join(" · ")}</p>
-        </div>{
+    <a class="back-link" href={withBase("#work")}><span aria-hidden="true">←</span> All selected work</a>
+    <header class="case-header">
+      <div class="case-introduction">
+        <span class="eyebrow">{project.data.label}</span>
+        <h1>{project.data.title}</h1>
+        <p class="case-summary">{project.data.summary}</p>
+        {scopeNotes[project.id] && <p class="case-scope">{scopeNotes[project.id]}</p>}
+      </div>
+      <dl class="case-facts">
+        <div>
+          <dt>My role</dt>
+          <dd>{project.data.role}</dd>
+        </div>
+        <div>
+          <dt>Toolkit</dt>
+          <dd>{project.data.stack.join(" · ")}</dd>
+        </div>
+        {
           project.data.links.length > 0 && (
             <div>
-              <span>EXPLORE</span>
-              {project.data.links.map((link) => (
-                <p>
-                  <a class="text-link" href={link.url}>
-                    {link.label} ↗
-                  </a>
-                </p>
-              ))}
+              <dt>Product</dt>
+              <dd class="case-product-links">
+                {project.data.links.map((link) => (
+                  <a href={link.url}>{link.label} <span aria-hidden="true">↗</span></a>
+                ))}
+              </dd>
             </div>
           )
         }
-      </div>
-    </div>
-    {
-      project.data.highlights.length > 0 && (
-        <div class="case-highlights" aria-label="Selected validation results">
-          {project.data.highlights.map((highlight) => (
-            <div>
-              <strong>{highlight.value}</strong>
-              <span>{highlight.label}</span>
-            </div>
-          ))}
-        </div>
-      )
-    }
-    <ProjectVisual kind={project.data.visual} />
+        {project.id === "portfolio" && (
+          <div>
+            <dt>Try it</dt>
+            <dd><a href={withBase("ask/")}>Ask about my work <span aria-hidden="true">↗</span></a></dd>
+          </div>
+        )}
+      </dl>
+    </header>
+
+    <details class="case-mobile-contents">
+      <summary>In this case study <span aria-hidden="true">+</span></summary>
+      <nav aria-label="In this case study">
+        {sections.map((section) => <a href={`#${section.slug}`}>{section.text}</a>)}
+      </nav>
+    </details>
+
     <div class="case-body">
-      <nav class="case-toc" aria-label="In this case study">
-        <span class="eyebrow">IN THIS CASE STUDY</span>{
-          headings
-            .filter((h) => h.depth === 2)
-            .map((h) => <a href={`#${h.slug}`}>{h.text}</a>)
-        }
-      </nav><div class="prose case-content"><Content /></div>
+      <aside class="case-rail" aria-label="Case study overview">
+        <ProjectVisual kind={project.data.visual} />
+        <nav class="case-toc" aria-label="In this case study">
+          <span class="eyebrow">On this page</span>
+          {sections.map((section) => <a href={`#${section.slug}`}>{section.text}</a>)}
+        </nav>
+      </aside>
+      <div class="prose case-content"><Content /></div>
     </div>
-    <a class="next-project" href={withBase(`projects/${next.id}/`)}
-      ><span class="eyebrow">NEXT CASE STUDY</span><span
-        >{next.data.title} <span aria-hidden="true">↗</span></span
-      ></a
-    >
+
+    <footer class="case-footer">
+      <a class="next-project" href={withBase(`projects/${next.id}/`)}>
+        <span class="eyebrow">Next case study</span>
+        <span>{next.data.title} <span aria-hidden="true">↗</span></span>
+      </a>
+      <div class="case-ask">
+        <p>Have a specific question?</p>
+        <a href={withBase("ask/")}>Find the relevant evidence in Ask <span aria-hidden="true">↗</span></a>
+      </div>
+    </footer>
   </article>
 </Base>
