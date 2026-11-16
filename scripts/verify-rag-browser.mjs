@@ -55,7 +55,7 @@ const mockWorker = `let mode='valid';self.onmessage=({data})=>{
  if(data.type==='load'){setTimeout(()=>postMessage({type:'ready'}),150);return;}
  if(data.type==='generate'){const current=mode;setTimeout(()=>{
   if(current==='error'){postMessage({type:'error',id:data.id,message:'fixture failure'});return;}
-  postMessage({type:'answer',id:data.id,raw:current==='malformed'?'{"sources":[99],"html":"<script>bad</script>"}':current==='abstain'?'{"sources":[]}':'{"sources":[1]}'});
+  postMessage({type:'answer',id:data.id,raw:current==='malformed'?'{"sources":[99],"html":"<script>bad</script>"}':current==='abstain'?'{"sources":[]}':current==='multiple'?'{"sources":[1,2]}':'{"sources":[1]}'});
  },current==='slow'?700:60);}
 };`;
 try {
@@ -86,6 +86,15 @@ try {
     assert.deepEqual(axe.violations.map(({ id, nodes }) => ({ id, targets: nodes.map((node) => node.target) })), [], `${width}px RAG accessibility`);
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px overflow`);
     await page.screenshot({ path: `artifacts/rag/screenshots/answer-${width}.png`, fullPage: true });
+    await submit(page, "What did the Nielsen parallel validation run establish?");
+    await page.evaluate(() => window.__ragWorkers.at(-1).postMessage({ type: "test-mode", mode: "multiple" }));
+    await page.locator("#rag-generate").click();
+    await page.locator("#rag-answer-content details summary").waitFor();
+    assert(await page.locator("#rag-answer-content details blockquote").isHidden());
+    await page.locator("#rag-answer-content details summary").focus(); await page.keyboard.press("Enter");
+    assert(await page.locator("#rag-answer-content details blockquote").isVisible());
+    await assertQuotes(page);
+
 
     await page.evaluate(() => window.__ragWorkers.at(-1).postMessage({ type: "test-mode", mode: "malformed" }));
     await page.locator("#rag-generate").click();
