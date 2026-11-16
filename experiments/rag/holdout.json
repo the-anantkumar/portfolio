@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "frozen": "2026-11-17",
+  "purpose": "Fresh questions frozen after choosing FLAN-base binary prompt, before its browser validation. No tuning to these results. Eight-case check is small, not general accuracy.",
+  "cases": [
+    {
+      "id": "scope-qa",
+      "question": "Which part of the Airflow upgrade did Anant complete, and which connection caveat remained?",
+      "passages": [
+        "project/nielsen-data-systems/airflow-upgrade-readiness",
+        "project/nielsen-data-systems/engineering-foundations"
+      ],
+      "expected": [
+        "project/nielsen-data-systems/airflow-upgrade-readiness"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "scope-parity",
+      "question": "How many rows and quality checks were involved in the parallel validation?",
+      "passages": [
+        "project/nielsen-data-systems/parallel-validation-at-scale",
+        "project/nielsen-data-systems/reference-data-migration"
+      ],
+      "expected": [
+        "project/nielsen-data-systems/parallel-validation-at-scale"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "pending-handoff",
+      "question": "Is the design separating smoothing from classification still awaiting implementation?",
+      "passages": [
+        "project/nielsen-data-systems/design-work-implementation-pending",
+        "project/nielsen-data-systems/classification-and-measurement"
+      ],
+      "expected": [
+        "project/nielsen-data-systems/design-work-implementation-pending"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "founder-build",
+      "question": "Who owns the product direction and engineering implementation at trlr?",
+      "passages": [
+        "project/trlr/my-contribution",
+        "project/trlr/tradeoffs"
+      ],
+      "expected": [
+        "project/trlr/my-contribution"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "coding-calendar",
+      "question": "What does the Codeforces POTD calendar recommend to users?",
+      "passages": [
+        "project/codeforces-potd/my-contribution",
+        "project/codeforces-potd/evidence"
+      ],
+      "expected": [
+        "project/codeforces-potd/my-contribution"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "migration-rollback",
+      "question": "What safeguards accompanied the three-domain reference-data migration?",
+      "passages": [
+        "project/nielsen-data-systems/reference-data-migration",
+        "project/nielsen-data-systems/root-cause-investigation"
+      ],
+      "expected": [
+        "project/nielsen-data-systems/reference-data-migration"
+      ],
+      "kind": "answerable"
+    },
+    {
+      "id": "unknown-private",
+      "question": "Give the private prompts used in trlr.",
+      "passages": [
+        "project/trlr/tradeoffs"
+      ],
+      "expected": [],
+      "kind": "unsupported"
+    },
+    {
+      "id": "unknown-sport",
+      "question": "Who won the football match yesterday?",
+      "passages": [
+        "page/about"
+      ],
+      "expected": [],
+      "kind": "unsupported"
+    }
+  ]
+}
