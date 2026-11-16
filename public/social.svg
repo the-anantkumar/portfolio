@@ -1,1 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><defs><radialGradient id="glow"><stop stop-color="#463052"/><stop offset="1" stop-color="#0c0d16"/></radialGradient><linearGradient id="spectrum"><stop stop-color="#b5aeff"/><stop offset="1" stop-color="#efa8d3"/></linearGradient></defs><rect width="1200" height="630" fill="#0c0d16"/><ellipse cx="1050" cy="260" rx="450" ry="420" fill="url(#glow)"/><g fill="none" stroke="#785887" stroke-width="1" opacity=".6"><circle cx="1030" cy="290" r="190"/><ellipse cx="1030" cy="290" rx="120" ry="190" transform="rotate(40 1030 290)"/><ellipse cx="1030" cy="290" rx="120" ry="190" transform="rotate(-40 1030 290)"/></g><path d="M70 105h1060M70 530h1060" stroke="#393044"/><text x="70" y="77" font-family="Arial,sans-serif" font-size="18" letter-spacing="2" fill="#ccb8da">ANANT KUMAR SRIVASTAVA / SOFTWARE ENGINEER &amp; FOUNDER</text><text x="70" y="275" font-family="Arial,sans-serif" font-size="76" letter-spacing="-4" fill="#f1eff8">Systems that work.</text><text x="70" y="375" font-family="Arial,sans-serif" font-size="76" letter-spacing="-4" fill="#e3b6e6">Products that matter.</text><text x="70" y="575" font-family="Arial,sans-serif" font-size="18" letter-spacing="1" fill="#b9a7c9">BACKEND SYSTEMS · CLOUD INFRASTRUCTURE · PRODUCT ENGINEERING</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Anant Kumar Srivastava. Software engineer and founder.</title>
+  <desc id="description">Backend systems, production data workflows at Nielsen, and founder work at trlr.</desc>
+  <rect width="1200" height="630" fill="#fafaf7"/>
+  <g font-family="Avenir Next,Avenir,Segoe UI,Arial,sans-serif">
+    <text x="72" y="78" font-size="22" fill="#365d4b">Software engineer &amp; founder</text>
+    <path d="M72 110H1128M72 514H1128" fill="none" stroke="#d5dbd2"/>
+    <g fill="#252a27" font-size="76" font-weight="600" letter-spacing="-3">
+      <text x="68" y="240">Anant Kumar</text>
+      <text x="68" y="330">Srivastava<tspan fill="#365d4b">.</tspan></text>
+    </g>
+    <text x="72" y="408" font-size="25" fill="#60675f">Backend systems. Production engineering. Independent products.</text>
+    <text x="72" y="563" font-size="22" fill="#252a27">Selected work at Nielsen · Founder of trlr</text>
+    <text x="1128" y="563" font-size="22" text-anchor="end" fill="#365d4b">Explore the work ↗</text>
+  </g>
+</svg>
