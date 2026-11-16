@@ -38,7 +38,7 @@ npm run preview
 - `src/scripts/rag.ts` and `rag-worker.ts`: separate answer-model opt-in, local generation, cancellation, cache removal, and evidence fallback.
 - `src/lib/rag-config.mjs`: the pinned FLAN-T5-base configuration and context limits.
 - `src/data/search-vectors.json`: precomputed public passage embeddings, regenerated only by a maintainer.
-- `src/components/ProjectVisual.astro`: original CSS illustrations; these are conceptual artwork, not screenshots or user records.
+- `src/components/ProjectVisual.astro`: accessible workflow diagrams derived from public project content; these are explanatory outlines, not screenshots or user records.
 - `docs/architecture.md`: stack decisions, delivery boundaries, and the search architecture.
 - `docs/portfolio-navigator-prd.md`: product scope, acceptance criteria, and implementation evidence for the navigator.
 - `docs/ai-search-learning.md`: a hands-on introduction to embeddings, retrieval, evaluation, and later generated answers.
@@ -127,7 +127,7 @@ The November 15 iteration resolves the four initial hybrid-search misses. `TEST_
 
 ## Portfolio navigator
 
-The `/ask/` experience now has six topic controls, compact source cards, expandable full evidence, and contextual follow-up questions. Topic navigation works without a model. Card summaries come from the same typed public collections as the rest of the portfolio. Nielsen experience and case-study passages share a card while keeping employer work separate from founder work.
+The `/ask/` experience now has three concise example questions, six topics behind a native disclosure, source cards with the first complete passage visible, expandable full evidence, and contextual follow-up questions. Topic navigation works without a model. Card summaries come from the same typed public collections as the rest of the portfolio. Nielsen experience and case-study passages share a card while keeping employer work separate from founder work.
 
 Guided questions select explicit public sources. Free-text questions continue to use word matching and optional on-device semantic retrieval. The model disclosure starts collapsed; opening it does not start a download. The November 17 development adds an experimental extractive answer layer with its own opt-in. Open-ended conversational memory is not implemented.
 
@@ -135,7 +135,7 @@ The [PRD](docs/portfolio-navigator-prd.md) records the reviewed scope and accept
 
 ## Revisit what was built
 
-Start with [the learning tracker](docs/learning-tracker.md). After a site build, run `npm run learn` and open `http://127.0.0.1:4382/`. The local lab maps 17 components to code, compares six prepared word/hybrid search traces, and explains the first generation candidate's failures. It downloads no model and is never copied into `dist/`. `npm run learn:build` creates an offline standalone HTML file under ignored `artifacts/learning/`; `npm run test:learn` checks mobile layouts, keyboard focus, local review state, offline operation, and accessibility in Chromium.
+Start with [the learning tracker](docs/learning-tracker.md). After a site build, run `npm run learn` and open `http://127.0.0.1:4382/`. The local lab maps 18 components to code, compares six prepared word/hybrid search traces, and explains the first generation candidate's failures. It downloads no model and is never copied into `dist/`. `npm run learn:build` creates an offline standalone HTML file under ignored `artifacts/learning/`; `npm run test:learn` checks mobile layouts, keyboard focus, local review state, offline operation, and accessibility in Chromium.
 
 Your reviewed-component markers are local browser state and begin unchecked. Implementation status does not claim personal understanding. The [first generation experiment](experiments/generation/README.md) failed its eight-case native and browser screen, so that candidate was rejected. The current RAG mode preserves original quotations instead of accepting generated factual prose. Its model downloads are explicit developer commands, separate from normal builds and tests.
 
@@ -163,3 +163,11 @@ The native supplied-evidence screening matched the exact expected source set on 
 Source identity and exact text are enforced; relevance and completeness still require evaluation. The [RAG contract](docs/rag-prd.md), [architecture](docs/architecture.md), and [learning guide](docs/ai-search-learning.md) explain those boundaries. Production release remains a separate checkpoint.
 
 The final browser selection measurement is **14/20 screening cases and 4/8 fresh cases**, compared with native CPU results of 18/20 and 6/8. The experimental pipeline works end to end, but model-quality promotion remains pending. See [the reviewed RAG record](experiments/rag/README.md) for misses, cache measurements, and reproduction commands.
+
+## Visual review and development handoff
+
+The 17 November polish keeps the spectral identity while emphasizing engineering evidence. Nielsen is the featured employer case; independent products are compact supporting projects. Case studies use readable prose, explicit role/scope notes, and accurate workflow diagrams. The GitHub calendar supports the story after experience and biography.
+
+Ask puts the question and original evidence first. Its first complete matching passage is immediately visible with an exact source link; all matching context remains available. Model choices stay separate and explicit after the results, with cancellation and fallback unchanged. The answer selector remains experimental.
+
+See [the design review](docs/design-polish.md) for before/after evidence, implementation decisions, and the screenshot command. With the production preview running, `node scripts/capture-design.mjs after` captures desktop/mobile routes and Ask states without enabling a model. Artifacts stay local and ignored. [Verification](docs/verification.md) and [checkpoint history](docs/release-checkpoints.md) record what passed and how to revisit each phase. Changes remain on `pilot`; release PR CI, merge, and exact-commit hosted verification remain launch steps.

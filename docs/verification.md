@@ -182,3 +182,50 @@ The full local extractive RAG path is implemented on `pilot`: typed question →
 - Earlier Qwen prose failed 0/8; final Qwen source selection scored 6/20 in both native/browser runs. FLAN-small reached 13/20 native. The safe [result summary](../experiments/rag/results-summary.json) records the chosen configuration and reviewed outcomes; raw invented prose and caches stay ignored. FLAN remains experimental, with production model acceptance pending.
 - Build budgets pass: ordinary output 187,051 bytes; homepage initial 12,305 gzip; Ask initial 31,238 gzip; bootstrap 10,949 gzip; combined optional JS 281,469 gzip across independently budgeted search/answer workers (each 250 KB ceiling, combined 500 KB). WASM remains 14,264,838 bytes, vectors 138,007 bytes, complete output 16,026,789 bytes within 17 MB. Answer weights remain off-site until explicit opt-in, with about 300 MB disclosed first-use transfer.
 - The learning lab maps 17 components and replays 28 safe saved RAG decisions alongside six retrieval examples. Its offline/mobile/keyboard/owner-review/no-JavaScript-link/axe checks pass. Screenshots in ignored `artifacts/rag/screenshots/` and `artifacts/learning/screenshots/` were visually inspected. No production merge or deployment occurred. Remote PR CI, physical-phone inference, model-quality promotion, and exact-commit hosted verification remain pending.
+
+## Editorial portfolio and evidence-first Ask, 17 November 2026
+
+Scope: presentation, content hierarchy, existing interaction states, and a public heading correction on `pilot`. No retrieval algorithm, model pin, inference service, deployment workflow, or contact boundary changed. Model-quality promotion remains a separate decision.
+
+The screenshot-based review and implementation map are in [design-polish.md](design-polish.md). The in-app browser was unavailable; the repository's installed Chromium setup exercised the actual production-path build. Before captures preceded the source rebuild. Final after captures cover 1440 × 1000, 390 × 844, and 320 × 844. Full-page captures explicitly load the lazy calendar first. The before manifest records the replacement of initially blank full-page calendar captures with accepted images from the earlier browser suite.
+
+Visitor journey checked:
+
+1. Homepage introduction and featured Nielsen work, compact founder/independent projects, Ask entry, and supporting GitHub calendar.
+2. All four case studies, scope/role attribution, public workflow diagrams, desktop contents links, mobile disclosure, and original section anchors.
+3. Ask entry with three examples, native topic disclosure, immediate complete evidence, exact source navigation, full context, and guided follow-ups.
+4. No-match feedback, keyboard focus, independent model disclosures, loading/cancellation/failure fallback, stale response rejection, and cache-removal behavior.
+
+The question field moved from 611 to 425 px down the desktop page and from 471 to 375 px on mobile in matched capture viewports. These are layout measurements, not user-study or conversion results. The desktop/mobile screenshots were inspected; 320 px checks verify wrapping without horizontal overflow. No physical phone was used.
+
+Commands and outcomes:
+
+- Node 24.22.2, `npm run check`: 54 files, zero errors, warnings, or hints.
+- `SITE_URL=https://the-anantkumar.github.io SITE_BASE=/portfolio npm run build`: all 7 routes, internal links/anchors, document policies, punctuation, publication boundaries, committed-vector integrity, and budgets passed. Ordinary pages remain script-free.
+- `npm run index:search`: regenerated 38 public passage vectors after changing “Future search” to “Search today and next.” The old fragment remains an alias, and the guided selection and evaluation reference use the current source ID. Query-vector files remained unchanged.
+- `npm test`: calendar refresh, word/hybrid retrieval suites, navigator, generation contract, RAG source validation, and built-output gates passed. The lexical baseline retains its documented misses; passing the gate is not perfect lexical recall.
+- `npm run test:browser`: routes at 1440/390/320 px, no-JavaScript browsing, case contents keyboard traversal, reduced motion, pause control, calendar, 404, axe checks, first-screen form, visible complete source previews, source navigation, topics/follow-ups, query privacy, lazy model loading, cancellation, and recovery passed.
+- `npm run test:rag:browser`: model-independent answer lifecycle, exact quotations/citations, cancellation, stale work, errors, and scoped cache removal passed. The FLAN model was not re-benchmarked by this design pass.
+- `TEST_AI_MODEL=1 npm run test:browser`: actual pinned embedding model passed all 90 labeled questions in browser WASM. Search set: 49/49 answerable, 3/3 scope, 22/22 unsupported; reserved set: 8/8 answerable, 2/2 scope, 6/6 unsupported. No reported misses. Chromium desktop with a 390 px viewport, not a physical-phone measurement.
+- Actual embedding run: 2,884 ms model load, 115 ms first query, 54 ms warm query, 314 ms cached reload, 37,619,090 cold model response-body bytes. These are one local run, not performance guarantees.
+- `npm run test:learn`: 18 components, six current retrieval traces, all 28 historical RAG cases, exact misses, owner-controlled review markers, keyboard, offline/no-JavaScript path, three viewports, and axe passed.
+- `git diff --check`: clean.
+
+Final production-path build budget results:
+
+| Artifact | Measured bytes | Existing limit |
+| --- | ---: | ---: |
+| Homepage initial compressed HTML + CSS | 10,330 | 300,000 |
+| Ask initial compressed HTML + CSS + bootstrap + corpus | 28,596 | 60,000 |
+| Ask bootstrap, compressed | 11,089 | 20,000 |
+| Ordinary output | 190,298 | 300,000 |
+| Combined optional model runtime, compressed | 281,469 | 500,000 |
+| Self-hosted WASM | 14,264,838 | 16,000,000 |
+| Public vectors | 138,018 | 200,000 |
+| Complete output | 16,033,614 | 17,000,000 |
+
+The homepage initial transfer fell from 12,305 to 10,330 compressed bytes. No new dependencies, remote fonts, image service, backend, analytics, or paid resource were introduced. Motion now uses one 520 px ambient glow and one slow decorative ring; pause/reduced-motion checks verify their controls, not a device-independent frame-rate guarantee.
+
+Historical RAG replay now reads `experiments/rag/corpus-2026-11-17.json`, whose hash equals the original recorded experiment hash. Current search traces still validate against the current corpus and vectors. The earlier measured RAG results remain unchanged: browser 14/20 screening and 4/8 fresh cases, with model acceptance and physical-phone inference pending.
+
+Local screenshot manifests and logs are under ignored `artifacts/design-polish/`. They are not published with the portfolio. Release remains pending: PR CI, owner-approved merge to `main`, and exact-commit hosted verification. No production deployment was performed.
