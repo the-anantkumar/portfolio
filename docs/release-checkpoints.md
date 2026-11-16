@@ -121,3 +121,42 @@ The tag also contains this handoff and its dated verification entry. These are o
 To revisit, use Node 24, run `npm run build`, then `npm run learn`, and open the printed loopback URL. `npm run learn:build` generates the standalone offline document under ignored `artifacts/learning/`. Replay is prepared retrieval evidence, not live inference. Your review markers belong only to your local browser and start unchecked.
 
 Next work: retain the fast evidence navigator, measure the embedding model on a physical phone, and freeze fresh evaluation questions before any further generation candidate or prompt tuning. A candidate must preserve source meaning and pass manual citation/scope review before any visitor integration is proposed. A completed benchmark command does not imply acceptance. Production release still needs PR CI and exact-commit hosted verification.
+
+## End-to-end experimental RAG, 17 November 2026
+
+Final annotated tag: `checkpoint/rag-experimental-v1-2026-11-17`. Branch: `pilot`. The minimal frontend and complete local extractive RAG implementation are built and checked. Model quality remains experimental, with measured misses preserved in [the safe RAG record](../experiments/rag/README.md). No merge to `main` or deployment occurred.
+
+Earlier boundaries are `checkpoint/rag-contract-v1-2026-11-17` (frozen contract/questions) and `checkpoint/rag-pipeline-v1-2026-11-17` (integrated FLAN pipeline before final verification). Each phase changes one to three files. Intermediate commits are dependent review/backtracking boundaries, not separately deployable releases. Prior tags and history remain intact.
+
+| Commit | Concern | Files |
+| --- | --- | --- |
+| `f840454` | docs: freeze the end-to-end RAG contract and fresh screening cases | 2 |
+| `fa709fe` | feat: validate extractive RAG context and source-only answers | 3 |
+| `e88f9bd` | experiment: screen a pinned stronger model for grounded prose | 3 |
+| `bcf8faa` | experiment: measure structured source selection on frozen questions | 1 |
+| `ce1e0ad` | experiment: simplify the selection prompt while preserving rejection checks | 2 |
+| `1b64ea4` | feat: connect local RAG generation cancellation and canonical citations | 3 |
+| `f89013b` | style: unify the navigator into a minimal spectral reading experience | 2 |
+| `8fa2679` | docs: preserve pinned answer model provenance and upstream license | 2 |
+| `c587cd7` | test: enforce separate answer runtime and hosted notice budgets | 2 |
+| `219b264` | fix: keep answer controls quiet and make cache removal race safe | 2 |
+| `f2cd924` | docs: map the complete RAG pipeline and its learning exercises | 3 |
+| `3c0e676` | test: freeze fresh RAG questions before browser candidate validation | 1 |
+| `7c73f41` | fix: abstain when a comparison omits an ownership group | 3 |
+| `6649666` | content: describe the experimental answer path and regenerate public vectors | 2 |
+| `24e12d7` | feat: pin the smaller FLAN answer selector and binary prompt | 3 |
+| `0dcf173` | feat: generate bounded relevance decisions from complete source passages | 2 |
+| `46e3b46` | fix: scope comparison completeness to the roles in the question | 3 |
+| `9bd746f` | experiment: retain the rejected Qwen configuration for reproduction | 2 |
+| `e0ffb77` | docs: disclose FLAN download cost and experimental source selection | 2 |
+| `91d7def` | test: cover RAG lifecycle source integrity and actual browser inference | 3 |
+| `1e9e07f` | docs: record measured RAG quality and remaining acceptance limits | 3 |
+| `789921d` | docs: teach extractive answers caching and native-browser differences | 3 |
+| `46d73c6` | style: disclose additional answer sources without crowding the page | 2 |
+| `585586d` | feat: replay every measured RAG decision in the offline learning lab | 3 |
+| `25238f4` | test: verify keyboard access to additional cited sources | 1 |
+| `2029717` | docs: distinguish completed RAG engineering from model acceptance | 3 |
+
+The final tag also includes this checkpoint inventory. To revisit, use Node 24, build the production path, and run `npm run preview` for `/portfolio/ask/` or `npm run learn` for the offline study map. The lab has 17 components and 28 saved RAG examples; review markers remain owner-controlled. `npm test`, `npm run test:browser`, `npm run test:rag:browser`, and `npm run test:learn` avoid external model downloads. `TEST_RAG_MODEL=1 npm run test:rag:browser` explicitly exercises actual inference.
+
+Completed: interface/lifecycle/source-integrity checks, pinned model integration, supplied-source native/browser measurement, actual retrieval-to-answer UI run, caching/cancellation measurement, documentation, learning replay, and phased commits. Outstanding: model-quality promotion (browser 14/20 screening, 4/8 fresh), physical-phone inference, release PR CI, and exact-commit hosted verification. Do not present the experimental pipeline as production-accepted or a free-form conversational assistant.
