@@ -17,14 +17,14 @@ const formatDate = (date: string) =>
   <div class="github-panel">
     <div class="github-section-heading">
       <div>
-        <span class="eyebrow">GITHUB / @{snapshot.username}</span><h2
+        <span class="eyebrow">@{snapshot.username}</span><h2
           id="github-heading"
         >
-          A year of building.
+          On GitHub
         </h2>
       </div>
       <p>
-        My GitHub contributions,<br />right here in the portfolio.
+        A year of public contributions.
       </p>
     </div>
     <dl class="github-metrics">
@@ -41,12 +41,12 @@ const formatDate = (date: string) =>
     >
       <img
         class="heatmap"
-        src={withBase("github-heatmap.svg?palette=teal-lime")}
+        src={withBase("github-heatmap.svg?palette=editorial-green")}
         width="725"
         height="125"
         loading="lazy"
         decoding="async"
-        alt={`${snapshot.total} contributions from ${formatDate(snapshot.from)} to ${formatDate(snapshot.to)}. Active days progress from teal through mint to lime as activity increases. Outlined slate cells indicate no contributions. Exact daily counts are available in the CSV download.`}
+        alt={`${snapshot.total} public contributions from ${formatDate(snapshot.from)} to ${formatDate(snapshot.to)}. Green cells become darker as activity increases. Outlined pale cells indicate no contributions. Exact daily counts are available in the CSV download.`}
       />
     </div>
     <div class="heatmap-foot">
