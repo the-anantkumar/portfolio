@@ -159,6 +159,14 @@ if (root) {
       if (!template) throw new Error("Public source card missing");
       const card = template.content.cloneNode(true) as DocumentFragment;
       const evidence = card.querySelector<HTMLElement>(".ask-card-evidence")!;
+      // A complete original passage gives the question an immediate, useful
+      // result. Keep every match below in the full-context disclosure as well.
+      const firstPassage = group.matches[0].passage;
+      card.querySelector(".ask-excerpt-title")!.textContent = firstPassage.title.split(": ").slice(1).join(": ") || firstPassage.title;
+      card.querySelector(".ask-excerpt")!.textContent = firstPassage.text;
+      const previewSource = card.querySelector<HTMLAnchorElement>(".ask-preview-source")!;
+      previewSource.href = firstPassage.url;
+      previewSource.setAttribute("aria-label", `Open this source: ${firstPassage.title}`);
       card.querySelector(".ask-evidence-count")!.textContent = String(group.matches.length);
       card.querySelector(".ask-matched-sections")!.textContent = `Matched: ${group.matches.map(({ passage }) => passage.title.split(": ").slice(1).join(": ") || passage.title).join(" · ")}`;
       for (const { passage } of group.matches) {
@@ -181,6 +189,7 @@ if (root) {
       fragment.append(item);
     }
     list.replaceChildren(fragment);
+    results.classList.toggle("ask-no-match", groups.length === 0);
     rag.evidence(question.value.trim(), matches.map(({ passage }) => passage));
     followupList.replaceChildren();
     followups.hidden = groups.length === 0;
@@ -214,10 +223,10 @@ if (root) {
       ? `${groups.length} ${groups.length === 1 ? "source" : "sources"} · ${matches.length} ${matches.length === 1 ? "passage" : "passages"} · ${guided ? "Guided exploration" : semantic ? "Meaning + word matching" : "Word matching"}`
       : `No supported match. ${noMatch}`;
     status.textContent = matches.length
-      ? `${groups.length} ${groups.length === 1 ? "source is" : "sources are"} ready below${guided ? " from the selected topic" : `, using ${semantic ? "meaning and word matching" : "word matching"}`}. Expand matched evidence to read the original passages.`
+      ? `${groups.length} ${groups.length === 1 ? "source is" : "sources are"} ready below${guided ? " from the selected topic" : `, using ${semantic ? "meaning and word matching" : "word matching"}`}. Original evidence is ready to read.`
       : `No supported match. ${noMatch}`;
-    // Results follow optional model controls. Bring them into view immediately
-    // after a deliberate search, including for keyboard and phone visitors.
+    // Bring new evidence into view after a deliberate search, including for
+    // keyboard and phone visitors. Optional model controls remain secondary.
     root!.querySelector<HTMLElement>("#ask-result-heading")!.focus({ preventScroll: true });
     results.scrollIntoView({ block: "start", behavior: "instant" });
   }
@@ -415,4 +424,5 @@ if (root) {
   });
   form.hidden = false;
   enhancement.hidden = false;
+  root.querySelector<HTMLElement>("#ask-tools")!.hidden = false;
 }
