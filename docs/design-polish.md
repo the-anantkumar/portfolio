@@ -1,65 +1,86 @@
-# Visual and UX polish, 17 November 2026
+# Minimal editorial direction, 17 November 2026
 
-Development branch: `pilot`. This pass refines presentation and the existing visitor journey. It does not promote the experimental answer model or deploy the site.
+Development branch: `pilot`. This is the current visual brief. It supersedes the earlier instruction to retain the dark spectral identity, lavender accent, prism, and decorative motion. The previous pass remains available at `checkpoint/design-polish-v1-2026-11-17`.
 
 ## Direction
 
-Keep the dark spectral identity, lavender accent, and prism illustration. Use a stronger editorial hierarchy: a clear introduction, one featured engineering case, compact independent projects, and supporting experience and activity. Shared typography, spacing, links, and focus states connect the pages. The prism is decorative illustration; project visuals are explicitly described public workflow diagrams, never product screenshots.
+Use a continuous near-white canvas, charcoal text, and one restrained green accent. The portfolio should feel personal, readable, and deliberately composed. Identity, useful work, and original evidence carry the presentation. Do not restore glows, rings, prism imagery, gradients, decorative animation, or repeated framed panels.
 
-The first screen connects the introduction to Anant's Nielsen validation work: approximately 7 million rows across 28 checks in one parallel run, with a direct source link. Employer contributions remain attributed to work within a wider team. trlr remains founder work with unvalidated prediction superiority.
+The references inform composition rather than exact styling:
 
-## Screenshot-based review
+- [Studio Plato](https://www.studioplato.co/): close grouping of identity, positioning, project context, and the route into the work. The portfolio does not adopt the full-screen carousel.
+- [Tom de Koning](https://www.tomdekoning.work/): shared gutters, confident identity, fine rules, and open rows. Keep this site's reading scale; do not import the reference's oversized masthead or portrait introduction.
+- [Awwwards minimal](https://www.awwwards.com/websites/minimal/) and [portfolio](https://www.awwwards.com/websites/portfolio/): review composition principles, not effects or awards as a design requirement. The galleries contain varied approaches, not one mandatory style.
 
-The in-app browser was unavailable. The repository's Chromium test setup captured and exercised the actual production-path build. Before images were taken before source edits were built, at 1440 × 1000 and 390 × 844. The initial capture exposed a lazy-image issue in full-page screenshots; those blank captures were rejected and replaced with the already captured browser-suite images showing the loaded calendar. The capture manifest records this provenance. The repeatable capture now decodes lazy images before accepting them.
+Actual desktop screenshots of all four references informed the direction. Plato's mobile splash and unloaded lower gallery thumbnails were not used as visual evidence. Reference captures remain in ignored `artifacts/design-polish/minimal-references/`.
 
-1. **Homepage → selected work: improved.** Before: three similarly large project rows, decorative product substitutes, and a large calendar before experience. After: Nielsen is the featured employer case; trlr, Codeforces, and the portfolio/search project use concise supporting rows. The calendar sits after experience and biography. Ask has a first-screen link and a dedicated invitation.
-2. **Case study → original context: improved.** Before: tall facts, metrics, and decorative visuals delay the body. After: compact facts, a clear scope note where needed, readable prose, and an explanatory margin diagram. Desktop contents links and a native mobile contents disclosure preserve navigation without JavaScript. All existing source qualifications remain.
-3. **Ask → question: improved.** Before: a large introduction, six topics, three long examples, and model controls compete. After: compact introduction, three short examples, optional topic disclosure, and model controls following results. The question field starts at 425 px rather than 611 px on desktop and 375 px rather than 471 px on mobile in the captured viewports.
-4. **Question → evidence → source: improved.** Before: generic card summaries are visible while the matched source is collapsed. After: the complete first matched passage is visible with its exact source link above it. The full matched set remains in a native disclosure; follow-up questions continue the journey. No quotation is truncated to manufacture a stronger claim.
-5. **Optional models and fallback: retained and clarified.** Separate explicit choices disclose approximately 40 MB for meaning search and approximately 300 MB for the experimental selector. Cancellation, failure recovery, and original evidence remain available. A return-to-evidence link connects the secondary controls to results. “How this works” links to the case study and learning material.
+## Baseline problems
 
-Screenshots alone do not establish accessibility or interaction correctness. Committed browser checks also cover keyboard use, reduced motion, no JavaScript, 320 px wrapping, source navigation, opt-in boundaries, cancellation, and fallback. Physical-phone inference and general model quality are outside this presentation pass.
+The `593d093` development build was captured before editing, at 1440, 768, 390, and 320 px. The rendered review identified five priorities:
 
-## Implementation map
+1. The full name was tiny while a broad slogan dominated the first screen.
+2. A long hero, repeated introduction, and separate metric strip delayed the first project, especially on phones.
+3. Prism, rings, and glows competed with concrete engineering evidence.
+4. Repeated backgrounds, borders, and rounded panels fragmented the composition.
+5. Several font families, very small labels, and oversized case titles created an uneven reading scale.
 
-| Concern | Where to read | Why |
+## Shared design rules
+
+`src/styles/global.css` is the foundation. Use its semantic roles rather than new component-specific font scales:
+
+| Role | Token | Purpose |
 | --- | --- | --- |
-| Shared hierarchy and restrained motion | `src/styles/global.css`, `src/layouts/Base.astro` | One coherent foundation instead of accumulated overrides; one small moving glow and one slow decorative ring |
-| Homepage story | `src/pages/index.astro` | Featured employer work, independent projects, visible Ask route, supporting GitHub calendar |
-| Case studies and accurate diagrams | `src/pages/projects/[slug].astro`, `src/styles/case-study.css`, `src/components/ProjectVisual.astro` | Read the problem early; retain role, tradeoffs, scope, and original sources |
-| Question and evidence journey | `src/pages/ask.astro`, `src/styles/ask.css`, `src/scripts/ask.ts` | Full first passage visible; complete context and optional models remain accessible |
-| Repeatable visual evidence | `scripts/capture-design.mjs` | Same routes, viewports, and states, with verified lazy images and no model opt-in |
-| Historical learning evidence | `experiments/rag/corpus-2026-11-17.json`, `scripts/learning-lab.mjs` | Replay measured RAG results against their original public input, even when later editorial changes update the live corpus |
+| Main heading | `--text-main` | Page identity and case titles, fluid and comfortable |
+| Section heading | `--text-section` | Major content groups |
+| Project title | `--text-project` | Work entries and prose sections |
+| Body | `--text-body` | 17 px reading text |
+| Supporting text | `--text-support` | 14 px metadata, captions, and supporting information |
+| Controls | `--text-control` | 15 px links and controls, with comfortable tap targets |
 
-The portfolio case study's old “Future search” heading is now “Search today and next.” Its old fragment remains an alias. The guided source ID and public vectors were regenerated together. Retrieval algorithms and pinned model configurations are unchanged. The historical RAG results were not rewritten or reevaluated by this design pass.
+The single primary font stack uses Avenir Next with local sans-serif fallbacks. No font service or download is needed. Use `--space-1` through `--space-6` for relationships within and between groups; `--space-section` separates major sections. Align shared navigation, content, and footer to `.wrap`. Long prose stays near 62 characters per line.
 
-## Reproduce the review
+The accent marks links, selected states, focus, and a few meaningful details. Fine neutral rules can separate work entries. Enclosing boundaries belong around inputs and controls where they help interaction. Do not put every section or result inside a card. Supporting text must remain readable on the near-white canvas.
 
-Use Node 24 and the installed Chromium browser:
+No ambient animation is required. Small color and border transitions may provide interaction feedback. Respect reduced motion for transitions and scrolling. The old pause control is removed because its decorative animation no longer exists.
+
+## Composition and interaction
+
+- **Homepage:** lead with the full name, role, and existing factual introduction. Provide quiet links to work and Ask. Feature Nielsen's employer work with its individual/team scope and one-run validation qualification. Supporting projects are open rows; trlr remains founder work. Experience uses native disclosures, keeping contributions available without JavaScript. Biography, a light contribution calendar, and straightforward contact links complete the story.
+- **Case studies:** connect title, summary, role, scope, and original sources. Use comfortable prose and clear section navigation. Keep accurate workflow diagrams, expressed as open steps with readable labels, not fake screenshots or decorative product substitutes. Preserve every qualification and source anchor.
+- **Ask:** share the same palette, typography, and alignment. Lead with the question field and three examples; topics and separate model controls remain disclosures. Show the complete first relevant passage near its exact source link, with all matched original context still accessible. Results and follow-ups should read as evidence, not chat bubbles.
+- **Optional models:** preserve separate explicit choices, approximately 40 MB and 300 MB disclosures, cancellation, fallback, cache controls, and query privacy. The experimental answer mode selects original passages; it is not an accepted free-form conversational assistant. Technical details remain in “How this works” and the case study.
+- **Activity and sharing:** calendar data and refresh behavior are unchanged. Empty tiles are outlined, and active tiles use a sequential green scale. The favicon and authored social image follow the same identity. Re-render the JPEG from its SVG with `node scripts/render-social.mjs` using the installed Chromium browser.
+
+## Operating boundaries
+
+Keep Astro, TypeScript, typed public Markdown, and CSS. Preserve zero-cost static GitHub Pages hosting under `/portfolio/`, document CSP/referrer metadata, script-free ordinary pages, and `/ask/` as the sole interactive route. No new service, account, model API, dependency, or paid resource is part of this redesign.
+
+The public collections, retrieval algorithms, pinned models, evaluation inputs, and historical RAG results are unchanged by this pass. Employer and founder attribution remain separate. No private data, new achievement, invented metric, screenshot, client, or testimonial is introduced. The owner alone marks personal learning review progress.
+
+## Visual review and reproduction
+
+Use Node 24. Start the existing production-path preview:
 
 ```sh
-npm run check
 SITE_URL=https://the-anantkumar.github.io SITE_BASE=/portfolio npm run build
 npm run preview -- --port 4321
 ```
 
-In another terminal:
+Capture the same routes and search states:
 
 ```sh
-node scripts/capture-design.mjs after
-CAPTURE_WIDTHS=1440,390,320 node scripts/capture-design.mjs after
-npm test
-npm run test:browser
-npm run test:rag:browser
-npm run test:learn
+CAPTURE_WIDTHS=1440,768,390,320 node scripts/capture-design.mjs minimal-before
+CAPTURE_WIDTHS=1440,768,390,320 node scripts/capture-design.mjs minimal-after
 ```
 
-If Chromium is installed outside Playwright's default location, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. `TEST_URL` can override the preview address, and `TEST_SCREENSHOT_DIR` can override the artifact directory. Screenshots, capture manifests, and test logs stay in ignored `artifacts/design-polish/`.
+The original baseline is already saved; use a new phase name rather than overwriting it during later work. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` if needed. `TEST_URL` overrides the local preview address. Screenshots are ignored review artifacts and must never be copied into `dist/`.
 
-The capture records the homepage, four case studies, Ask entry, a sourced result, no-match feedback, expanded model disclosures, and keyboard focus. It does not enable either model. The default browser suites exercise model lifecycle behavior without depending on remote hosting. Separate explicit real-model checks are described in the README.
+The sequence matters: inspect the current rendered pages, implement the shared foundation and homepage, inspect that result, then propagate to case studies and Ask. The intermediate reviewed images are in `minimal-foundation/`. Final review covers homepage, all four projects, Ask entry, evidence, no-match, model disclosures, and keyboard focus at all four widths. Screenshots establish visual quality; the existing browser suites separately check keyboard, reduced motion, no JavaScript, overflow, accessibility, source integrity, opt-ins, and fallback.
+
+Run `npm run check`, the production-path build, `npm test`, `npm run test:browser`, `npm run test:rag:browser`, and `npm run test:learn`. This presentation-only pass does not require new model downloads or rebenchmarking model quality. Physical-phone inference remains unmeasured.
 
 ## Handoff
 
-Small commits isolate the shared foundation, homepage story, diagrams, case studies, Ask presentation, browser checks, editorial/index update, historical replay inputs, and learning notes. They are review/backtracking boundaries, not independently deployable releases. See `docs/release-checkpoints.md` for exact revisions and `docs/verification.md` for final measurements.
+Small commits separate the foundation, homepage, activity figure, project reading experience, Ask, social identity, checks, and study material. These are review boundaries; the complete final checkpoint is the checked implementation. See [verification](verification.md) and [release checkpoints](release-checkpoints.md) for exact results and revisions.
 
-Publishing remains a separate owner decision: review `pilot`, open or update its release PR to `main`, allow the existing public-repository CI guards to run, then merge and verify the exact hosted revision. No paid service, new backend, account, or model API is needed.
+Keep changes on `pilot`. Publishing requires the release PR and successful existing CI, followed by an authorized merge to `main` and exact-commit hosted verification. No production deployment is part of this visual redesign.
