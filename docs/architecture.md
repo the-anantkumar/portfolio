@@ -27,7 +27,8 @@ Only `src/content/pages` and `src/content/projects` feed search. `src/lib/knowle
 - Ordinary pages: zero application JavaScript and no model-related requests.
 - Initial homepage transfer: under 300 KB. Search assets have separate budgets; a larger optional model must not consume the ordinary-page budget.
 - Ask: a small controller and retrieval module load on this route. Corpus data loads for search. The model worker and inference assets load only after explicit opt-in.
-- Optional inference currently needs about 40 MB of uncompressed assets: about 23 MB of quantized weights, 14 MB of same-origin WebAssembly, and the worker/runtime files. This is an approximate artifact size, not a measured network-transfer or memory claim.
+- Optional meaning-search inference needs about 40 MB of uncompressed assets: about 23 MB of quantized weights, 14 MB of same-origin WebAssembly, and the worker/runtime files. This is an approximate artifact size, not a measured network-transfer or memory claim.
+- Experimental extractive RAG has a separate approximately 300 MB first-use disclosure and explicit opt-in. Its model files are remote pinned public assets; no server inference is used.
 - CSS: shared site styling plus Ask-only styling. System fonts require no remote requests.
 - Target Lighthouse mobile performance/accessibility: 95 or above. Lab scores are not field Core Web Vitals.
 - Build output must have working internal links, one h1 per page, no simulation states or known private markers.
@@ -35,14 +36,16 @@ Only `src/content/pages` and `src/content/projects` feed search. `src/lib/knowle
 
 Production uses `SITE_URL=https://the-anantkumar.github.io` and `SITE_BASE=/portfolio`; local builds default to `/` without a canonical origin. A shared path helper prefixes authored links and public assets. Build checks reject links outside the hosting base and validate sitemap/social URLs. Every document includes CSP and referrer metadata because GitHub Pages does not apply the optional Cloudflare `public/_headers` file. Ask alone enables its same-origin application scripts and worker. Host cache behavior and response-only security headers remain outside application control. The committed build verifier is the executable source for exact asset budgets.
 
-Local build measurements from 15 November 2026 and enforced limits are separate from real network transfer. KB and MB below use decimal bytes; gzip estimates assume compression rather than a particular host response.
+The historical local measurements below are from 15 November 2026. The November 17 RAG layer adds a separate runtime budget; rerun the build verifier for current measurements. Artifact limits remain separate from real network transfer. KB and MB below use decimal bytes; gzip estimates assume compression rather than a particular host response.
 
 | Asset group | Current measured size, rounded where marked | Enforced cap |
 | --- | --- | --- |
 | Ordinary site output, excluding optional search assets | About 187 KB | 300 KB |
 | Ask HTML, CSS, bootstrap, and corpus | About 27.4 KB gzip | 60 KB gzip |
 | Ask bootstrap JavaScript | About 7.9 KB gzip | 20 KB gzip |
-| Optional inference JavaScript | About 143 KB gzip | 250 KB gzip |
+| Search inference JavaScript | About 143 KB gzip at the November 15 checkpoint | 250 KB gzip |
+| Experimental answer worker JavaScript | Record from the current build | 250 KB gzip |
+| Combined optional inference JavaScript | Record from the current build | 500 KB gzip |
 | Same-origin WebAssembly | 14,264,838 bytes | 16 MB |
 | Public passage vectors | 138,012 bytes | 200 KB |
 | Full upstream license notices | 351,753 bytes | 400 KB |
@@ -60,7 +63,7 @@ The reviewed worker code instead restricts model requests to the pinned model ro
 
 The earlier Pagefind proposal is replaced by a small custom retriever for the current 38-passage corpus. This keeps complete passages, qualifications, and source anchors explicit, and lets word matching and semantic retrieval share an evaluation suite. It avoids maintaining two indexes with different document boundaries. Pagefind remains an option if the site grows into a large document collection; custom ranking should not become an unbounded search-platform project.
 
-The default path matches words locally. Optional AI search embeds the visitor's question, compares it with precomputed passage vectors, and combines semantic and lexical rankings. Results are related original complete passages, never generated answers or verification of a question's premise. Boundary rules and evidence thresholds reject some unsupported requests, but cannot guarantee detection of every absent fact or misleading premise. A match score ranks evidence; it is not a probability that a claim is true.
+The default path matches words locally. Optional AI search embeds the visitor's question, compares it with precomputed passage vectors, and combines semantic and lexical rankings. Retrieval returns related original complete passages and does not verify a question's premise. The separately enabled extractive RAG layer consumes this same evidence. Boundary rules and evidence thresholds reject some unsupported requests, but cannot guarantee detection of every absent fact or misleading premise. A match score ranks evidence; it is not a probability that a claim is true.
 
 Transformers.js is pinned to `4.3.2`. The public Apache-2.0 model is `Xenova/all-MiniLM-L6-v2`, revision `751bff37182d3f1213fa05d7196b954e230abad9`, using `q8` weights, mean pooling, L2 normalization, and 384-dimensional vectors. The worker runs CPU WebAssembly with one inference thread, avoiding dependence on WebGPU or cross-origin isolation headers. Model weights are downloaded from Hugging Face only after consent; runtime files are served from the portfolio. `public/ai-notices/` publishes full upstream license and third-party notice files.
 
@@ -76,7 +79,7 @@ A bounded fallback can use two leading sections from the same source when their 
 
 The 16 reserved questions were frozen in `e7be182` before ranking changes. Their first run followed a ranking freeze; results were then visible before a follow-up fix for an existing real-browser regression. They were not used to tune that fix, but final repeated results must not be presented as a fully blind independent benchmark. See [the learning and evaluation guide](ai-search-learning.md) for the initial checkpoint and current measurements.
 
-Generated answers would require a separate generative model and new factuality, citation, refusal, latency, and download tests. They are outside the current implementation. No paid inference, API key, or trlr backend is introduced.
+The November 17 extractive RAG implementation adds a separate local sequence-to-sequence model after retrieval, described below. Unrestricted model-written factual prose remains excluded. No paid inference, API key, or trlr backend is introduced.
 
 ## Portfolio navigator presentation
 
@@ -86,13 +89,40 @@ The [navigator PRD](portfolio-navigator-prd.md) defines the next layer above ret
 
 Topic actions and guided follow-ups select explicit public passages without invoking the model, including when semantic search has already been enabled. Typed questions keep the original retrieval boundary checks. A monotonically increasing request sequence prevents an older topic or typed question from overwriting a later selection. No visitor history is persisted.
 
-The model disclosure starts collapsed and contains the download explanation and enable control. No-match help opens that disclosure and focuses the control; enabling remains a separate action. Ordinary pages, the contribution refresh workflow, model revision, embedding data, and inference-runtime budgets are unchanged. The complete initial Ask HTML/CSS/controller/corpus now measures 27,431 bytes gzip, below its 60 KB cap. The browser suite checks native evidence disclosures, all topics, follow-ups, and request races in addition to the 90-question retrieval contract.
+The model disclosure starts collapsed and contains the download explanation and enable control. No-match help opens that disclosure and focuses the control; enabling remains a separate action. At the November 15 navigator checkpoint, ordinary pages, the contribution refresh workflow, embedding-model revision, and embedding data were unchanged. Initial Ask HTML/CSS/controller/corpus measured 27,431 bytes gzip, below its 60 KB cap. The November 17 integration must satisfy the same initial-page cap and its separate answer-runtime budget. The browser suite checks native evidence disclosures, all topics, follow-ups, and request races in addition to the 90-question retrieval contract.
 
 ## Local learning and generation screening
 
-`docs/learning-tracker.json` describes component boundaries, implementation status, exercises, and dated milestones. `scripts/learning-lab.mjs` validates those file references and the existing public corpus/vector hashes, then runs the actual retriever for six saved evaluation questions. A standalone HTML explorer is generated under ignored `artifacts/learning/`. Its loopback server serves only that document. The explorer has no model download or API; optional review markers contain component IDs only in the owner's browser. It is not an additional public route and is excluded from the Pages artifact.
+`docs/learning-tracker.json` describes 17 component boundaries, implementation status, exercises, and dated milestones. `scripts/learning-lab.mjs` validates those file references and the existing public corpus/vector hashes, then runs the actual retriever for six saved evaluation questions. A standalone HTML explorer is generated under ignored `artifacts/learning/`. Its loopback server serves only that document. The explorer has no model download or API; optional review markers contain component IDs only in the owner's browser. It is not an additional public route and is excluded from the Pages artifact.
 
 `experiments/generation/` isolates a pinned instruction model from the public search runtime. Native CPU and browser WASM runners supply fixed questions with complete relevant public passages, reject oversized prompts, and inspect generated citations, scope, and abstention before manual review. Raw drafts and caches stay in ignored artifacts. The first candidate failed all eight automated screening cases in both runtimes, with confirmed semantic errors, and is not integrated into `/ask/`. Routine CI tests the offline contract and the model-free learning lab; model screening requires an explicit developer command. See [the reviewed decision](../experiments/generation/results-summary.json).
+
+## Experimental extractive RAG pipeline
+
+The [RAG product contract](rag-prd.md) defines the November 17 integration on `pilot`. A minimalist refinement keeps the question, topic navigation, source evidence, and optional model controls in a single readable flow. The pipeline is complete locally, while browser, fresh-question, and device measurements determine its release status.
+
+```text
+Question → retrieve up to three complete public passages
+         → prepare an immutable question/evidence snapshot
+         → public-scope and context checks
+         → explicit answer-model opt-in
+         → per-document local yes/no generation
+         → validate source selection and companion qualifications
+         → exact original quotations with canonical citations
+         → evidence fallback on abstention, incomplete context, or failure
+```
+
+`src/lib/rag-config.mjs` pins `Xenova/flan-t5-base` q8 at revision `c6a1b98a4a35e1063d88edaceef4dc52cf3b2784`. The encoder and merged decoder files total 275,241,990 bytes. Their recorded hashes identify the reviewed files; runtime URLs are pinned to the revision. The approximately 300 MB first-use disclosure includes tokenizer/runtime overhead rather than claiming a universal transfer or memory size. The embedding model remains a separate opt-in with its original revision.
+
+`src/scripts/rag-worker.ts` uses `AutoModelForSeq2SeqLM` and `AutoTokenizer` in a single-thread CPU/WASM worker. For each complete retrieved passage, `src/lib/rag-prompt.mjs` asks whether it answers the question. The full title, attribution, text, question, and instruction must fit within 512 tokens. Generation is limited to three new tokens, and only a yes/no result is accepted. Context is never silently truncated. The worker turns positive decisions into source indices; it cannot supply the displayed factual wording.
+
+`src/lib/rag.mjs` rejects private or unsupported requests before inference, freezes public source fields, and validates the narrow selection contract. All selected indices must belong to the current request. Required trlr outcome context is preserved and repairs remain measurable. A partial employer/founder comparison abstains rather than presenting one side as complete. `src/scripts/rag.ts` constructs quotations, attributions, and links using DOM text APIs and canonical corpus values. These checks enforce provenance and text identity; they cannot prove independent factual truth, universal relevance, or every possible completeness requirement.
+
+The controller owns the request lifecycle. Editing, topic navigation, new evidence, stop, disable, and page exit invalidate stale answer work. Loading and generation have timeouts. Stop terminates the worker; retry uses the same pinned model. Cache removal targets only `portfolio-rag-flan-v1`. No questions enter URLs, network payloads, logs, or persistent storage. Only progress is shown before validation; model output never streams into the page as unchecked prose. Ordinary evidence navigation remains available throughout.
+
+The native 20-case supplied-evidence screen produced 18 exact expected source sets: 12/14 answerable and 6/6 unsupported. Five unsupported cases were blocked by application preflight, so they must not be counted as model refusals. No unrelated source was selected in that screen. Dated adoption and the employer/founder comparison remained misses; the latter is now an explicit fallback. These are development results after observing earlier candidates, not blind general accuracy. Record the actual browser and fresh-question results in [verification](verification.md) before claiming those checks complete. Physical-phone inference remains unmeasured.
+
+`npm run test:rag` covers context and source contracts. `npm run test:rag:browser` covers lifecycle/UI behavior without external model downloads. `TEST_RAG_MODEL=1 npm run test:rag:browser` explicitly exercises real browser inference, while `npm run experiment:rag` runs native screening. Published initial-page budgets and the 17 MB full-output cap remain; optional search JS and answer-worker JS each have a 250 KB gzip cap, with a 500 KB combined cap. Upstream notices remain under `public/ai-notices/`.
 
 ## References
 
@@ -111,3 +141,5 @@ A dark, continuous spectral palette replaces paper-like surfaces. Native checkbo
 ## Contribution-only GitHub section
 
 Repository cards, repository metadata, and their refresh script were removed at the owner's request. The section shows only aggregate contribution activity and a dated heatmap. The deployment workflow checks every six hours on `main`, commits only changed calendar data, validates that exact revision in Chromium, then publishes the verified Pages artifact within the same run. No visitor-triggered API fetch exists. See [the refresh runbook](github-refresh.md) for activation and failure behavior.
+
+The final browser selection measurement is **14/20 screening cases and 4/8 fresh cases**, compared with native CPU results of 18/20 and 6/8. The experimental pipeline works end to end, but model-quality promotion remains pending. See [the reviewed RAG record](../experiments/rag/README.md) for misses, cache measurements, and reproduction commands.

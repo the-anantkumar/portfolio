@@ -1,6 +1,6 @@
 # Anant Kumar Srivastava | portfolio
 
-A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership. The optional `/ask/` page finds original portfolio passages, with browser-local AI search available after an explicit download choice.
+A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership. The optional `/ask/` page finds original portfolio passages, with browser-local meaning search and an experimental extractive RAG mode available through separate explicit download choices on `pilot`.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh, search retrieval, navigator source handling, and the offline generation contract, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
+`npm run build` also verifies generated routes, internal links and anchors, publication boundaries, punctuation, deployment paths, canonical URLs, and size budgets. `npm test` tests the calendar refresh, search retrieval, navigator source handling, the offline generation contract, and RAG source validation, then reruns build checks against the existing `dist/` output. `npm run test:github` runs the refresh tests alone, offline and without installed dependencies. `npm run test:search` compares word matching and hybrid retrieval across both the original and reserved question suites using committed public evaluation vectors. `npm run test:search:holdout` runs the reserved set alone. `npx playwright install chromium` then `npm run test:browser` checks the built site in Chromium, including accessibility and mobile layouts. No test makes paid requests.
 
 ## Content and structure
 
@@ -34,13 +34,17 @@ npm run preview
 - `src/lib/navigator.mjs`: validated topic selections, source grouping, and contextual follow-ups.
 - `src/lib/embedding-config.mjs`: pinned model revision and corpus/index compatibility checks.
 - `src/scripts/ask.ts` and `embedding-worker.ts`: optional search interface and model worker.
+- `src/lib/rag.mjs` and `rag-prompt.mjs`: context boundaries, per-document relevance prompts, complete-source validation, and citation inputs.
+- `src/scripts/rag.ts` and `rag-worker.ts`: separate answer-model opt-in, local generation, cancellation, cache removal, and evidence fallback.
+- `src/lib/rag-config.mjs`: the pinned FLAN-T5-base configuration and context limits.
 - `src/data/search-vectors.json`: precomputed public passage embeddings, regenerated only by a maintainer.
 - `src/components/ProjectVisual.astro`: original CSS illustrations; these are conceptual artwork, not screenshots or user records.
 - `docs/architecture.md`: stack decisions, delivery boundaries, and the search architecture.
 - `docs/portfolio-navigator-prd.md`: product scope, acceptance criteria, and implementation evidence for the navigator.
 - `docs/ai-search-learning.md`: a hands-on introduction to embeddings, retrieval, evaluation, and later generated answers.
 - `docs/learning-tracker.md` and `.json`: component map, input/output boundaries, exercises, and dated experiment outcomes.
-- `experiments/generation/`: isolated local answer-generation screening, excluded from the published site.
+- `experiments/generation/` and `experiments/rag/`: local model comparisons and fixed evaluation cases, excluded from the published site.
+- `docs/rag-prd.md`: the end-to-end RAG product contract, quality boundaries, and checkpoint plan.
 - `docs/editorial-review.md`: the three-perspective editorial review.
 
 Set `featured: true` and a numeric `order` to feature a project. The Markdown filename is its public URL slug. Keep existing slugs stable; GitHub Pages does not support server redirect rules.
@@ -82,7 +86,7 @@ Store metrics are dated snapshots. Portfolio narratives distinguish independent 
 
 ## Ask and optional AI search
 
-Ask starts with lightweight word matching. It returns related complete public passages and source links; it does not generate answers or verify the premise of a question. Visitors can enable meaning-based search using a small embedding model that runs on their device. No model download happens before that choice. If loading fails or is canceled, word matching remains available. No-match feedback explains the public-content boundary or offers a path to the AI download disclosure. Questions about product assumptions preserve the source’s outcome and qualifications too. Without JavaScript, Ask offers useful portfolio links.
+Ask starts with lightweight word matching. It returns related complete public passages and source links. Retrieval does not verify the premise of a question. An additional experimental answer mode is described below. Visitors can enable meaning-based search using a small embedding model that runs on their device. No model download happens before that choice. If loading fails or is canceled, word matching remains available. No-match feedback explains the public-content boundary or offers a path to the AI download disclosure. Questions about product assumptions preserve the source’s outcome and qualifications too. Without JavaScript, Ask offers useful portfolio links.
 
 This needs no backend, API key, Hugging Face account, or paid inference service. The model and runtime add about 40 MB of uncompressed assets on first use; actual network transfer and load time depend on compression, cache, and device. Browser cache can be evicted. Ordinary pages never download the model or search scripts.
 
@@ -125,12 +129,37 @@ The November 15 iteration resolves the four initial hybrid-search misses. `TEST_
 
 The `/ask/` experience now has six topic controls, compact source cards, expandable full evidence, and contextual follow-up questions. Topic navigation works without a model. Card summaries come from the same typed public collections as the rest of the portfolio. Nielsen experience and case-study passages share a card while keeping employer work separate from founder work.
 
-Guided questions select explicit public sources. Free-text questions continue to use word matching and optional on-device semantic retrieval. The model disclosure starts collapsed; opening it does not start a download. There is no generated-answer or conversational-memory feature in this release.
+Guided questions select explicit public sources. Free-text questions continue to use word matching and optional on-device semantic retrieval. The model disclosure starts collapsed; opening it does not start a download. The November 17 development adds an experimental extractive answer layer with its own opt-in. Open-ended conversational memory is not implemented.
 
 The [PRD](docs/portfolio-navigator-prd.md) records the reviewed scope and acceptance criteria. `npm run test:navigator` verifies grouping, complete product evaluation evidence, source integrity, and deduplication; it is included in `npm test`. Browser checks also cover all topics, guided follow-ups, evidence disclosures, and races between topics and typed questions. The [verification record](docs/verification.md#portfolio-navigator-15-november-2026) includes the real-model run and performance measurements.
 
 ## Revisit what was built
 
-Start with [the learning tracker](docs/learning-tracker.md). After a site build, run `npm run learn` and open `http://127.0.0.1:4382/`. The local lab maps 14 components to code, compares six prepared word/hybrid search traces, and explains the first generation candidate's failures. It downloads no model and is never copied into `dist/`. `npm run learn:build` creates an offline standalone HTML file under ignored `artifacts/learning/`; `npm run test:learn` checks mobile layouts, keyboard focus, local review state, offline operation, and accessibility in Chromium.
+Start with [the learning tracker](docs/learning-tracker.md). After a site build, run `npm run learn` and open `http://127.0.0.1:4382/`. The local lab maps 17 components to code, compares six prepared word/hybrid search traces, and explains the first generation candidate's failures. It downloads no model and is never copied into `dist/`. `npm run learn:build` creates an offline standalone HTML file under ignored `artifacts/learning/`; `npm run test:learn` checks mobile layouts, keyboard focus, local review state, offline operation, and accessibility in Chromium.
 
-Your reviewed-component markers are local browser state and begin unchecked. Implementation status does not claim personal understanding. The [first generation experiment](experiments/generation/README.md) failed its eight-case native and browser screen, so generated prose is not enabled for visitors. Its model downloads are explicit developer commands, separate from normal builds and tests.
+Your reviewed-component markers are local browser state and begin unchecked. Implementation status does not claim personal understanding. The [first generation experiment](experiments/generation/README.md) failed its eight-case native and browser screen, so that candidate was rejected. The current RAG mode preserves original quotations instead of accepting generated factual prose. Its model downloads are explicit developer commands, separate from normal builds and tests.
+
+## Experimental extractive RAG on pilot
+
+The minimal Ask interface keeps evidence visible first. After a separate **Enable AI-selected answers** action, a visitor can compose an answer from the current retrieved sources. A local language model judges each complete passage, and the application renders the selected original quotations with attribution and canonical source links. This is extractive RAG: it selects evidence for an answer, rather than writing new biographical claims or maintaining an open-ended chat history.
+
+The candidate is `Xenova/flan-t5-base` q8 at revision `c6a1b98a4a35e1063d88edaceef4dc52cf3b2784`. Its encoder and decoder weights total 275,241,990 bytes. The first-use disclosure is approximately **300 MB**, including tokenizer/runtime overhead; this is a separate download from the approximately 40 MB meaning-search model. Actual transfer and working memory depend on caching and device. The model handles one complete document at a time within a checked 512-token prompt budget. Oversized context is rejected, never silently truncated.
+
+Questions and context stay in memory on the device. No account, inference API, backend, paid service, or persistent conversation is involved. Requests for pinned public model files omit credentials and referrers. Stop terminates answer work; errors and unsupported output leave original evidence available. Cache removal deletes this answer model's own cache, without deleting the embedding-model cache. A new question or topic invalidates an earlier answer.
+
+Run the separate checks using Node 24 after a site build:
+
+```sh
+npm run test:rag
+npm run test:rag:browser
+TEST_RAG_MODEL=1 npm run test:rag:browser
+npm run experiment:rag
+```
+
+The first two commands are model-free. The explicit `TEST_RAG_MODEL=1` run exercises the actual browser model; `experiment:rag` runs native CPU screening and may download the pinned weights. Default build/test workflows do not download models.
+
+The native supplied-evidence screening matched the exact expected source set on 18/20 cases: 12/14 answerable and 6/6 unsupported, with five unsupported cases rejected by application preflight before inference. It selected no unrelated sources in that small set. It missed dated adoption evidence and one side of an employer/founder comparison; incomplete comparisons now fall back to the original evidence. These are development screening results, not general answer accuracy, browser results, or physical-phone measurements. Browser and fresh-question evidence belongs in the dated [verification record](docs/verification.md) once completed. The feature remains experimental while those checks are in progress.
+
+Source identity and exact text are enforced; relevance and completeness still require evaluation. The [RAG contract](docs/rag-prd.md), [architecture](docs/architecture.md), and [learning guide](docs/ai-search-learning.md) explain those boundaries. Production release remains a separate checkpoint.
+
+The final browser selection measurement is **14/20 screening cases and 4/8 fresh cases**, compared with native CPU results of 18/20 and 6/8. The experimental pipeline works end to end, but model-quality promotion remains pending. See [the reviewed RAG record](experiments/rag/README.md) for misses, cache measurements, and reproduction commands.

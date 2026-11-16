@@ -2,7 +2,7 @@
 
 The first AI feature helps a reader find related passages in the portfolio. It does not invent a biography, write a conversational answer, or verify the premise of a question. Start with word matching, then choose **Enable meaning-based search** on `/ask/` to use an embedding model on your device.
 
-You can learn the main parts of an AI retrieval system here without a backend, API key, paid inference, or a Hugging Face account.
+You can learn the main parts of an AI retrieval system here without a backend, API key, paid inference, or a Hugging Face account. The November 17 development adds experimental extractive RAG through a separate answer-model opt-in, explained at the end of this guide.
 
 ## Follow one question
 
@@ -45,7 +45,7 @@ Our hybrid retriever combines the order of semantic matches with the order of wo
 
 ## Why there is no hosted LLM
 
-An embedding model creates vectors. A generative large language model, or LLM, writes text. The current feature uses the first kind and returns the actual source passages. That is a useful AI capability in its own right, with a much smaller download than many browser LLMs.
+An embedding model creates vectors. A generative large language model, or LLM, writes text. The original search feature uses the first kind and returns the actual source passages. The experimental answer layer uses a generative sequence-to-sequence model for a bounded relevance decision. That is a useful AI capability in its own right, with a much smaller download than many browser LLMs.
 
 Hugging Face model-file hosting and hosted model execution are different services. Official terms checked on **2026-11-07** show:
 
@@ -63,7 +63,7 @@ One practical dependency lesson: passing a model revision is not enough if a lib
 
 ## Download, privacy, and failure behavior
 
-No model or inference runtime downloads until the visitor opts in. The optional assets total about 40 MB uncompressed: about 23 MB of weights, 14 MB of WebAssembly, and worker/runtime files. Compression and cache change the bytes transferred; device speed affects inference. The current Ask HTML, CSS, bootstrap, and corpus total about 23 KB gzip before optional model use. See the [measured artifact sizes and enforced budgets](architecture.md#performance-and-delivery-contract) for the separate size categories.
+No model or inference runtime downloads until the visitor opts in. The optional meaning-search assets total about 40 MB uncompressed: about 23 MB of weights, 14 MB of WebAssembly, and worker/runtime files. Compression and cache change the bytes transferred; device speed affects inference. At the initial November 7 checkpoint, Ask HTML, CSS, bootstrap, and corpus totaled about 23 KB gzip before optional model use. See the [measured artifact sizes and enforced budgets](architecture.md#performance-and-delivery-contract) for the separate size categories.
 
 The committed browser smoke test on 2026-11-07 measured a 4,355 ms cold model load, a 131 ms first question, a 58 ms subsequent question, and a 209 ms model reload using cached weights. It reported roughly 37.6 MB of cold response bodies, excluding a worker response size that Chromium reported as zero. Keep the rounded 40 MB disclosure. These are individual samples on desktop Chromium at a 390px viewport, not physical-phone measurements or latency percentiles. A warm reload made no Hugging Face weight requests, but the local server re-served WebAssembly; cached weights do not guarantee zero network transfer.
 
@@ -150,16 +150,16 @@ The bounded fallback now considers whether the two leading sections belong to th
 
 Physical-phone testing remains outstanding. Use a secure preview of the same revision or phone-localhost USB forwarding, then record the device, browser version, initial download, cached reload, question time, cancellation, and word-matching fallback. Do not infer those results from a narrow desktop viewport.
 
-## What generated answers would add later
+## From retrieval to an answer
 
-Retrieval-augmented generation, or RAG, would add an LLM after retrieval:
+Retrieval-augmented generation, or RAG, adds model inference after evidence retrieval. A conventional version asks a model to write prose:
 
 ```text
 Question -> retrieve public passages -> give passages to an LLM
          -> generated answer with verified citations
 ```
 
-That would require a separate decision about model download or genuinely free inference, plus tests for unsupported claims, invented facts, citation correctness, prompt injection, latency, and failure fallback. A citation alone does not prove an answer is supported by its source. No RAG or LLM generation is enabled for visitors. A separate local screening experiment is recorded below.
+That would require a separate decision about model download or genuinely free inference, plus tests for unsupported claims, invented facts, citation correctness, prompt injection, latency, and failure fallback. A citation alone does not prove an answer is supported by its source. The local implementation now uses a constrained extractive path instead, described below. It preserves original wording and has separate selection-quality tests.
 
 For now, the practical learning loop is: inspect the corpus, ask a question, inspect the returned evidence, add a test for what went wrong, and make one measured retrieval improvement.
 
@@ -172,13 +172,13 @@ The interface now has two deliberate ways to reach the same public evidence. A t
 | Topic and guided follow-up | Explicit public passage IDs validated during the build | No |
 | Word matching | Shared vocabulary and the existing ranking rules | No |
 | Meaning-based search | A local question embedding plus word matching | Optional opt-in download |
-| Generated answer | A future model would compose prose from retrieved evidence | Separate experiment |
+| AI-selected answer | Local yes/no generation selects complete passages; application code provides quotations and citations | Separate experimental opt-in |
 
 For example, the guided question about trlr's hypothesis opens both the problem and current outcome. It cannot silently select only the optimistic half of the story. A free-text question still needs to find that evidence through ranking. These paths share source text but have different selection behavior, and the interface labels guided exploration explicitly.
 
 This distinction is useful product engineering: a known destination can be fast and predictable, while AI helps when a visitor brings unfamiliar wording. Neither path needs a backend or persistent visitor history. Changing from a topic to a typed question also tests ordinary asynchronous application design: a slow earlier result must never overwrite the visitor's newer action.
 
-The [PRD](portfolio-navigator-prd.md) defines the accepted scope, and [the verification record](verification.md#portfolio-navigator-15-november-2026) records its browser and source-integrity checks. Natural-language answer generation remains a later decision.
+The [PRD](portfolio-navigator-prd.md) defines the accepted scope, and [the verification record](verification.md#portfolio-navigator-15-november-2026) records its browser and source-integrity checks. Unrestricted natural-language answers remain excluded; the newer extractive RAG layer has its own [product contract](rag-prd.md).
 
 ## Revisit components and learn from a failed generation candidate
 
@@ -188,4 +188,63 @@ On 15 November we screened a separate 135-million-parameter instruction model. A
 
 This is why RAG needs separate gates: finding evidence, preserving its meaning when writing, and running acceptably on real devices. Citation syntax checks are useful but cannot establish that a sentence follows from its source. The browser also behaved differently from the native runtime on some cases, so a native-only test would have hidden repetition and scope failures. A 137 MB quantized weight file also does not describe total download or working memory. Quantization stores weights at lower precision; it does not guarantee accurate answers or phone suitability.
 
-Read the [contract and reproduction commands](../experiments/generation/README.md) and [safe reviewed findings](../experiments/generation/results-summary.json). The eight questions are a screening set, not an unseen benchmark. The candidate was rejected, and the fast evidence navigator remains the visitor feature. The next candidate or prompt needs fresh questions frozen before tuning and a measured physical-phone budget. No paid service or hosted inference account was introduced.
+Read the [contract and reproduction commands](../experiments/generation/README.md) and [safe reviewed findings](../experiments/generation/results-summary.json). The eight questions are a screening set, not an unseen benchmark. The candidate was rejected, and the fast evidence navigator remains the visitor feature. Later candidate comparisons preserve fresh-question checkpoints and still require physical-phone measurement. No paid service or hosted inference account was introduced.
+
+## November 17: build a constrained end-to-end RAG pipeline
+
+The next experiment separates the work into two decisions: find candidate passages, then decide which actually answer the question. The new Ask interface keeps ordinary evidence navigation immediate and offers a separate **AI-selected answers** control. Enabling the answer model does not automatically enable meaning search. Either word retrieval or optional hybrid retrieval can provide its sources.
+
+The implemented candidate is [FLAN-T5-base](https://huggingface.co/google/flan-t5-base), using the pinned `Xenova/flan-t5-base` ONNX conversion at revision `c6a1b98a4a35e1063d88edaceef4dc52cf3b2784`. It is a sequence-to-sequence language model: an encoder reads the input, then a decoder generates output tokens. In this product, the generated output is just a yes/no relevance decision for one document, not a paragraph about Anant. The q8 encoder and decoder weights total 275,241,990 bytes; the interface discloses approximately 300 MB for first use including runtime/tokenizer overhead. The upstream model has an Apache-2.0 license and documented limitations; neither its license nor general benchmark scores establish suitability for this portfolio. [Model card and limitations](https://huggingface.co/google/flan-t5-base#bias-risks-and-limitations)
+
+```mermaid
+flowchart TD
+  Q[Current question] --> R[Word or hybrid retrieval]
+  R --> S[Immutable complete public sources]
+  S --> P{Scope and context checks}
+  P -->|Allowed and separately enabled| W[Worker: one document at a time]
+  W --> G[Generate yes or no]
+  G --> V[Validate selected source IDs]
+  V --> C[Preserve companion qualifications]
+  C --> A[Original quotations and canonical citations]
+  P -->|Unsupported or no evidence| F[Evidence fallback]
+  V -->|Invalid or incomplete selection| F
+  W -->|Stop or failure| F
+```
+
+A complete document, including its title, attribution, question, and instruction, must fit within 512 tokens. If it is too long, the worker rejects it rather than cutting away the final qualification. This is why we evaluate input length using the actual tokenizer. The output is limited to three tokens, so we spend computation on a bounded relevance decision. A yes/no response must parse exactly before it becomes a source choice.
+
+The application then verifies that every selected source belongs to the current immutable snapshot. It retains complete original paragraphs, constructs links from the corpus, and preserves the trlr hypothesis's outcome qualification. If an employer/founder comparison contains only one required side, it falls back to the visible evidence. The model has no path to publish its own invented number, URL, or paraphrased claim. This guarantees where the displayed wording came from; it does not guarantee that the chosen passage answers every question. That distinction is the central learning goal of this iteration.
+
+### What the candidate comparisons show so far
+
+The stronger Qwen free-prose baseline still passed 0/8 cases under the existing strict answer contract. Structured source-selection prompts also performed poorly. A smaller FLAN-T5 candidate improved the screening to 13/20; FLAN-T5-base reached 18/20 exact source sets with supplied relevant evidence and distractors. These results describe the tested configurations, not the model families in general. Earlier failed outputs remain local artifacts or safe reviewed summaries, never public invented personal details.
+
+For FLAN-T5-base, the 18/20 total splits into 12/14 answerable and 6/6 unsupported. Five unsupported requests were blocked by application preflight, so only the remaining rejection exercised model behavior. No unrelated document was selected in this small screen. The misses were dated adoption evidence and a comparison needing both employer and founder sources. The comparison now returns a fallback rather than a partial answer. These supplied-evidence tests isolate generation and selection; they do not prove the retriever found the right input on a new question.
+
+Browser results and the fresh eight-question check are separate acceptance evidence and must be recorded in the dated [verification record](verification.md) when complete. A narrow desktop viewport is not a phone test. Neither the native screening totals nor a working UI establish physical-phone latency, memory usage, or download reliability.
+
+### Reproduce and understand each boundary
+
+After building the site with Node 24:
+
+```sh
+# Context, output, source-identity, and completeness contracts; no model download
+npm run test:rag
+
+# Interface and lifecycle checks with controlled worker behavior
+npm run test:rag:browser
+
+# Explicit actual-model browser inference
+TEST_RAG_MODEL=1 npm run test:rag:browser
+
+# Explicit native CPU model screening
+npm run experiment:rag
+```
+
+Open `src/lib/rag-prompt.mjs` to see what the model receives. Follow `src/scripts/rag-worker.ts` through token limits and yes/no parsing, then `src/lib/rag.mjs` through source validation. Finally, read `src/scripts/rag.ts` to see how source text reaches the DOM only after the current request is checked. Try changing the question while an answer is running and identify where the older request becomes invalid.
+
+The worker uses pinned public file URLs and omits credentials/referrers. Questions and retrieved evidence stay on-device. The download provider still sees normal file-request metadata. Stop terminates work; cache removal deletes only the answer-model cache, leaving the embedding cache separate. No account, inference API, new backend, paid service, or conversation storage is introduced.
+
+The [17-component learning tracker](learning-tracker.md) now includes context packing, validation/citations, and answer lifecycle. Its local lab downloads no model and marks personal review only when you choose to do so. Treat a functioning pipeline, relevant model decisions, exact source integrity, and real-device performance as four different things to verify.
+
+The final browser selection measurement is **14/20 screening cases and 4/8 fresh cases**, compared with native CPU results of 18/20 and 6/8. The experimental pipeline works end to end, but model-quality promotion remains pending. See [the reviewed RAG record](../experiments/rag/README.md) for misses, cache measurements, and reproduction commands.
