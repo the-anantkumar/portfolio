@@ -1,6 +1,6 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {env,AutoModelForCausalLM,AutoTokenizer,TextGenerationPipeline} from '@huggingface/transformers';
-import {RAG_MODEL as c} from '../../src/lib/rag-config.mjs';
+import {RAG_MODEL as c} from './candidate.mjs';
 import {prepareRag,validateRagSelection} from '../../src/lib/rag.mjs';
 await mkdir('artifacts/rag',{recursive:true});
 env.allowLocalModels=false;env.cacheDir='artifacts/rag/cache';env.remotePathTemplate=`{model}/resolve/${c.revision}/`;
