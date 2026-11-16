@@ -106,3 +106,9 @@ test("semantic evidence is not rejected solely for insufficient word overlap", (
   assert.equal(result.kind, "ready");
   assert.equal(result.passages[0].text, founder.text);
 });
+
+test("a cross-role comparison cannot silently omit one ownership group", () => {
+ const employer = source("project/nielsen-data-systems/the-context");
+ assert.equal(validateRagSelection('{"sources":[2]}', [employer, founder], "Contrast employer work and founder ownership").reason, "incomplete-comparison");
+ assert.equal(validateRagSelection('{"sources":[1,2]}', [employer, founder], "Contrast employer work and founder ownership").kind, "answer");
+});

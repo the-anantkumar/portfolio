@@ -93,7 +93,7 @@ export function prepareRag(question, passages) {
   return { kind: "ready", question, passages: snapshot, messages: buildRagMessages(question, snapshot) };
 }
 
-export function validateRagSelection(raw, passages) {
+export function validateRagSelection(raw, passages, question = "") {
   const snapshot = snapshotPassages(passages);
   requireCompanion(snapshot);
   // The narrow grammar also rejects duplicate object keys, exponent notation,
@@ -113,6 +113,12 @@ export function validateRagSelection(raw, passages) {
   if (selected.some(({ id }) => id === PROBLEM) && !selected.some(({ id }) => id === OUTCOME)) {
     selected.push(snapshot.find(({ id }) => id === OUTCOME));
     repaired = true;
+  }
+  const ownerGroup = (p) => p.id.startsWith("project/trlr/") ? "founder" : p.id.startsWith("project/nielsen-data-systems/") || p.id === "experience/nielsen-media" ? "employer" : p.id.split("/").slice(0, 2).join("/");
+  if (/\b(?:compare|contrast|comparison|difference between)\b/i.test(question)) {
+    const requestedGroups = new Set(snapshot.map(ownerGroup));
+    const selectedGroups = new Set(selected.map(ownerGroup));
+    if ([...requestedGroups].some((group) => !selectedGroups.has(group))) return abstain("incomplete-comparison");
   }
   // Provenance is enforced here. Relevance and truth are evaluated separately;
   // a structurally valid source selection is not a factual-confidence score.

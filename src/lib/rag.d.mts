@@ -17,4 +17,4 @@ export interface RagAnswer {
 }
 export function buildRagMessages(question: string, passages: readonly KnowledgePassage[]): RagMessage[];
 export function prepareRag(question: string, passages: readonly KnowledgePassage[]): RagPrepared | RagAbstention;
-export function validateRagSelection(raw: string, passages: readonly KnowledgePassage[]): RagAnswer | RagAbstention;
+export function validateRagSelection(raw: string, passages: readonly KnowledgePassage[], question?: string): RagAnswer | RagAbstention;
