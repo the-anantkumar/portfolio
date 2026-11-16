@@ -115,7 +115,8 @@ export function validateRagSelection(raw, passages, question = "") {
     repaired = true;
   }
   const ownerGroup = (p) => p.id.startsWith("project/trlr/") ? "founder" : p.id.startsWith("project/nielsen-data-systems/") || p.id === "experience/nielsen-media" ? "employer" : p.id.split("/").slice(0, 2).join("/");
-  if (/\b(?:compare|contrast|comparison|difference between)\b/i.test(question)) {
+  if (/\b(?:compare|contrast|comparison|difference between)\b/i.test(question)
+    && /\b(?:employer|nielsen)\b/i.test(question) && /\b(?:founder|trlr)\b/i.test(question)) {
     const requestedGroups = new Set(snapshot.map(ownerGroup));
     const selectedGroups = new Set(selected.map(ownerGroup));
     if ([...requestedGroups].some((group) => !selectedGroups.has(group))) return abstain("incomplete-comparison");

@@ -110,5 +110,16 @@ test("semantic evidence is not rejected solely for insufficient word overlap", (
 test("a cross-role comparison cannot silently omit one ownership group", () => {
  const employer = source("project/nielsen-data-systems/the-context");
  assert.equal(validateRagSelection('{"sources":[2]}', [employer, founder], "Contrast employer work and founder ownership").reason, "incomplete-comparison");
+ assert.equal(validateRagSelection('{"sources":[1]}', [employer, founder], "What did the Nielsen comparison measure?").kind, "answer");
  assert.equal(validateRagSelection('{"sources":[1,2]}', [employer, founder], "Contrast employer work and founder ownership").kind, "answer");
+});
+
+test("binary generation retains complete context and rejects prose masquerading as a label", async () => {
+ const { buildRagBinaryPrompt, parseRagRelevance } = await import('../src/lib/rag-prompt.mjs');
+ const prompt = buildRagBinaryPrompt('Was the correction deployed?', investigation);
+ assert(prompt.includes(investigation.text));
+ assert(prompt.includes(investigation.context));
+ assert.equal(parseRagRelevance('Yes.'), true);
+ assert.equal(parseRagRelevance('no'), false);
+ for (const output of ['yes, because it was deployed', 'not sure', 'yes\nno', '<b>yes</b>', '', null]) assert.throws(() => parseRagRelevance(output));
 });

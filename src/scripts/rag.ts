@@ -62,7 +62,7 @@ export function createRag(root: HTMLElement) {
       if (data.type === "answer" && data.id === sequence && state === "generating" && context) {
         clearTimeout(timer); state = "ready"; controls(); content.replaceChildren();
         try {
-          const result = validateRagSelection(data.raw, context.passages);
+          const result = validateRagSelection(data.raw, context.passages, context.question);
           if (result.kind === "abstain") { answerStatus.textContent = "The model could not select a supported answer. Explore the original evidence below."; return; }
           for (const [index, passage] of result.passages.entries()) {
             const article = document.createElement("article"); article.className = "rag-quote"; article.dataset.passageId = passage.id;
