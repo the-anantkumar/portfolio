@@ -30,7 +30,7 @@ const canonical = Astro.site
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0c0d16" />
+    <meta name="theme-color" content="#fafaf7" />
     <title>{title}</title>
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
@@ -53,19 +53,9 @@ const canonical = Astro.site
     <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
   </head>
   <body>
-    <div class="ambient" aria-hidden="true">
-      <div class="ambient-glow glow-violet"></div><div
-        class="ambient-glow glow-rose"
-      >
-      </div><div class="ambient-orbit"></div>
-    </div>
     <a class="skip" href="#main">Skip to content</a>
     <header class="header wrap">
-      <a class="brand" href={withBase()}
-        ><span class="brand-mark" aria-hidden="true">a.</span><span
-          >ANANT KUMAR<br />SRIVASTAVA</span
-        ></a
-      >
+      <a class="brand" href={withBase()} aria-label="Anant Kumar Srivastava, home">Anant Kumar<br /> Srivastava<span aria-hidden="true">.</span></a>
       <nav aria-label="Main navigation">
         <a href={withBase("#work")}>Work</a><a href={withBase("#experience")}
           >Experience</a
@@ -74,11 +64,6 @@ const canonical = Astro.site
           href={withBase("#contact")}
           >Let’s talk <span aria-hidden="true">↗</span></a
         >
-        <label class="motion-control" title="Pause visual motion">
-          <input id="pause-motion" type="checkbox" />
-          <span class="motion-icon" aria-hidden="true">Ⅱ</span>
-          <span class="sr-only">Pause visual motion</span>
-        </label>
       </nav>
     </header>
     <main id="main" tabindex="-1"><slot /></main>
