@@ -106,6 +106,7 @@ for (const asset of [
   "search-vectors.json",
   "ai-notices/README.txt",
   "ai-notices/Apache-2.0.txt",
+  "ai-notices/Qwen2.5-LICENSE.txt",
   "ai-notices/ONNX-Runtime-LICENSE.txt",
   "ai-notices/ONNX-Runtime-ThirdPartyNotices.txt",
 ]) {

@@ -206,7 +206,7 @@ const js = files.filter((file) => /\.m?js$/.test(file));
 const wasm = files.filter((file) => file.endsWith(".wasm"));
 const askOnlyStyles = new Set([...askStyles].filter((file) => !ordinaryStyles.has(file)));
 const notices = files.filter((file) => file.startsWith(path.join(root, "ai-notices") + path.sep));
-assert.equal(notices.length, 4, "Keep the model and runtime license notices with the optional assets");
+assert.equal(notices.length, 5, "Keep the model and runtime license notices with the optional assets");
 assert(await sumBytes(notices) < 400_000, "Optional AI notices exceed their 400 KB budget");
 const optionalAssets = new Set([askFile, corpusFile, vectorsFile, ...js, ...wasm, ...askOnlyStyles, ...notices]);
 const ordinaryOutputBytes = await sumBytes(files.filter((file) => !optionalAssets.has(file)));
@@ -230,7 +230,15 @@ assert(ordinaryOutputBytes < 300_000, `Ordinary site output exceeds its 300 KB b
 assert(homeInitialGzipBytes <= 300_000, "Initial homepage HTML/CSS exceeds its 300 KB transfer budget");
 assert(bootstrapGzipBytes <= 20_000, `Ask bootstrap exceeds its 20 KB gzip budget: ${bootstrapGzipBytes}`);
 assert(askInitialGzipBytes <= 60_000, `Ask HTML/CSS/bootstrap/corpus exceeds its 60 KB gzip budget: ${askInitialGzipBytes}`);
-assert(optionalRuntimeGzipBytes <= 250_000, `Optional AI JavaScript exceeds its 250 KB gzip budget: ${optionalRuntimeGzipBytes}`);
+// Embedding and generation are independent opt-in workers. Budget each entry,
+// plus the shared runtime, and cap their combined deployment footprint.
+const ragEntries = js.filter((file) => /rag-worker/.test(file));
+assert.equal(ragEntries.length, 1, "One isolated answer worker is required");
+const ragRuntimeGzipBytes = await sumBytes(ragEntries, true);
+const searchRuntimeGzipBytes = optionalRuntimeGzipBytes - ragRuntimeGzipBytes;
+assert(searchRuntimeGzipBytes <= 250_000, "Search runtime exceeds its existing 250 KB gzip cap");
+assert(ragRuntimeGzipBytes <= 250_000, "Answer worker exceeds its separate 250 KB gzip cap");
+assert(optionalRuntimeGzipBytes <= 500_000, "Combined optional runtimes exceed 500 KB gzip");
 assert(wasmBytes <= 16_000_000, `Optional WASM exceeds its 16 MB budget: ${wasmBytes}`);
 assert(vectorsBytes <= 200_000, `Search vectors exceed their 200 KB budget: ${vectorsBytes}`);
 assert(total <= 17_000_000, `Complete output exceeds its 17 MB budget: ${total}`);
