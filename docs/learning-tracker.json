@@ -1,8 +1,8 @@
 {
   "version": 1,
   "updated": "2026-11-17",
-  "checkpoint": "checkpoint/design-polish-v1-2026-11-17",
-  "focus": "Study the evidence-first visitor journey, static presentation boundaries, and preserved experimental RAG replay",
+  "checkpoint": "checkpoint/minimal-editorial-v1-2026-11-17",
+  "focus": "Study shared design tokens, static composition, native disclosure, and source-first search without changing retrieval",
   "examples": [
     "rows",
     "linkedin",
@@ -65,6 +65,12 @@
       "status": "built and locally browser-checked; production release pending",
       "date": "2026-11-17",
       "evidence": "docs/design-polish.md"
+    },
+    {
+      "name": "Light editorial redesign and shared presentation system",
+      "status": "built and locally browser-checked; production release pending",
+      "date": "2026-11-17",
+      "evidence": "docs/design-polish.md"
     }
   ],
   "components": [
@@ -108,23 +114,24 @@
       "name": "Editorial presentation and progressive disclosure",
       "status": "built",
       "lane": "Visitor experience",
-      "purpose": "Make engineering work and original evidence easy to scan without adding a runtime to ordinary pages.",
-      "input": "Typed public project data, rendered Markdown, existing retrieval matches, and explicit visitor actions.",
-      "output": "A featured employer case, compact independent projects, readable case studies, and a complete first evidence passage with a source link.",
+      "purpose": "Make identity, engineering work, and original evidence easy to read through one light editorial system, without adding a runtime to ordinary pages.",
+      "input": "Approved public content, shared typography/color/spacing tokens, existing retrieval matches, and explicit visitor actions.",
+      "output": "A continuous canvas with a featured employer case, open independent projects, native experience disclosures, readable case studies, and complete evidence with exact source links.",
       "files": [
         "src/pages/index.astro",
         "src/pages/projects/[slug].astro",
         "src/components/ProjectVisual.astro",
         "src/styles/global.css",
         "src/styles/case-study.css",
+        "src/styles/ask.css",
         "src/pages/ask.astro",
         "src/scripts/ask.ts",
         "scripts/capture-design.mjs",
         "docs/design-polish.md"
       ],
-      "exercise": "Open the homepage with JavaScript disabled, follow a case-study contents link, then enable JavaScript on Ask and compare its visible first passage with Complete matched evidence. Trace both to the same public source.",
-      "explain": "Why does moving model controls after results improve the default journey without removing AI capability? What must remain beside an evidence quotation?",
-      "pitfall": "A shorter interface is not permission to cut a qualification from a quotation. Show a complete passage and preserve all matched context."
+      "exercise": "Change one typography or spacing token on a disposable branch. Compare the homepage, a case study, and Ask at 1440 and 390 px. Then use the experience disclosure without JavaScript and follow a complete Ask passage to its source.",
+      "explain": "Which decisions belong in shared tokens, and which belong in a component layout? Why can a presentation-only change leave the public corpus and committed vectors identical?",
+      "pitfall": "A color swap alone leaves old borders, tiny labels, and contradictory component styles. Inspect rendered pages; retain qualifications, sources, and explicit model choices."
     },
     {
       "id": "corpus",

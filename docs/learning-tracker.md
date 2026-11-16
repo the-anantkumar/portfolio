@@ -2,7 +2,7 @@
 
 This is the revisit point for what has been built, how its components connect, and what remains experimental. Implementation status is separate from your understanding: a built component is not automatically marked as reviewed by you.
 
-Updated: 17 November 2026. Current development checkpoint: `checkpoint/design-polish-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
+Updated: 17 November 2026. Current development checkpoint: `checkpoint/minimal-editorial-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
 
 ## Open the component map
 
@@ -79,6 +79,31 @@ Revisit three decisions in the code:
 Changing the old “Future search” heading required a new public source ID and regenerated vectors. The learning lab now replays the earlier RAG measurements against a frozen public corpus whose hash matches that experiment. Current retrieval traces still use the current corpus. This keeps historical results honest while allowing editorial changes; no model quality improvement is claimed by a UI pass.
 
 Run the capture and browser commands in the review, then mark this component reviewed only when you have explained its input and output yourself. Model quality remains experimental and physical-phone inference remains unmeasured.
+
+## Study the light editorial redesign
+
+The later 17 November direction replaces the spectral theme with one continuous light canvas. The presentation component remains built; the experimental answer selector retains its experimental status. These are independent concerns.
+
+```mermaid
+flowchart LR
+  T[Shared color, type, and spacing tokens] --> H[Homepage composition]
+  T --> C[Case study reading layout]
+  T --> A[Ask field and source results]
+  P[Unchanged public Markdown] --> H
+  P --> C
+  P --> K[Unchanged corpus and vectors]
+  K --> A
+  H --> D[Native experience disclosure]
+  D --> N[Usable without JavaScript]
+```
+
+1. **Read the tokens:** find `--text-main`, `--text-body`, `--text-support`, and the spacing scale in `global.css`. Change one on a disposable branch and predict which pages will respond.
+2. **Separate grouping from framing:** inspect the project rows and the Ask source results. Whitespace, alignment, and a fine separator can organize content without a card background. Form controls retain meaningful boundaries.
+3. **Understand native interaction:** open a contribution disclosure by keyboard with JavaScript disabled. Astro renders the content at build time; the browser supplies disclosure behavior.
+4. **Verify the correct layer:** a screenshot can expose a bad heading wrap, while a browser assertion can protect exact original evidence. Neither replaces the other. The updated browser suite also covers 768 px and verifies that no ambient animation remains.
+5. **Preserve retrieval inputs:** this pass changes presentation without editing the typed public collections. The corpus hash and committed vectors remain identical. Reindex when approved source content changes, not merely when CSS changes.
+
+Before, foundation-review, and final images live in ignored `artifacts/design-polish/minimal-before/`, `minimal-foundation/`, and `minimal-after/`. The [design brief](design-polish.md) records the new rules and the [checkpoint record](release-checkpoints.md) identifies small reviewable commits. No personal review marker is changed by implementation work.
 
 ## What the first generation experiment taught us
 
