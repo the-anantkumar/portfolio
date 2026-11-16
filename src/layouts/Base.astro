@@ -69,7 +69,7 @@ const canonical = Astro.site
       <nav aria-label="Main navigation">
         <a href={withBase("#work")}>Work</a><a href={withBase("#experience")}
           >Experience</a
-        ><a href={withBase("#about")}>About</a><a href={withBase("ask/")}>Ask</a><a
+        ><a href={withBase("#about")}>About</a><a class="nav-ask" href={withBase("ask/")} aria-current={interactive ? "page" : undefined}>Ask</a><a
           class="nav-contact"
           href={withBase("#contact")}
           >Let’s talk <span aria-hidden="true">↗</span></a
