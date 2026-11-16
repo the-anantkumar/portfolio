@@ -39,6 +39,22 @@ try {
     assert.equal(await page.locator("#experiment-results article").count(), 8);
     await page.locator("#example").selectOption("private-phone");
     assert.match(await page.locator("#trace-results").innerText(), /No supported match/);
+    assert.equal(await page.locator("#rag-example option").count(), 28);
+    assert.match(await page.locator("#rag-measurements").innerText(), /Browser: 18 \/ 28/);
+    await page.locator("#rag-example").selectOption("scope-parity");
+    assert.equal(await page.locator("#rag-question").innerText(), "How many rows and quality checks were involved in the parallel validation?");
+    assert.match(await page.locator("#rag-case-status").innerText(), /^Miss .*2 selected sources .*1 expected/);
+    assert.equal(await page.locator('#rag-results [data-selection="selected"]').count(), 2);
+    const extra = page.locator('#rag-results [data-unexpected="true"]');
+    assert.equal(await extra.getAttribute("data-source-id"), "project/nielsen-data-systems/reference-data-migration");
+    assert.match(await extra.innerText(), /Selected but not expected/);
+    const parity = page.locator('#rag-results [data-source-id="project/nielsen-data-systems/parallel-validation-at-scale"]');
+    await parity.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    assert(await parity.locator("blockquote").isVisible());
+    assert.match(await parity.locator("blockquote").innerText(), /not a claim that every production workload is error-free/);
+    assert.match(await page.locator("#rag-ui-summary").textContent(), /Retrieved 2 passages; selected 2/);
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("portfolio-learning-reviewed-v1"))), ["hybrid"], "Replaying RAG must not persist questions or mark components reviewed");
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px learning lab overflow`);
     const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
     assert.deepEqual(axe.violations.map(({ id, nodes }) => ({ id, targets: nodes.map((node) => node.target) })), []);
@@ -52,5 +68,5 @@ try {
   await page.goto(pathToFileURL(resolve("artifacts/learning/index.html")).href);
   assert(await page.locator("noscript a").isVisible(), "A script-disabled browser can reach the Markdown study path");
   await noJS.close();
-  console.log("Learning lab passed: component map, saved traces, explicit owner review persistence, keyboard focus, offline load, no-JavaScript study link, three viewport sizes, and axe.");
+  console.log("Learning lab passed: component map, saved search and 28 RAG traces, exact miss visibility, explicit owner review persistence, keyboard focus, offline load, no-JavaScript study link, three viewport sizes, and axe.");
 } finally { await browser.close(); }

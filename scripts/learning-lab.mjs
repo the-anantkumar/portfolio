@@ -35,7 +35,50 @@ const traces = tracker.examples.map((id) => {
 });
 const screening = await readJSON("experiments/generation/results-summary.json");
 assert.equal(screening.promoted, false, "Revisit the learning lab before promoting a generation candidate");
-const data = { ...tracker, screening, traces, corpusPassages: corpus.passages.length, dimensions: index.dimensions };
+const ragSummary = await readJSON("experiments/rag/results-summary.json");
+assert.equal(ragSummary.version, 1);
+assert.equal(ragSummary.corpusHash, await corpusHash(corpus.passages), "RAG examples must match the current public corpus");
+const fixtures = [
+  ...(await readJSON("experiments/rag/cases.json")).cases.map((entry) => ({ ...entry, cohort: "screening" })),
+  ...(await readJSON("experiments/rag/holdout.json")).cases.map((entry) => ({ ...entry, cohort: "holdout" })),
+];
+assert.equal(new Set(fixtures.map(({ id }) => id)).size, fixtures.length);
+assert.equal(ragSummary.cases.length, fixtures.length, "Show every recorded RAG case");
+assert.equal(new Set(ragSummary.cases.map(({ id }) => id)).size, fixtures.length, "Do not duplicate a recorded RAG case");
+const publicPassages = new Map(corpus.passages.map((passage) => [passage.id, passage]));
+const safeIds = (ids) => {
+  assert(Array.isArray(ids) && ids.length <= 3 && new Set(ids).size === ids.length, "Invalid saved RAG source set");
+  ids.forEach((id) => assert(publicPassages.has(id), `Nonpublic saved RAG source: ${id}`));
+  return ids;
+};
+const sameIds = (left, right) => JSON.stringify([...left].sort()) === JSON.stringify([...right].sort());
+const ragCases = ragSummary.cases.map((row) => {
+  const fixture = fixtures.find(({ id }) => id === row.id);
+  assert(fixture && row.question === fixture.question && row.cohort === fixture.cohort, "RAG case identity changed");
+  const supplied = safeIds(fixture.passages), expected = safeIds(row.expected), selected = safeIds(row.selected);
+  assert(sameIds(expected, fixture.expected), "Saved RAG expectation differs from its frozen case");
+  assert(selected.every((id) => supplied.includes(id)) && expected.every((id) => supplied.includes(id)), "RAG source is outside the saved request");
+  assert.equal(row.pass, sameIds(expected, selected), "RAG match label must describe the exact source set");
+  assert.equal(row.abstained, selected.length === 0);
+  assert(typeof row.repaired === "boolean" && typeof row.error === "boolean" && Number.isFinite(row.milliseconds));
+  return { id: row.id, question: row.question, cohort: row.cohort, supplied, expected, selected,
+    pass: row.pass, abstained: row.abstained, repaired: row.repaired, error: row.error, milliseconds: row.milliseconds };
+});
+const ui = ragSummary.browser.ui;
+assert(typeof ui.question === "string" && ui.question.length <= 500);
+assert(ui.answerIds.every((id) => ui.retrievedIds.includes(id)), "Recorded interface selection must come from retrieved sources");
+const rag = {
+  date: ragSummary.date, model: ragSummary.candidate.model, revision: ragSummary.candidate.revision,
+  native: ragSummary.native, browser: { screen: ragSummary.browser.screen, holdout: ragSummary.browser.holdout, device: ragSummary.browser.device },
+  cases: ragCases,
+  // Only canonical public text and safe reviewed fields enter this offline lab.
+  // Raw model prose, caches, request logs, and private files are never embedded.
+  passages: Object.fromEntries(publicPassages),
+  ui: { question: ui.question, retrieved: safeIds(ui.retrievedIds), selected: safeIds(ui.answerIds),
+    modelReadyMilliseconds: ui.modelReadyMilliseconds, totalMilliseconds: ui.totalMilliseconds,
+    reportedColdResponseBodyBytes: ui.reportedColdResponseBodyBytes },
+};
+const data = { ...tracker, screening, rag, traces, corpusPassages: corpus.passages.length, dimensions: index.dimensions };
 const template = await readFile("scripts/learning-lab.template.html", "utf8");
 const serialized = JSON.stringify(data).replaceAll("<", "\\u003c");
 assert.equal(template.split("__LEARNING_DATA__").length, 2, "One data injection point is required");
