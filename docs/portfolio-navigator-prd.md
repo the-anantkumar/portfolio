@@ -18,7 +18,7 @@ For example, selecting Founder shows trlr's product and engineering ownership wi
 
 ## Inspiration and identity
 
-[ntropy.dev](https://www.ntropy.dev/) provides the interaction reference: a distinct exploration mode, central question entry, and a topic dock. Keep Anant's dark pink and violet spectrum, rings, system fonts, and accessible motion controls. Use the existing ordinary portfolio as the browse experience. The reference is design inspiration; its backend, voice system, and external LLM APIs are not dependencies.
+[ntropy.dev](https://www.ntropy.dev/) provides the interaction reference: a distinct exploration mode, central question entry, and a topic dock. The current presentation follows [the minimal editorial brief](design-polish.md): a light canvas, shared system typography, restrained green, and no decorative animation. This supersedes the original spectrum/rings direction. Use the existing ordinary portfolio as the browse experience. The reference is design inspiration; its backend, voice system, and external LLM APIs are not dependencies.
 
 ## Release scope
 
@@ -54,7 +54,7 @@ No new dependency, hosted process, database, paid service, account, analytics, p
 4. Follow-up actions resolve valid public sources and preserve multi-source hypothesis/outcome evidence. No stale topic action overwrites a newer typed query.
 5. The AI panel is collapsed initially. Enabling requires a separate deliberate action after the disclosure is opened; cancellation and failure leave typed search and topic navigation usable.
 6. No-match AI help opens and focuses the disclosure. It creates no worker or model request by itself.
-7. Desktop 1440px and mobile 390px/320px layouts have no horizontal page overflow. Controls are labeled, focus is visible, and topic/follow-up targets are at least 44px high. Reduced motion and the existing pause control stop decorative animation.
+7. Desktop 1440px, tablet 768px, and mobile 390px/320px layouts have no horizontal page overflow. Controls are labeled, focus is visible, and topic/follow-up targets are at least 44px high. Reduced motion disables nonessential transitions and smooth scrolling; no decorative animation or pause control is needed.
 8. No-JavaScript navigation, keyboard flows, axe checks, and the existing 90-question tests pass. The explicit real-model check also verifies compact evidence rendering against the full original text.
 9. Preserve the documented budgets: ordinary output under 300 KB; Ask bootstrap at most 20 KB gzip; Ask HTML/CSS/bootstrap/corpus at most 60 KB gzip; optional runtime JS at most 250 KB gzip; WASM at most 16 MB; vectors at most 200 KB; complete output at most 17 MB.
 10. Use Node 24 for `npm run check`, the production-path `npm run build`, `npm test`, and browser checks. Keep ignored screenshots and caches out of Git. Commit and push in coherent phases of one to three files.
@@ -82,7 +82,7 @@ All acceptance criteria for the local implementation pass. The [verification rec
 | --- | --- |
 | Topics, source grouping, and complete follow-ups | Four navigator tests plus all six topic and guided-evaluation browser flows |
 | Full original evidence and exact sources | Existing 90-question real-browser run verifies original text, source IDs, and complete evidence after grouping |
-| Responsive, keyboard, motion, and no-JavaScript behavior | 1440/390/320px browser checks, axe, native disclosure controls, ring pause, and no-JavaScript browse links |
+| Responsive, keyboard, motion, and no-JavaScript behavior | 1440/390/320px browser checks, axe, native disclosure controls, reduced motion, and no-JavaScript browse links |
 | Privacy, opt-in, failure, and request ordering | No external request before opt-in; cancellation, failure, corpus retry, and both topic/question response-race scenarios |
 | Performance | Ask initial HTML/CSS/controller/corpus 27,431 bytes gzip; bootstrap 7,897 bytes gzip; all separate caps pass |
 

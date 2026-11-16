@@ -1,6 +1,6 @@
 # Anant Kumar Srivastava | portfolio
 
-A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The dark spectral design uses optional CSS-only motion and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership. The optional `/ask/` page finds original portfolio passages, with browser-local meaning search and an experimental extractive RAG mode available through separate explicit download choices on `pilot`.
+A static engineering portfolio built with Astro, TypeScript, Markdown, and CSS. The light editorial design uses shared typography, open project presentations, and an embedded GitHub activity section. It targets MTS 2 / SDE 2+ opportunities and presents founder work as evidence of product and technical ownership. The optional `/ask/` page finds original portfolio passages, with browser-local meaning search and an experimental extractive RAG mode available through separate explicit download choices on `pilot`.
 
 ## Run locally
 
@@ -102,7 +102,7 @@ npm run test:browser
 
 The indexing command downloads the pinned public model as needed and updates passage vectors plus vectors for both public evaluation-question suites. Normal builds use committed vectors, verify their content hash and preprocessing version, and fail if the index is stale. They do not download models. Review index changes with the corresponding content change. Full upstream license files are published under `public/ai-notices/`. The learning guide explains the [pipeline, evaluation commands, and limits](docs/ai-search-learning.md).
 
-## GitHub activity and motion
+## GitHub activity and interaction
 
 The homepage displays the contribution calendar and aggregate activity counts. GitHub links scroll to this section rather than leaving the portfolio. Repository-level information is not included.
 
@@ -119,7 +119,7 @@ No personal access token or service secret is required. [Refresh operations and 
 
 This is an automatically refreshed snapshot. Reloading the page reads deployed data; an already-open page does not poll. The displayed snapshot date changes only when the saved calendar changes. GitHub contribution processing, the schedule, deployment, and CDN caching all affect freshness.
 
-Slow ambient light and ring movement use CSS transforms. The pause control in the header stops motion; `prefers-reduced-motion` disables it automatically. No preference storage or animation JavaScript is needed.
+The site has no ambient animation. Small control transitions and smooth anchor scrolling respect `prefers-reduced-motion`. No animation JavaScript or preference storage is needed. The current [visual design brief](docs/design-polish.md) replaces the earlier dark spectral direction.
 
 ## Search validation on pilot
 

@@ -12,7 +12,7 @@ The previous implementation used React/Vite, routing, particle effects, animatio
 
 Astro generates seven HTML pages: home, four case studies, 404, and Ask. It renders Markdown at build time and extracts CSS. The first six pages contain no application scripts. Ask is an isolated interactive route with optional browser-local model inference. There is no database, backend process, hosted inference endpoint, contact API, or runtime GitHub fetch. System fonts avoid font downloads.
 
-An always-visible GitHub section embeds a saved contribution calendar; optional CSS transforms animate the spectral background and rings. Semantic HTML and ordinary links support navigation. Illustrations contain no private screenshots or records.
+An always-visible GitHub section embeds a saved contribution calendar. A continuous light canvas, shared typography, native disclosures, and ordinary links support navigation. No ambient animation runs. Workflow diagrams contain no private screenshots or records.
 
 Plain HTML would also meet runtime constraints but duplicate project metadata. Retaining React would reduce migration work but add a browser runtime without a current interactive need. A server framework would introduce operational responsibilities with no visitor benefit. Astro supplies content validation and routing while preserving static portability.
 
@@ -93,7 +93,7 @@ The model disclosure starts collapsed and contains the download explanation and 
 
 ## Local learning and generation screening
 
-`docs/learning-tracker.json` describes 17 component boundaries, implementation status, exercises, and dated milestones. `scripts/learning-lab.mjs` validates those file references and the existing public corpus/vector hashes, then runs the actual retriever for six saved evaluation questions. A standalone HTML explorer is generated under ignored `artifacts/learning/`. Its loopback server serves only that document. The explorer has no model download or API; optional review markers contain component IDs only in the owner's browser. It is not an additional public route and is excluded from the Pages artifact.
+`docs/learning-tracker.json` describes 18 component boundaries, implementation status, exercises, and dated milestones. `scripts/learning-lab.mjs` validates those file references and the existing public corpus/vector hashes, then runs the actual retriever for six saved evaluation questions. A standalone HTML explorer is generated under ignored `artifacts/learning/`. Its loopback server serves only that document. The explorer has no model download or API; optional review markers contain component IDs only in the owner's browser. It is not an additional public route and is excluded from the Pages artifact.
 
 `experiments/generation/` isolates a pinned instruction model from the public search runtime. Native CPU and browser WASM runners supply fixed questions with complete relevant public passages, reject oversized prompts, and inspect generated citations, scope, and abstention before manual review. Raw drafts and caches stay in ignored artifacts. The first candidate failed all eight automated screening cases in both runtimes, with confirmed semantic errors, and is not integrated into `/ask/`. Routine CI tests the offline contract and the model-free learning lab; model screening requires an explicit developer command. See [the reviewed decision](../experiments/generation/results-summary.json).
 
@@ -136,7 +136,7 @@ Free terms and quotas can change. Recheck before deployment or enabling any new 
 
 ## November visual/activity iteration
 
-A dark, continuous spectral palette replaces paper-like surfaces. Native checkbox and `:has()` provide an explicit animation pause control; reduced-motion overrides all CSS animation. The GitHub refresh script fetches public calendar HTML manually or in the scheduled workflow, validates a continuous full-year date range, and atomically persists a minimal aggregate snapshot when data changes. Builds and visitor requests do not depend on GitHub. The parser intentionally fails rather than fabricate counts if GitHub markup changes.
+The earlier November iteration used a dark spectral palette and a native animation pause control. The later [minimal editorial redesign](design-polish.md) supersedes that presentation with a continuous light canvas and no ambient animation; reduced motion still disables nonessential transitions and scrolling. The GitHub refresh script fetches public calendar HTML manually or in the scheduled workflow, validates a continuous full-year date range, and atomically persists a minimal aggregate snapshot when data changes. Builds and visitor requests do not depend on GitHub. The parser intentionally fails rather than fabricate counts if GitHub markup changes.
 
 ## Contribution-only GitHub section
 
