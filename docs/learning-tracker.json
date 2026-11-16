@@ -1,8 +1,8 @@
 {
   "version": 1,
   "updated": "2026-11-17",
-  "checkpoint": "checkpoint/rag-pipeline-v1-2026-11-17",
-  "focus": "Trace the locally built RAG pipeline and minimal Ask interface while keeping experimental model quality separate from verified source integrity",
+  "checkpoint": "checkpoint/rag-experimental-v1-2026-11-17",
+  "focus": "Explore the complete experimental RAG pipeline, measured browser failures, and cached local inference",
   "examples": [
     "rows",
     "linkedin",
@@ -50,13 +50,13 @@
     },
     {
       "name": "Minimal Ask interface and integrated local answer controls",
-      "status": "built locally; verification in progress",
+      "status": "implemented and locally checked; model quality remains experimental",
       "date": "2026-11-17",
       "evidence": "src/pages/ask.astro"
     },
     {
       "name": "RAG context, worker, source validation, and fallback pipeline",
-      "status": "built locally; model quality remains experimental",
+      "status": "implemented and locally checked; model quality remains experimental",
       "date": "2026-11-17",
       "evidence": "docs/rag-prd.md"
     }
@@ -267,15 +267,15 @@
       "status": "experiment",
       "lane": "Local experiment",
       "purpose": "Evaluate a pinned instruction model after retrieval, including free-prose baselines and constrained source selection.",
-      "input": "An immutable question and complete public evidence, supplied only after a separate local-model opt-in.",
-      "output": "An untrusted structured source selection for validation, or a generation failure. The integrated local pipeline does not establish model quality or authorize production promotion.",
+      "input": "At most three complete public passages, one bounded binary relevance prompt per passage, and the pinned FLAN-T5-base q8 model.",
+      "output": "Yes/no source decisions, then validated original quotations or fallback. Browser exact selection: 14/20 screening and 4/8 fresh cases; not promoted to production.",
       "files": [
         "src/lib/rag-config.mjs",
+        "src/lib/rag-prompt.mjs",
         "src/scripts/rag-worker.ts",
-        "docs/rag-prd.md",
-        "experiments/generation/results-summary.json"
+        "experiments/rag/results-summary.json"
       ],
-      "exercise": "Compare the original rejected generation findings with the current strict selection contract. Identify what the model is allowed to produce and what the application must validate.",
+      "exercise": "Compare one passed source selection, one abstention, and scope-parity in the saved RAG replay. Explain why exact quotation does not prove relevance.",
       "explain": "How can an end-to-end pipeline work correctly while its model still selects the wrong evidence?",
       "pitfall": "A completed model run, valid JSON, or correct citation shape does not prove answer relevance or factual truth."
     },
@@ -292,7 +292,7 @@
         "src/lib/rag.d.mts",
         "scripts/rag.test.mjs"
       ],
-      "exercise": "Trace prepareRag and buildRagMessages for pending Nielsen design work. Confirm that implementation status and employer attribution survive unchanged.",
+      "exercise": "Trace prepareRag and buildRagBinaryPrompt for pending Nielsen design work. Confirm that implementation status and employer attribution survive unchanged.",
       "explain": "Why does a semantic match with little shared vocabulary still need to be allowed through context packing?",
       "pitfall": "Silently truncating a passage can remove the sentence that limits an achievement. Reject oversized context instead."
     },

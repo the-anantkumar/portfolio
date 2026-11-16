@@ -2,7 +2,7 @@
 
 This is the revisit point for what has been built, how its components connect, and what remains experimental. Implementation status is separate from your understanding: a built component is not automatically marked as reviewed by you.
 
-Updated: 17 November 2026. Current development checkpoint: `checkpoint/rag-pipeline-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
+Updated: 17 November 2026. Current development checkpoint: `checkpoint/rag-experimental-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
 
 ## Open the component map
 
@@ -48,7 +48,7 @@ Reading path: public content → static build → corpus → precomputed vectors
 | Topic navigator and evidence disclosures | Built | [Navigator PRD](portfolio-navigator-prd.md) |
 | Visual learning lab | Built and browser-checked | [Tracker data](learning-tracker.json) |
 | First generation candidate | Rejected in native and browser screening | [Reviewed findings](../experiments/generation/results-summary.json) |
-| Minimal Ask interface | Built locally; verification in progress | [Ask route](../src/pages/ask.astro) |
+| Minimal Ask interface | Built and browser-checked locally | [Ask route](../src/pages/ask.astro) |
 | End-to-end RAG pipeline | Built locally; model quality remains experimental | [RAG product contract](rag-prd.md) |
 | Context, source validation, answer lifecycle | Implemented components with separate contract and browser checks | [Contract tests](../scripts/rag.test.mjs) and [browser checks](../scripts/verify-rag-browser.mjs) |
 | Physical-phone inference | Not measured | Record real device and browser before making phone claims |
@@ -86,7 +86,7 @@ Three new study stops explain that path:
 2. **Validation and citations:** `validateRagSelection` accepts a narrow source-selection format. The application supplies the quotations and links. Required companion evidence, such as trlr's unvalidated outcome, stays attached; repairs must be counted separately from raw model success.
 3. **Answer lifecycle:** `createRag` manages loading, generation, cancellation, retry, disable, cache removal, and stale results. Editing a question or choosing another topic invalidates older answer work. Progress messages can stream; unvalidated generated prose must not.
 
-The implementation and model quality have different status. The stronger free-prose baseline has not met its acceptance requirements, and source selection is still being evaluated. The pipeline can correctly reject bad output while the model remains unsuitable for release. See [the RAG contract](rag-prd.md) and the eventual dated verification entry for the final measured result; an intermediate screening run is not a completed quality checkpoint. The original failed experiment remains in the history.
+The final local implementation checks pass. Model quality remains experimental: native FLAN achieved 18/20 screening and 6/8 fresh cases; browser WASM achieved 14/20 and 4/8. Nine browser mismatches abstained and one selected an extra irrelevant source. The local lab now replays all 28 browser cases with expected versus selected evidence and full original text. This is saved evaluation, not live inference. See [the reviewed RAG record](../experiments/rag/README.md). Production model acceptance and physical-phone measurement remain pending; the failed experiments remain in the history.
 
 Study selection quality, source integrity, and runtime behavior separately. Exact quotations prevent altered numbers and fabricated displayed wording, but they cannot establish that the selected passage answers a question or contains every needed fact. A native CPU result also does not establish browser or physical-phone performance. Keep owner review markers unchecked until you choose to mark them.
 
