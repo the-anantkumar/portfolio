@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "passages": [
+    {
+      "id": "page/home/intro",
+      "title": "Anant Kumar Srivastava: software engineer and founder",
+      "text": "Anant Kumar Srivastava\n\nI build backend systems and user-facing products, from production data workflows at Nielsen to founding trlr.\n\nBackend systems · Cloud infrastructure · Product engineering",
+      "context": "Anant Kumar Srivastava. Public professional introduction",
+      "url": "/portfolio/#hero-heading"
+    },
+    {
+      "id": "page/home/contact",
+      "title": "Opportunities and public contact · Email · LinkedIn profile",
+      "text": "I'm interested in MTS 2 / SDE 2 and above opportunities where I can own a problem, make thoughtful technical decisions, and carry the solution into production.\n\nEmail: iamanant1110@gmail.com\n\nLinkedIn: https://www.linkedin.com/in/anantkumar11",
+      "context": "Anant Kumar Srivastava. Public professional contact and desired roles",
+      "url": "/portfolio/#contact"
+    },
+    {
+      "id": "page/about",
+      "title": "About Anant: education and music",
+      "text": "I'm Anant, a software engineer at Nielsen and the founder of trlr. My work spans data workflows, cloud infrastructure, and the experience on the other side of an API.\n\nI studied Electronics and Instrumentation and Mathematics at BITS Pilani (2019–2024). That combination keeps me interested in both how a system works and whether it solves the right problem.\n\nAway from engineering, I play keyboard and compose music. I'm certified in keyboard performance by Trinity College London. Music is another place where I enjoy making individual parts work together.",
+      "context": "Anant Kumar Srivastava. Public biography, BITS Pilani education, keyboard and composition",
+      "url": "/portfolio/#about"
+    },
+    {
+      "id": "experience/nielsen-media",
+      "title": "Nielsen Media: Member of Technical Staff",
+      "text": "Nielsen Media. Member of Technical Staff. July 2024 to Present.\n\n- Validated approximately 7 million output rows across 28 quality checks, with zero measured production/test variances in a parallel run.\n\n- Validated a reference-data migration across 3 domains; all 18 evaluated runs passed, supported by automated rollback safeguards.\n\n- Completed nonproduction Airflow upgrade QA/UAT across 50 connections and 449+ configuration variables, documenting one connection exception.\n\n- Automated Kubernetes workload cleanup with Fabric8 and corrected ad-insertion classification affecting 2 streaming services.",
+      "context": "Anant Kumar Srivastava. Employer work. Nielsen Media. Member of Technical Staff. July 2024 to Present.",
+      "url": "/portfolio/#experience"
+    },
+    {
+      "id": "experience/sap-labs",
+      "title": "SAP Labs: Developer Intern",
+      "text": "SAP Labs. Developer Intern. February to July 2024.\n\n- Developed an SAPUI5 interaction-logging plugin backed by an OData service.\n\n- Built internal tooling connecting Azure DevOps, SAP MXP, and Jira to improve reporting and workflow visibility.",
+      "context": "Anant Kumar Srivastava. Employer work. SAP Labs. Developer Intern. February to July 2024.",
+      "url": "/portfolio/#experience"
+    },
+    {
+      "id": "experience/iiit-delhi",
+      "title": "IIIT Delhi: R&D Intern",
+      "text": "IIIT Delhi. R&D Intern. June to December 2023.\n\n- Developed a smartphone-sensor application for research, using Kotlin and Android tooling.\n\n- Contributed to COPDApp, a mobile application for COPD awareness and support.",
+      "context": "Anant Kumar Srivastava. Employer work. IIIT Delhi. R&D Intern. June to December 2023.",
+      "url": "/portfolio/#experience"
+    },
+    {
+      "id": "project/trlr/overview",
+      "title": "trlr",
+      "text": "Exploring how conversational AI can build a more useful understanding of the person using it.\n\nRole: Founder · Product & engineering.\nTechnologies: Python, FastAPI, SQLite, GCP.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/"
+    },
+    {
+      "id": "project/trlr/the-problem",
+      "title": "trlr: The problem",
+      "text": "A conversation can contain a great deal of context about a person. The product question behind trlr is whether an AI system can use that context to develop a useful personal understanding, and whether that understanding improves its predictions.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#the-problem"
+    },
+    {
+      "id": "project/trlr/my-contribution",
+      "title": "trlr: My contribution",
+      "text": "As founder, I own both the product direction and engineering implementation. That means turning a broad product hypothesis into a working conversational experience, defining how it should be evaluated, and carrying the application through deployment.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#my-contribution"
+    },
+    {
+      "id": "project/trlr/engineering-decisions",
+      "title": "trlr: Engineering decisions",
+      "text": "The application uses a Python and FastAPI backend with persistent state. Reliability matters because an interrupted conversation should not silently lose accepted work or turn a retry into duplicate processing.\n\nThe engineering work includes durable conversation workflows, validation, recovery behavior, and comparisons against a baseline. Keeping product behavior and evaluation visible makes it easier to distinguish a working implementation from evidence that the underlying hypothesis is correct.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#engineering-decisions"
+    },
+    {
+      "id": "project/trlr/tradeoffs",
+      "title": "trlr: Tradeoffs",
+      "text": "Persistent state makes recovery possible but also increases the responsibility to handle private information carefully. The public case study therefore describes the engineering approach without exposing personal profiles, conversations, internal prompts, or operational configuration.\n\nEvaluation also adds complexity. A successful deployment demonstrates that the software runs; it does not demonstrate that personalization improves predictions.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#tradeoffs"
+    },
+    {
+      "id": "project/trlr/current-outcome",
+      "title": "trlr: Current outcome",
+      "text": "trlr has a deployed application and a public product landing page. Prediction quality and superiority over a baseline still require further measurement. I do not claim validated traction or prediction gains here.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#current-outcome"
+    },
+    {
+      "id": "project/trlr/what-this-work-demonstrates",
+      "title": "trlr: What this work demonstrates",
+      "text": "Product ownership, backend implementation, deployment, and the discipline to test an AI product's central assumption rather than infer success from a functioning demo.",
+      "context": "Anant Kumar Srivastava. trlr. Founder · Product & engineering. Technologies: Python, FastAPI, SQLite, GCP.",
+      "url": "/portfolio/projects/trlr/#what-this-work-demonstrates"
+    },
+    {
+      "id": "project/codeforces-potd/overview",
+      "title": "Codeforces POTD",
+      "text": "A daily coding problem, matched to your level. Less time choosing, more time practicing.\n\nRole: Creator · Engineering.\nTechnologies: JavaScript, Chrome APIs, Codeforces API.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/"
+    },
+    {
+      "id": "project/codeforces-potd/the-problem",
+      "title": "Codeforces POTD: The problem",
+      "text": "Codeforces offers a large problem library. Choosing a suitable problem every day can get in the way of building a consistent practice habit.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#the-problem"
+    },
+    {
+      "id": "project/codeforces-potd/my-contribution",
+      "title": "Codeforces POTD: My contribution",
+      "text": "I built a Chrome extension that recommends a daily problem based on a user's Codeforces rating and puts a practice calendar into the workflow they already use.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#my-contribution"
+    },
+    {
+      "id": "project/codeforces-potd/engineering-decisions",
+      "title": "Codeforces POTD: Engineering decisions",
+      "text": "The extension integrates the Codeforces API with browser capabilities to retrieve user and problem information and present a personalized daily challenge. The current published listing describes streak tracking, progress synchronization, and automatic recognition of solved daily problems.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#engineering-decisions"
+    },
+    {
+      "id": "project/codeforces-potd/product-tradeoffs",
+      "title": "Codeforces POTD: Product tradeoffs",
+      "text": "The product focuses on a small, repeatable task: choosing the next problem and returning to practice. Its usefulness depends on relevant recommendations and reliable interaction with an external platform, rather than the number of features on screen.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#product-tradeoffs"
+    },
+    {
+      "id": "project/codeforces-potd/evidence",
+      "title": "Codeforces POTD: Evidence",
+      "text": "The Chrome Web Store listing checked on 3 November 2026 displayed 2,000 users, 4.4 out of 5 from 32 ratings, and Featured status. These are a dated snapshot of the listing, not lifetime installs or weekly active users.\n\nView the source listing.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#evidence"
+    },
+    {
+      "id": "project/codeforces-potd/what-i-learned",
+      "title": "Codeforces POTD: What I learned",
+      "text": "A narrow workflow can be a useful product in its own right. Adoption is a signal that people find it useful; stronger claims about retention or learning efficiency require separate measurement.",
+      "context": "Anant Kumar Srivastava. Codeforces POTD. Creator · Engineering. Technologies: JavaScript, Chrome APIs, Codeforces API.",
+      "url": "/portfolio/projects/codeforces-potd/#what-i-learned"
+    },
+    {
+      "id": "project/nielsen-data-systems/overview",
+      "title": "Data systems at Nielsen",
+      "text": "Making data changes safer to ship through large-scale parity checks, migration safeguards, and workload automation.\n\nRole: Member of Technical Staff · Employer work.\nTechnologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/"
+    },
+    {
+      "id": "project/nielsen-data-systems/the-context",
+      "title": "Data systems at Nielsen: The context",
+      "text": "At Nielsen, I work on backend, data-processing, and infrastructure workflows. This is employer work within a wider team. My focus spans validation, operational reliability, and making changes safer to ship.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#the-context"
+    },
+    {
+      "id": "project/nielsen-data-systems/parallel-validation-at-scale",
+      "title": "Data systems at Nielsen: Parallel validation at scale",
+      "text": "I validated approximately 7 million output rows across 28 quality checks. The parallel validation run achieved 100% production/test parity and zero measured variances.\n\nThat result describes the evaluated outputs in this particular run. It is not a claim that every production workload is error-free.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#parallel-validation-at-scale"
+    },
+    {
+      "id": "project/nielsen-data-systems/reference-data-migration",
+      "title": "Data systems at Nielsen: Reference-data migration",
+      "text": "I validated a migration across 3 data domains, with 18/18 evaluated runs passing and 100% accuracy on the checked columns and mappings. Automated rollback safeguards supported the cutover.\n\nThe important distinction is the scope: these results apply to the runs, columns, and mappings evaluated, rather than every possible downstream use of the data.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#reference-data-migration"
+    },
+    {
+      "id": "project/nielsen-data-systems/airflow-upgrade-readiness",
+      "title": "Data systems at Nielsen: Airflow upgrade readiness",
+      "text": "I completed nonproduction QA/UAT for an Apache Airflow upgrade covering 50 connections and 449+ configuration variables. The work used zero-import-error acceptance criteria and documented one connection exception.\n\nThis is evidence of nonproduction readiness work, not a claim that the production upgrade was completed or that every connection was exception-free.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#airflow-upgrade-readiness"
+    },
+    {
+      "id": "project/nielsen-data-systems/classification-and-measurement",
+      "title": "Data systems at Nielsen: Classification and measurement",
+      "text": "I corrected ad-insertion classification affecting 2 streaming services, removing smoothing-based false positives to improve measurement accuracy. The correction separates the classification decision from effects introduced by smoothing; no unmeasured percentage improvement is claimed.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#classification-and-measurement"
+    },
+    {
+      "id": "project/nielsen-data-systems/environment-and-workload-automation",
+      "title": "Data systems at Nielsen: Environment and workload automation",
+      "text": "I consolidated subminute processing across 2 development/test environments, covering infrastructure, database schemas, namespaces, and service deployment.\n\nI also automated Kubernetes workload cleanup using Fabric8, implementing graceful pod termination after successful job completion across environments. Cleanup becomes part of the workload lifecycle instead of a separate manual task.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#environment-and-workload-automation"
+    },
+    {
+      "id": "project/nielsen-data-systems/root-cause-investigation",
+      "title": "Data systems at Nielsen: Root-cause investigation",
+      "text": "I identified a cross-midnight timestamp defect that produced a −40,120-second duration, then submitted root-cause findings for peer review. The findings documented risks to feed integrity and Parquet conversion.\n\nThe completed deliverable is the investigation and submitted findings. A deployed correction is not claimed here.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#root-cause-investigation"
+    },
+    {
+      "id": "project/nielsen-data-systems/design-work-implementation-pending",
+      "title": "Data systems at Nielsen: Design work (implementation pending)",
+      "text": "I authored a technical design spanning 3 processing components to separate classification from smoothing logic. Implementation and testing remain pending.\n\nThis is a design deliverable and is deliberately distinguished from the completed classification correction described above.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#design-work-implementation-pending"
+    },
+    {
+      "id": "project/nielsen-data-systems/engineering-foundations",
+      "title": "Data systems at Nielsen: Engineering foundations",
+      "text": "My other work includes Python processing of geospatial JSON data, AWS message ingestion, Redis caching, durable persistence, Airflow scheduling, cloud resource migration, distributed cache cleanup, and reusable Terraform provisioning.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#engineering-foundations"
+    },
+    {
+      "id": "project/nielsen-data-systems/what-this-work-demonstrates",
+      "title": "Data systems at Nielsen: What this work demonstrates",
+      "text": "Making change measurable before cutover, keeping validation scope explicit, documenting exceptions, and carrying operational safeguards into the design. Public details exclude service names, internal identifiers, datasets, and private infrastructure configuration.",
+      "context": "Anant Kumar Srivastava. Data systems at Nielsen. Member of Technical Staff · Employer work. Technologies: Python, AWS, Airflow, Kubernetes, Fabric8, Redis.",
+      "url": "/portfolio/projects/nielsen-data-systems/#what-this-work-demonstrates"
+    },
+    {
+      "id": "project/portfolio/overview",
+      "title": "This portfolio",
+      "text": "A static, content-driven portfolio designed around a zero-cost operating constraint.\n\nRole: Portfolio architecture & implementation.\nTechnologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/"
+    },
+    {
+      "id": "project/portfolio/the-problem",
+      "title": "This portfolio: The problem",
+      "text": "Present engineering and product work clearly, load quickly, and keep hosting costs at zero. Future AI experiments should not make reading a portfolio expensive or dependent on a model service.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#the-problem"
+    },
+    {
+      "id": "project/portfolio/architecture",
+      "title": "This portfolio: Architecture",
+      "text": "Astro renders typed Markdown content into static HTML at build time. Project cards and detail pages share one content source. Native links provide navigation, and CSS supplies the layout and restrained visual feedback.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#architecture"
+    },
+    {
+      "id": "project/portfolio/tradeoffs",
+      "title": "This portfolio: Tradeoffs",
+      "text": "A client-rendered application would add a runtime to pages whose main job is to communicate. A dynamic backend would add operational cost without improving the current visitor experience. Static generation fits these constraints directly.\n\nThe contact links open email or LinkedIn. The site does not claim to send a message or collect contact-form data.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#tradeoffs"
+    },
+    {
+      "id": "project/portfolio/performance-contract",
+      "title": "This portfolio: Performance contract",
+      "text": "The build checks an initial homepage transfer budget of 300 KB. Ordinary pages ship no application scripts. Core navigation and case studies work without JavaScript. A separate Ask page has a 20 KB compressed initial script budget; its optional model loads only after a visitor enables meaning-based search.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#performance-contract"
+    },
+    {
+      "id": "project/portfolio/future-search",
+      "title": "This portfolio: Future search",
+      "text": "The Ask page searches only these public Markdown collections and links each result to its source. Word matching works immediately. Optional meaning-based search uses a small embedding model in the visitor's browser, with an explicit first-use download and a working word-matching fallback.\n\nSearch retrieves original public passages. An experimental, separately enabled local language model can select complete passages for a cited answer. The application preserves their original wording and qualifications; it does not display model-written factual prose. Questions stay on the device, and no model API or backend is required. Selection quality and physical-phone performance remain evaluation concerns.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#future-search"
+    },
+    {
+      "id": "project/portfolio/delivery",
+      "title": "This portfolio: Delivery",
+      "text": "GitHub Pages serves the generated files from this portfolio's public repository. GitHub Actions validates and deploys changes, including scheduled contribution-calendar updates. A custom domain, paid backend, analytics service, and model API are not required.",
+      "context": "Anant Kumar Srivastava. This portfolio. Portfolio architecture & implementation. Technologies: Astro, TypeScript, Markdown, CSS, Transformers.js.",
+      "url": "/portfolio/projects/portfolio/#delivery"
+    }
+  ]
+}

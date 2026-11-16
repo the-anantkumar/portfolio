@@ -23,6 +23,8 @@ The candidate is `Xenova/flan-t5-base`, revision `c6a1b98a4a35e1063d88edaceef4dc
 
 The [safe reviewed result summary](results-summary.json) distinguishes source-selection quality from interface correctness. Twenty supplied-source questions were frozen before tuning. Eight further questions were frozen after choosing the binary model/prompt and before browser validation; they were not used to tune it. These are small sets and do not establish general accuracy.
 
+The [17 November public corpus snapshot](corpus-2026-11-17.json) preserves the exact public source text used by these recorded results. Its content hash must match `results-summary.json`; the learning lab checks that before replaying any RAG case. Current word/hybrid traces continue to use the current built corpus and its verified index. Later editorial changes therefore update the current search without rewriting the historical model measurements or presenting old results as a fresh evaluation.
+
 | Runtime | Screening exact sets | Fresh exact sets |
 | --- | --- | --- |
 | Native CPU | 18/20 | 6/8 |

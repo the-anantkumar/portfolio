@@ -37,7 +37,16 @@ const screening = await readJSON("experiments/generation/results-summary.json");
 assert.equal(screening.promoted, false, "Revisit the learning lab before promoting a generation candidate");
 const ragSummary = await readJSON("experiments/rag/results-summary.json");
 assert.equal(ragSummary.version, 1);
-assert.equal(ragSummary.corpusHash, await corpusHash(corpus.passages), "RAG examples must match the current public corpus");
+// Historical model results must replay the public text actually evaluated.
+// Current retrieval traces above still validate against the current index.
+const ragCorpus = await readJSON("experiments/rag/corpus-2026-11-17.json");
+assert.equal(ragCorpus.version, 1);
+assert.equal(ragSummary.corpusHash, await corpusHash(ragCorpus.passages), "Recorded RAG examples must match their frozen public corpus");
+assert.equal(new Set(ragCorpus.passages.map(({ id }) => id)).size, ragCorpus.passages.length, "Frozen RAG sources must be unique");
+for (const passage of ragCorpus.passages) {
+  assert(["id", "title", "context", "text", "url"].every((key) => typeof passage[key] === "string" && passage[key].length > 0), "Incomplete frozen public source");
+  assert(/^\/portfolio\/(?:projects\/[a-z0-9-]+\/)?(?:#[a-z0-9-]+)?$/.test(passage.url), "Frozen source links must stay within the public portfolio");
+}
 const fixtures = [
   ...(await readJSON("experiments/rag/cases.json")).cases.map((entry) => ({ ...entry, cohort: "screening" })),
   ...(await readJSON("experiments/rag/holdout.json")).cases.map((entry) => ({ ...entry, cohort: "holdout" })),
@@ -45,7 +54,7 @@ const fixtures = [
 assert.equal(new Set(fixtures.map(({ id }) => id)).size, fixtures.length);
 assert.equal(ragSummary.cases.length, fixtures.length, "Show every recorded RAG case");
 assert.equal(new Set(ragSummary.cases.map(({ id }) => id)).size, fixtures.length, "Do not duplicate a recorded RAG case");
-const publicPassages = new Map(corpus.passages.map((passage) => [passage.id, passage]));
+const publicPassages = new Map(ragCorpus.passages.map((passage) => [passage.id, passage]));
 const safeIds = (ids) => {
   assert(Array.isArray(ids) && ids.length <= 3 && new Set(ids).size === ids.length, "Invalid saved RAG source set");
   ids.forEach((id) => assert(publicPassages.has(id), `Nonpublic saved RAG source: ${id}`));
