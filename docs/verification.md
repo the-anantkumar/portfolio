@@ -228,4 +228,4 @@ The homepage initial transfer fell from 12,305 to 10,330 compressed bytes. No ne
 
 Historical RAG replay now reads `experiments/rag/corpus-2026-11-17.json`, whose hash equals the original recorded experiment hash. Current search traces still validate against the current corpus and vectors. The earlier measured RAG results remain unchanged: browser 14/20 screening and 4/8 fresh cases, with model acceptance and physical-phone inference pending.
 
-Local screenshot manifests and logs are under ignored `artifacts/design-polish/`. They are not published with the portfolio. Release remains pending: PR CI, owner-approved merge to `main`, and exact-commit hosted verification. No production deployment was performed.
+Local screenshot manifests and logs are under ignored `artifacts/design-polish/`. Accepted images are frozen in its `verified/` subdirectory with a SHA256 manifest. Font readiness, paint settling, and restored scroll position avoid unreliable immediate headless captures. They are not published with the portfolio. Release remains pending: PR CI, owner-approved merge to `main`, and exact-commit hosted verification. No production deployment was performed.

@@ -160,3 +160,35 @@ Earlier boundaries are `checkpoint/rag-contract-v1-2026-11-17` (frozen contract/
 The final tag also includes this checkpoint inventory. To revisit, use Node 24, build the production path, and run `npm run preview` for `/portfolio/ask/` or `npm run learn` for the offline study map. The lab has 17 components and 28 saved RAG examples; review markers remain owner-controlled. `npm test`, `npm run test:browser`, `npm run test:rag:browser`, and `npm run test:learn` avoid external model downloads. `TEST_RAG_MODEL=1 npm run test:rag:browser` explicitly exercises actual inference.
 
 Completed: interface/lifecycle/source-integrity checks, pinned model integration, supplied-source native/browser measurement, actual retrieval-to-answer UI run, caching/cancellation measurement, documentation, learning replay, and phased commits. Outstanding: model-quality promotion (browser 14/20 screening, 4/8 fresh), physical-phone inference, release PR CI, and exact-commit hosted verification. Do not present the experimental pipeline as production-accepted or a free-form conversational assistant.
+
+
+## Editorial polish and evidence-first navigation, 17 November 2026
+
+Final annotated tag: `checkpoint/design-polish-v1-2026-11-17`. Branch: `pilot`. Earlier UI boundary: `checkpoint/editorial-ui-v1-2026-11-17` at `e5a8dc7`. The homepage, four case studies, and existing Ask journey have been refined and checked. The implementation remains static and free, with optional models only on Ask. The answer selector remains experimental; no model-quality promotion or production release occurred.
+
+Each implementation commit changes one to three files. Intermediate commits are ordered review/backtracking boundaries and may depend on the next commit, particularly the heading/source-ID update and regenerated vectors. The final tag is the complete checked handoff.
+
+| Commit | Concern | Files |
+| --- | --- | --- |
+| `a7c8d60` | style: unify typography navigation and restrained spectral motion | 2 |
+| `82b19b8` | style: feature production work and clarify the homepage story | 1 |
+| `7c9cf4b` | design: replace decorative project panels with public workflow diagrams | 1 |
+| `35fe9f2` | style: make case studies readable with clear roles and contents | 2 |
+| `319fe8a` | design: lead Ask with complete evidence and secondary model controls | 3 |
+| `81caa28` | test: verify evidence previews mobile navigation and model recovery | 2 |
+| `e5a8dc7` | test: capture repeatable portfolio journeys and loaded visual assets | 1 |
+| `dca8c0d` | test: preserve original public inputs for historical RAG replay | 3 |
+| `5a84e63` | content: distinguish built search from future experiments | 3 |
+| `2fe2d6f` | chore: regenerate public vectors for the revised search heading | 1 |
+| `b508535` | docs: teach presentation boundaries and evidence-first navigation | 2 |
+| `c7c0fa7` | fix: clarify empty search feedback and preserve accessible status | 3 |
+| `ae110c8` | docs: record the visual review and verified development handoff | 3 |
+| `7382a41` | test: stabilize screenshot fonts and viewport capture order | 1 |
+
+The final tag also includes this checkpoint inventory and the frozen screenshot archive location. The [design review](design-polish.md), [verification record](verification.md#editorial-portfolio-and-evidence-first-ask-17-november-2026), and [learning tracker](learning-tracker.md) explain the choices and how to study them. The tracker now maps 18 components; personal review markers remain owner-controlled.
+
+Local previews use `npm run preview -- --port 4321` after a production-path build with Node 24. The study map uses `npm run learn` on port 4382. Accepted before/after images are frozen under ignored `artifacts/design-polish/verified/`, including a SHA256 manifest; they are never copied into the published site. `scripts/capture-design.mjs` reproduces the visitor journey with lazy-image decoding, font readiness, and stable viewport capture.
+
+Verified: all routes and public boundaries, 1440/390/320 layouts, keyboard/no-JavaScript navigation, reduced motion and pause controls, axe checks, source integrity, optional-model failure/cancellation, 90/90 existing semantic browser evaluation questions, model-free RAG lifecycle, and the updated offline learning lab. Historical RAG results replay against their original frozen public corpus instead of a later editorial revision.
+
+Launch remains separate: review the complete `pilot` diff, run release PR CI, approve the merge to `main`, and verify the exact hosted revision after the existing workflow publishes it. The static deployment workflow and contribution refresh are unchanged. No new account, service, billing resource, or domain is needed.
