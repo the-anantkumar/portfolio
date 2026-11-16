@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updated": "2026-11-15",
-  "checkpoint": "checkpoint/learning-lab-v1-2026-11-15",
-  "focus": "Revisit the built navigator and the rejected first generation candidate through the local learning lab",
+  "updated": "2026-11-17",
+  "checkpoint": "checkpoint/rag-pipeline-v1-2026-11-17",
+  "focus": "Trace the locally built RAG pipeline and minimal Ask interface while keeping experimental model quality separate from verified source integrity",
   "examples": [
     "rows",
     "linkedin",
@@ -47,6 +47,18 @@
       "status": "evaluated, not promoted",
       "date": "2026-11-15",
       "evidence": "experiments/generation/results-summary.json"
+    },
+    {
+      "name": "Minimal Ask interface and integrated local answer controls",
+      "status": "built locally; verification in progress",
+      "date": "2026-11-17",
+      "evidence": "src/pages/ask.astro"
+    },
+    {
+      "name": "RAG context, worker, source validation, and fallback pipeline",
+      "status": "built locally; model quality remains experimental",
+      "date": "2026-11-17",
+      "evidence": "docs/rag-prd.md"
     }
   ],
   "components": [
@@ -251,23 +263,72 @@
     },
     {
       "id": "generation",
-      "name": "Grounded answer generation",
+      "name": "Local language-model generation",
       "status": "experiment",
       "lane": "Local experiment",
-      "purpose": "Test whether a small instruction model can write concise supported answers from retrieved evidence.",
-      "input": "A question, complete public passages, and explicit citation and scope instructions.",
-      "output": "First candidate rejected: 0/8 automated passes in native and browser runs, with manually confirmed source-fidelity failures. No visitor feature is enabled.",
+      "purpose": "Evaluate a pinned instruction model after retrieval, including free-prose baselines and constrained source selection.",
+      "input": "An immutable question and complete public evidence, supplied only after a separate local-model opt-in.",
+      "output": "An untrusted structured source selection for validation, or a generation failure. The integrated local pipeline does not establish model quality or authorize production promotion.",
       "files": [
-        "experiments/generation/config.mjs",
-        "experiments/generation/cases.json",
-        "experiments/generation/run.mjs",
-        "experiments/generation/README.md",
-        "experiments/generation/web/worker.js",
+        "src/lib/rag-config.mjs",
+        "src/scripts/rag-worker.ts",
+        "docs/rag-prd.md",
         "experiments/generation/results-summary.json"
       ],
-      "exercise": "Read the reviewed parity, pending-design, and investigation failures in results-summary.json. Explain how each changes the meaning of its source without rerunning the model.",
-      "explain": "What does RAG add after retrieval, and why does a citation alone not prove support?",
-      "pitfall": "Fluent text or valid citation syntax can still misrepresent the source."
+      "exercise": "Compare the original rejected generation findings with the current strict selection contract. Identify what the model is allowed to produce and what the application must validate.",
+      "explain": "How can an end-to-end pipeline work correctly while its model still selects the wrong evidence?",
+      "pitfall": "A completed model run, valid JSON, or correct citation shape does not prove answer relevance or factual truth."
+    },
+    {
+      "id": "rag-context",
+      "name": "RAG context packing",
+      "status": "built",
+      "lane": "Local experiment",
+      "purpose": "Freeze the current question and retrieved evidence so generation sees complete qualifications and cannot use a later question's sources.",
+      "input": "The current question and up to three complete public passages selected by retrieval.",
+      "output": "A validated immutable source snapshot and model messages, or an explicit unsupported/no-evidence outcome.",
+      "files": [
+        "src/lib/rag.mjs",
+        "src/lib/rag.d.mts",
+        "scripts/rag.test.mjs"
+      ],
+      "exercise": "Trace prepareRag and buildRagMessages for pending Nielsen design work. Confirm that implementation status and employer attribution survive unchanged.",
+      "explain": "Why does a semantic match with little shared vocabulary still need to be allowed through context packing?",
+      "pitfall": "Silently truncating a passage can remove the sentence that limits an achievement. Reject oversized context instead."
+    },
+    {
+      "id": "rag-validation",
+      "name": "Source validation and citations",
+      "status": "built",
+      "lane": "Local experiment",
+      "purpose": "Constrain displayed answers to complete approved source text and application-created citations.",
+      "input": "Untrusted model JSON containing numbered source choices and the exact request's immutable evidence snapshot.",
+      "output": "Complete original quotations with canonical source links, explicit abstention, or rejection; required trlr outcome context is preserved and any repair is measurable.",
+      "files": [
+        "src/lib/rag.mjs",
+        "src/scripts/rag.ts",
+        "scripts/rag.test.mjs"
+      ],
+      "exercise": "Run the contract tests, then inspect the unknown-source, altered-output, and missing-outcome cases. Find why model-provided URLs and prose cannot become an answer.",
+      "explain": "What does exact source identity guarantee, and which relevance or completeness errors can still remain?",
+      "pitfall": "A valid source selection proves where the text came from, not that the source answers the visitor's question."
+    },
+    {
+      "id": "rag-lifecycle",
+      "name": "Answer lifecycle and fallback",
+      "status": "built",
+      "lane": "Local experiment",
+      "purpose": "Keep answer generation optional and cancellable while a newer visitor action stays authoritative.",
+      "input": "Separate opt-in, model progress, a compose action, edits, topic choices, worker results, timeout, disable, and cache removal.",
+      "output": "Current validated answer or explicit fallback to evidence; stale work is discarded and questions remain in memory only.",
+      "files": [
+        "src/scripts/rag.ts",
+        "src/scripts/rag-worker.ts",
+        "scripts/verify-rag-browser.mjs"
+      ],
+      "exercise": "Trace a slow answer followed by a new question. Find both the request identity check and the operation that terminates obsolete work.",
+      "explain": "Why must editing, topic navigation, cancellation, and page exit invalidate a pending answer before it can render?",
+      "pitfall": "Streaming unvalidated model prose can show an incorrect claim before a later validator rejects it. Stream status, then display only validated output."
     },
     {
       "id": "memory",

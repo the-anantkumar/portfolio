@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
+const componentCount = JSON.parse(await readFile("docs/learning-tracker.json", "utf8")).components.length;
 const browser = await chromium.launch({ ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH } : {}) });
 await mkdir("artifacts/learning/screenshots", { recursive: true });
 try {
@@ -15,15 +16,15 @@ try {
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("request", (request) => { if (/^https?:/.test(request.url())) requests.push(request.url()); });
     await page.goto(pathToFileURL(resolve("artifacts/learning/index.html")).href);
-    assert.equal(await page.locator("[data-component]").count(), 14);
-    assert.match(await page.locator("#review-count").innerText(), /^0 \/ 14/);
+    assert.equal(await page.locator("[data-component]").count(), componentCount);
+    assert.match(await page.locator("#review-count").innerText(), new RegExp(`^0 / ${componentCount}`));
     await page.locator('[data-component="hybrid"]').focus();
     await page.keyboard.press("Enter");
     assert.equal(await page.locator("#component-title").innerText(), "Hybrid evidence retrieval");
     assert.equal(await page.locator(":focus").getAttribute("id"), "component-title");
     await page.locator("#review-component").check();
     await page.reload();
-    assert.match(await page.locator("#review-count").innerText(), /^1 \/ 14/);
+    assert.match(await page.locator("#review-count").innerText(), new RegExp(`^1 / ${componentCount}`));
     await page.locator('[data-component="hybrid"]').click();
     assert(await page.locator("#review-component").isChecked());
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("portfolio-learning-reviewed-v1")));
