@@ -38,9 +38,9 @@ const examples = [
     <a class="ask-return" href={withBase()}>← Back to the portfolio</a>
     <header class="ask-intro">
       <div class="ask-orbits" aria-hidden="true"><i></i><i></i><i></i><span>a.</span></div>
-      <span class="eyebrow">ANANT / PORTFOLIO NAVIGATOR</span>
+      <span class="eyebrow">A CLOSER LOOK AT MY WORK</span>
       <h1 id="ask-heading">What would you<br /><em>like to know?</em></h1>
-      <p>Engineering at Nielsen. Founder work at trlr.<br />Pick a direction, or bring your own question.</p>
+      <p>Engineering at Nielsen. Founder work at trlr.<br />Follow your curiosity. Every answer starts with a source.</p>
     </header>
 
     <div
@@ -103,12 +103,36 @@ const examples = [
         </div>
       </details>
 
+      <details id="rag-enhancement" class="ask-enhancement rag-enhancement" hidden>
+        <summary><span class="ask-model-dot" aria-hidden="true"></span>Optional AI-selected answers<span class="ask-mode">ON YOUR DEVICE</span><span class="ask-disclosure-mark" aria-hidden="true">+</span></summary>
+        <div class="ask-enhancement-body">
+          <div class="ask-enhancement-copy">
+            <h2>An answer, in the original words.</h2>
+            <p>A local language model selects the sources that answer your question. Complete original wording and source links stay together.</p>
+            <p class="ask-download-note" id="rag-help">About 540 MB on first use, including Qwen model files from Hugging Face. Download only when you are ready. Loading and answers may be slow on phones and older devices. Questions stay in this browser. <a href={withBase("ai-notices/README.txt")}>Model and software notices</a>.</p>
+          </div>
+          <div class="ask-enhancement-actions">
+            <button id="rag-enable" class="ask-secondary" type="button" aria-describedby="rag-help">Enable AI-selected answers</button>
+            <button id="rag-stop" class="ask-secondary" type="button" hidden>Stop answer model</button>
+            <button id="rag-clear" class="ask-text-button" type="button">Remove answer model cache</button>
+            <p id="rag-status" role="status" aria-live="polite" aria-atomic="true"></p>
+          </div>
+        </div>
+      </details>
+
       <p id="ask-status" class="ask-status" role="status" aria-live="polite" aria-atomic="true"></p>
       <section id="ask-results" class="ask-results" aria-labelledby="ask-result-heading" aria-busy="false" hidden>
         <div class="ask-results-heading">
           <h2 id="ask-result-heading" tabindex="-1">From the portfolio</h2>
           <p id="ask-result-summary"></p>
         </div>
+        <section id="rag-answer-panel" class="rag-answer" aria-labelledby="rag-answer-title" hidden>
+          <div class="rag-answer-heading"><span class="ask-model-dot" aria-hidden="true"></span><h3 id="rag-answer-title">AI-selected answer</h3></div>
+          <p class="rag-answer-note">Original wording, selected by a local language model. Follow each source for context.</p>
+          <div id="rag-answer-content"></div>
+          <button id="rag-generate" class="ask-secondary" type="button">Compose an answer from these sources</button>
+          <p id="rag-answer-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        </section>
         <ol id="ask-result-list"></ol>
         <button id="ask-explore-meaning" class="ask-secondary" type="button" hidden>Explore meaning-based search</button>
         <p class="ask-result-note">Card summaries come from the portfolio. Expand matched evidence for the full original text.</p>
