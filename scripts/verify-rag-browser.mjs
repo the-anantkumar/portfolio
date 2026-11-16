@@ -126,6 +126,8 @@ try {
     await enable(page); await submit(page, "What remains pending in the Nielsen classification design?");
     await page.evaluate(() => window.__ragWorkers.at(-1).postMessage({ type: "test-mode", mode: "slow" }));
     await page.locator("#rag-generate").click();
+    if (!await page.locator("#ask-topics").evaluate((element) => element.open))
+      await page.locator("#ask-topics > summary").click();
     await page.locator('[data-ask-topic="founder"]').click();
     await page.waitForTimeout(800);
     assert.equal(await page.locator("#rag-answer-content article").count(), 0, "A late generation cannot overwrite a topic");

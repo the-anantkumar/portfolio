@@ -97,6 +97,25 @@ async function enableMeaningSearch(page) {
   if (!await panel.evaluate((element) => element.open)) await panel.locator(":scope > summary").click();
   await page.locator("#semantic-enable").click();
 }
+async function selectTopic(page, topic) {
+  const disclosure = page.locator("#ask-topics");
+  if (!await disclosure.evaluate((element) => element.open))
+    await disclosure.locator(":scope > summary").click();
+  await page.locator(`[data-ask-topic="${topic}"]`).click();
+}
+async function assertEvidencePreview(page) {
+  for (const card of await page.locator(".ask-result").all()) {
+    const preview = card.locator(".ask-excerpt");
+    const original = card.locator(".ask-result-text").first();
+    assert(await preview.isVisible(), "The first useful original passage must be visible without expanding a card");
+    assert.equal(await preview.textContent(), await original.textContent(), "Evidence previews preserve the complete first original passage and its qualifications");
+    assert.equal(
+      await card.locator(".ask-preview-source").getAttribute("href"),
+      await card.locator(".ask-card-evidence .ask-source-link").first().getAttribute("href"),
+      "The visible passage links directly to the same source as its complete context",
+    );
+  }
+}
 async function assertSourceLinks(page) {
   const links = await page.locator(".ask-source-link").evaluateAll((elements) =>
     elements.map((element) => element.href),
@@ -146,10 +165,15 @@ async function verifyAsk() {
     await page.locator("#ask-form").waitFor({ state: "visible" });
     await assertNoOverflow(page, `${width}px Ask form`);
     assert.equal(await page.locator("#ask-question").getAttribute("maxlength"), "500");
+    const questionBounds = await page.locator("#ask-question").boundingBox();
+    assert(questionBounds.y + questionBounds.height < 900, `${width}px: the question field must be on the first screen`);
+    assert(await page.locator("#ask-question").evaluate((element) => parseFloat(getComputedStyle(element).fontSize) >= 16), "Question text remains readable without mobile focus zoom");
+    assert(!await page.locator("#ask-topics").evaluate((element) => element.open), "Topics are progressively disclosed");
+    assert.equal(await page.locator("[data-ask-example]").count(), 3, "Keep a small set of initial suggestions");
     assert(!await page.locator("#ask-enhancement").evaluate((element) => element.open), "AI disclosure starts collapsed");
     const topicSources = { experience: 3, projects: 3, founder: 1, skills: 3, about: 1, contact: 1 };
     for (const [topic, count] of Object.entries(topicSources)) {
-      await page.locator(`[data-ask-topic="${topic}"]`).click();
+      await selectTopic(page, topic);
       await page.locator("#ask-results").waitFor({ state: "visible" });
       assert.equal(await page.locator(".ask-result").count(), count, `${topic}: expected source grouping`);
       assert.equal(await page.locator('[data-ask-topic][aria-pressed="true"]').count(), 1);
@@ -158,7 +182,7 @@ async function verifyAsk() {
       assert(!await page.locator("#ask-enhancement").evaluate((element) => element.open), "Topics must not open AI controls");
       await assertNoOverflow(page, `${width}px ${topic} topic`);
     }
-    await page.locator('[data-ask-topic="founder"]').click();
+    await selectTopic(page, "founder");
     await page.locator('[data-ask-followup="evaluation"]').click();
     await page.locator("#ask-results").waitFor({ state: "visible" });
     const hypothesis = page.locator('[data-passage-id="project/trlr/the-problem"]');
@@ -181,7 +205,9 @@ async function verifyAsk() {
     assert(await page.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0);
     assert(await page.locator("#ask-result-heading").evaluate((element) => element === document.activeElement), "Keyboard search must lead to the results heading");
     assert.equal(await page.locator(".ask-result").count(), 1, "Nielsen case study and experience share one compact source card");
+    await assertEvidencePreview(page);
     assert(await page.locator(".ask-result-text").first().isHidden(), "Full evidence starts collapsed");
+    assert(await page.locator("#ask-results").evaluate((element) => Boolean(element.compareDocumentPosition(document.querySelector("#ask-tools")) & Node.DOCUMENT_POSITION_FOLLOWING)), "Results precede optional model settings");
     await screenshot(page, `ask-compact-${width}.png`);
     await page.locator(".ask-evidence > summary").first().focus();
     await page.keyboard.press("Enter");
@@ -193,6 +219,13 @@ async function verifyAsk() {
     await screenshot(page, `ask-results-${width}.png`);
     await page.getByRole("button", { name: "Ask another question", exact: true }).click();
     assert(await page.locator("#ask-question").evaluate((element) => element === document.activeElement), "Ask another question must return focus to the input");
+
+    const originalSource = await page.locator(".ask-preview-source").first().getAttribute("href");
+    await page.locator(".ask-preview-source").first().click();
+    assert.equal(page.url(), new URL(originalSource, base).href, "The evidence journey reaches the original section");
+    assert(await page.locator(new URL(page.url()).hash).isVisible(), "The source section exists and is readable");
+    await page.goto(askURL);
+    await page.locator("#ask-form").waitFor({ state: "visible" });
 
     await submitQuestion(page, "What is Anant's private phone number?");
     assert.match(await page.locator("#ask-result-summary").innerText(), /No supported match/i);
@@ -276,7 +309,7 @@ async function verifyAsk() {
     assert.match(await page.locator("#semantic-status").innerText(), /word matching|unavailable|could not|cancel/i);
     await submitQuestion(page, "What did Anant validate at Nielsen?");
     assert(await page.locator('.ask-source-link[href*="nielsen-data-systems"]').count() > 0, "Text search survives model cancellation or failure");
-    await page.locator('[data-ask-topic="projects"]').click();
+    await selectTopic(page, "projects");
     assert.equal(await page.locator(".ask-result").count(), 3, "Guided navigation also survives model cancellation or failure");
     await assertAccessible(page, `Ask ${scenario} fallback`);
     assert.equal(workerRequests, 1, "Lifecycle fixture must exercise a worker load");
@@ -317,11 +350,11 @@ async function verifyAsk() {
         await racePage.locator("#ask-question").fill("What did Anant validate at Nielsen?");
         await racePage.getByRole("button", { name: "Find relevant passages", exact: true }).click();
       };
-      if (latest === "question") await racePage.locator('[data-ask-topic="founder"]').click();
+      if (latest === "question") await selectTopic(racePage, "founder");
       else await startQuestion();
       await requestStarted;
       if (latest === "question") await startQuestion();
-      else await racePage.locator('[data-ask-topic="founder"]').click();
+      else await selectTopic(racePage, "founder");
       release();
       await racePage.locator("#ask-results").waitFor({ state: "visible" });
       await racePage.waitForFunction(() => document.querySelector("#ask-results")?.getAttribute("aria-busy") === "false");
@@ -426,7 +459,7 @@ async function verifyRealModel() {
       assert.match(await page.locator("#ask-mode").innerText(), /MEANING \+ WORD/, "Evaluation must not silently fall back to word matching");
       summaries[suite] = summary;
     }
-    await page.locator('[data-ask-topic="founder"]').click();
+    await selectTopic(page, "founder");
     await page.locator('[data-ask-followup="evaluation"]').click();
     assert.match(await page.locator("#ask-result-summary").innerText(), /Guided exploration/);
     assert.equal(await page.locator('[data-passage-id="project/trlr/current-outcome"]').count(), 1);
@@ -518,6 +551,23 @@ try {
         assert(await page.locator("#ask-browse a").count() >= 3);
         await screenshot(page, `ask-nojs-${width}.png`);
       } else if (route) {
+        const mobileContents = page.locator(".case-mobile-contents");
+        let contents;
+        if (width <= 800) {
+          assert(!await mobileContents.evaluate((element) => element.open), "Mobile contents start collapsed");
+          await mobileContents.locator(":scope > summary").focus();
+          await page.keyboard.press("Enter");
+          contents = mobileContents.locator("nav a").first();
+          await page.keyboard.press("Tab");
+          assert(await contents.evaluate((element) => element === document.activeElement), "Mobile case contents support natural keyboard navigation");
+        } else {
+          contents = page.locator(".case-toc a").first();
+          await contents.focus();
+        }
+        const heading = await contents.getAttribute("href");
+        await page.keyboard.press("Enter");
+        assert.equal(new URL(page.url()).hash, heading, "Case contents navigate to the chosen section without JavaScript");
+        assert(await page.locator(`.case-content ${heading}`).isVisible());
         await page.locator(".back-link").click();
         assert.equal(new URL(page.url()).hash, "#work");
         assert.equal(new URL(page.url()).pathname, new URL(base).pathname);
@@ -572,9 +622,8 @@ try {
   );
   await page.goto(askURL);
   await page.locator("#pause-motion").check();
-  assert.equal(await page.locator(".ask-orbits i").count(), 3);
-  const orbitStates = await page.locator(".ask-orbits i").evaluateAll((elements) => elements.map((element) => getComputedStyle(element).animationPlayState));
-  assert(orbitStates.every((state) => state === "paused"), "The normal pause control must stop navigator rings");
+  const askMotion = await page.locator(".ambient-glow, .prism-ring, .ask-orbits i").evaluateAll((elements) => elements.map((element) => ({ name: getComputedStyle(element).animationName, state: getComputedStyle(element).animationPlayState })));
+  assert(askMotion.every(({ name, state }) => name === "none" || state === "paused"), "The pause control stops any remaining ambient motion on Ask");
   assert.equal(
     (await page.goto(new URL("missing-page-check/", base).href)).status(),
     404,
