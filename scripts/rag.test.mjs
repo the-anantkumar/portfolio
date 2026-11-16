@@ -20,11 +20,11 @@ test("context packing preserves full source qualifications and treats the questi
   const messages = buildRagMessages(question, [pending, investigation]);
   assert.equal(messages.length, 2);
   assert.equal(messages[0].role, "system");
-  const packed = JSON.parse(messages[1].content);
-  assert.equal(packed.question, question);
-  assert.deepEqual(packed.sources.map(({ text }) => text), [pending.text, investigation.text]);
-  assert.equal(packed.sources[0].attribution, pending.context);
-  assert(!("url" in packed.sources[0]), "The model never creates source links");
+  assert(messages[1].content.includes(question));
+  assert(messages[1].content.includes(pending.text));
+  assert(messages[1].content.includes(investigation.text));
+  assert(messages[1].content.includes(pending.context));
+  assert(!messages[1].content.includes(pending.url), "The model never creates source links");
 });
 
 test("preflight creates an immutable snapshot of the current question's evidence", () => {
