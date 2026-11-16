@@ -43,8 +43,19 @@ try {
         assert(await image.evaluate((element) => element.complete && element.naturalWidth > 0), "Reject blank or unloaded images");
       }
       if (fromTop) await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
-      await page.screenshot({ path: path.join(directory, `${name}-${viewport.width}-viewport.png`) });
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      });
+      const captureScrollY = await page.evaluate(() => scrollY);
       await page.screenshot({ path: path.join(directory, `${name}-${viewport.width}-full.png`), fullPage: true });
+      // Full-page capture can adjust the compositor's viewport. Restore the
+      // intended scroll position before capturing the visible first screen.
+      await page.evaluate(async (top) => {
+        window.scrollTo({ top, behavior: "instant" });
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      }, captureScrollY);
+      await page.screenshot({ path: path.join(directory, `${name}-${viewport.width}-viewport.png`) });
       const landmarks = await page.evaluate(() => {
         const bounds = (selector) => {
           const element = document.querySelector(selector);
