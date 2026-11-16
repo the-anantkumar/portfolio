@@ -28,7 +28,7 @@ The build checks an initial homepage transfer budget of 300 KB. Ordinary pages s
 ## Future search
 The Ask page searches only these public Markdown collections and links each result to its source. Word matching works immediately. Optional meaning-based search uses a small embedding model in the visitor's browser, with an explicit first-use download and a working word-matching fallback.
 
-This retrieves original passages rather than generating new answers. Questions stay on the device, and no model API or backend is required. A future conversational model would need separate tests for factual accuracy, unsupported questions, download size, and performance on phones.
+Search retrieves original public passages. An experimental, separately enabled local language model can select complete passages for a cited answer. The application preserves their original wording and qualifications; it does not display model-written factual prose. Questions stay on the device, and no model API or backend is required. Selection quality and physical-phone performance remain evaluation concerns.
 
 ## Delivery
 GitHub Pages serves the generated files from this portfolio's public repository. GitHub Actions validates and deploys changes, including scheduled contribution-calendar updates. A custom domain, paid backend, analytics service, and model API are not required.
