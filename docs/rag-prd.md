@@ -36,3 +36,9 @@ Required checks: Node 24 `npm run check`, production-path `npm run build`, `npm 
 ## Learning checkpoints
 
 Commit in phases of one to three files, with annotated checkpoints for the frozen contract, model screening, integrated pipeline, and final verification. Update the learning tracker with context packing, generation, validation, citations, and fallback components. Show the full pipeline and safe saved examples in the local lab. Preserve failed experiments and the distinction between built, experimental, planned, and owner-reviewed.
+
+## Implementation review, 17 November 2026
+
+The local extractive RAG pipeline and minimal frontend are implemented. Context remains complete, model decisions are strict yes/no, citations are application-created, and fallback/cancellation/cache behavior is browser-checked. FLAN-T5-base replaced the rejected Qwen candidate. The actual first-use sample is about 290 MB, within the separately disclosed experimental budget.
+
+The real browser achieved 14/20 exact screening selections and 4/8 fresh selections. Nine mismatches abstained; one selected an extra irrelevant source. Native results were stronger and cannot substitute for browser results. Therefore the product remains explicitly experimental and production model acceptance is not complete. Full verification evidence, remaining physical-phone work, and reproduction commands are in [the RAG record](../experiments/rag/README.md). No production release has occurred.
