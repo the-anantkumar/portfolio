@@ -7,6 +7,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { EMBEDDING } from "../src/lib/embedding-config.mjs";
 
 const release = JSON.parse(await readFile("dist/release.json", "utf8"));
+const experienceEvidence = JSON.parse(await readFile("dist/knowledge.json", "utf8"))
+  .passages.filter(({ id }) => id.startsWith("experience/"));
 const root = path.resolve("dist");
 const mime = {
   ".html": "text/html",
@@ -62,6 +64,7 @@ const routes = [
   "projects/portfolio/",
   "ask/",
 ];
+const viewportWidths = [1440, 768, 390, 320];
 const askURL = new URL("ask/", base).href;
 const isModelAsset = (url) =>
   /embedding-worker|search-vectors\.json|\.wasm(?:\?|$)|\.onnx(?:\?|$)|transformers|ort-wasm/i.test(url);
@@ -70,6 +73,57 @@ async function assertNoOverflow(page, label) {
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     `${label}: horizontal overflow`,
   );
+}
+async function assertMotionPreferences(page, label, reduced = false) {
+  const state = await page.evaluate(() => {
+    const elements = [...document.querySelectorAll("*")];
+    const styles = elements.flatMap((element) =>
+      [null, "::before", "::after"].map((pseudo) => ({
+        element: `${element.tagName.toLowerCase()}${element.id ? `#${element.id}` : ""}${pseudo || ""}`,
+        style: getComputedStyle(element, pseudo),
+      })),
+    );
+    const seconds = (value) => value.split(",").map((duration) =>
+      parseFloat(duration) / (duration.trim().endsWith("ms") ? 1000 : 1),
+    );
+    return {
+      inspected: elements.length,
+      reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
+      scroll: getComputedStyle(document.documentElement).scrollBehavior,
+      animations: styles.filter(({ style }) => style.animationName.split(",").some((name) => name.trim() !== "none")).map(({ element }) => element),
+      transitions: styles.filter(({ style }) => seconds(style.transitionDuration).some((duration) => duration > 0.001)).map(({ element }) => element),
+    };
+  });
+  assert(state.inspected > 0, `${label}: motion checks inspect actual page elements`);
+  assert.deepEqual(state.animations, [], `${label}: the editorial canvas has no ambient animation, including pseudo-elements`);
+  if (reduced) {
+    assert(state.reduced, `${label}: reduced-motion preference is active`);
+    assert.equal(state.scroll, "auto", `${label}: reduced motion disables smooth scrolling`);
+    assert.deepEqual(state.transitions, [], `${label}: reduced motion removes animated interaction transitions`);
+  }
+}
+async function assertExperienceDisclosures(page, width) {
+  const roles = await page.locator(".experience-item").all();
+  assert.equal(roles.length, experienceEvidence.length, "Each published employer role remains available");
+  for (const role of roles) {
+    const company = await role.locator("h3").innerText();
+    const evidence = experienceEvidence.find(({ title }) => title.startsWith(`${company}:`));
+    assert(evidence, `${company}: contributions have a public evidence source`);
+    const disclosure = role.locator(".experience-details");
+    const summary = disclosure.locator(":scope > summary");
+    assert(!await disclosure.evaluate((element) => element.open), "Experience starts with a compact role summary");
+    assert(await disclosure.locator("ul").isHidden(), "Collapsed contributions do not compete with the role summary");
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    assert(await disclosure.locator("ul").isVisible(), "Original contributions open by keyboard without JavaScript");
+    assert(await summary.evaluate((element) => element === document.activeElement), "Opening contributions retains keyboard focus");
+    const points = disclosure.locator("li");
+    assert.deepEqual(await points.allTextContents(), evidence.text.split("\n\n- ").slice(1), `${company}: expanded contributions preserve the original public evidence`);
+    for (const point of await points.all()) assert(await point.isVisible(), `${company}: every contribution is readable`);
+    await assertNoOverflow(page, `${width}px expanded ${company} contributions`);
+    await page.keyboard.press("Space");
+    assert(!await disclosure.evaluate((element) => element.open), "Contribution details can be collapsed again by keyboard");
+  }
 }
 async function assertAccessible(page, label) {
   const result = await new AxeBuilder({ page })
@@ -140,7 +194,7 @@ async function screenshot(page, filename) {
   });
 }
 async function verifyAsk() {
-  for (const width of [1440, 390, 320]) {
+  for (const width of viewportWidths) {
     const context = await browser.newContext({
       viewport: { width, height: 900 },
       reducedMotion: "reduce",
@@ -507,7 +561,7 @@ async function verifyRealModel() {
   }
 }
 try {
-  for (const width of [1440, 390, 320]) {
+  for (const width of viewportWidths) {
     const context = await browser.newContext({
       viewport: { width, height: 900 },
       javaScriptEnabled: false,
@@ -538,16 +592,10 @@ try {
       );
       assert.equal(await page.locator("script").count(), route === "ask/" ? 1 : 0);
       assert(!/\u2014/.test(await page.locator("body").innerText()));
-      assert(
-        await page
-          .locator(".ambient-glow, .ask-orbits i")
-          .evaluateAll((elements) =>
-            elements.every(
-              (element) => getComputedStyle(element).animationName === "none",
-            ),
-          ),
-      );
-      if (route === "ask/") {
+      await assertMotionPreferences(page, `${width}px ${route || "homepage"}`, true);
+      if (!route) {
+        await assertExperienceDisclosures(page, width);
+      } else if (route === "ask/") {
         assert(await page.locator("#ask-form").isHidden(), "No-JS visitors must not see an unusable form");
         assert(await page.locator("#ask-browse").isVisible(), "No-JS visitors can browse the evidence");
         assert(await page.locator("#ask-browse a").count() >= 3);
@@ -599,33 +647,16 @@ try {
   for (const route of routes) {
     await page.goto(new URL(route, base).href);
     await assertAccessible(page, route);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await assertMotionPreferences(page, route || "homepage");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await assertMotionPreferences(page, route || "homepage", true);
   }
   await page.goto(base);
   await page.keyboard.press("Tab");
   assert.equal(await page.locator(":focus").getAttribute("class"), "skip");
   await page.keyboard.press("Enter");
   assert.equal(await page.locator(":focus").getAttribute("id"), "main");
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.locator("#pause-motion").check();
-  const animations = await page
-    .locator(".ambient-glow, .prism-ring, .ask-orbits i")
-    .evaluateAll((elements) =>
-      elements
-        .map((element) => ({
-          name: getComputedStyle(element).animationName,
-          state: getComputedStyle(element).animationPlayState,
-        }))
-        .filter((animation) => animation.name !== "none"),
-    );
-  assert(animations.length > 0, "Motion check must inspect animated elements");
-  assert(
-    animations.every((animation) => animation.state === "paused"),
-    JSON.stringify(animations),
-  );
-  await page.goto(askURL);
-  await page.locator("#pause-motion").check();
-  const askMotion = await page.locator(".ambient-glow, .prism-ring, .ask-orbits i").evaluateAll((elements) => elements.map((element) => ({ name: getComputedStyle(element).animationName, state: getComputedStyle(element).animationPlayState })));
-  assert(askMotion.every(({ name, state }) => name === "none" || state === "paused"), "The pause control stops any remaining ambient motion on Ask");
   assert.equal(
     (await page.goto(new URL("missing-page-check/", base).href)).status(),
     404,
@@ -636,7 +667,7 @@ try {
   await context.close();
   await verifyAsk();
   console.log(
-    "Browser checks passed: all routes, 3 viewport sizes, no-JS navigation, reduced motion, keyboard access, pause control, heatmap, 404, axe accessibility, sourced search, privacy, lazy AI loading and recovery.",
+    "Browser checks passed: all routes, 4 viewport sizes, no-JS navigation, reduced motion, keyboard access, animation-free canvas, heatmap, 404, axe accessibility, sourced search, privacy, lazy AI loading and recovery.",
   );
 } finally {
   await browser.close();
