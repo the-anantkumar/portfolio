@@ -104,12 +104,12 @@ const examples = [
       </details>
 
       <details id="rag-enhancement" class="ask-enhancement rag-enhancement" hidden>
-        <summary><span class="ask-model-dot" aria-hidden="true"></span>Optional AI-selected answers<span class="ask-mode">ON YOUR DEVICE</span><span class="ask-disclosure-mark" aria-hidden="true">+</span></summary>
+        <summary><span class="ask-model-dot" aria-hidden="true"></span>Experimental AI-selected answers<span class="ask-mode">ON YOUR DEVICE</span><span class="ask-disclosure-mark" aria-hidden="true">+</span></summary>
         <div class="ask-enhancement-body">
           <div class="ask-enhancement-copy">
             <h2>An answer, in the original words.</h2>
-            <p>A local language model selects the sources that answer your question. Complete original wording and source links stay together.</p>
-            <p class="ask-download-note" id="rag-help">About 540 MB on first use, including Qwen model files from Hugging Face. Download only when you are ready. Loading and answers may be slow on phones and older devices. Questions stay in this browser. <a href={withBase("ai-notices/README.txt")}>Model and software notices</a>.</p>
+            <p>A local language model selects relevant source passages. It can miss useful evidence, so the full search results stay available. Complete original wording and source links stay together.</p>
+            <p class="ask-download-note" id="rag-help">About 300 MB on first use, including FLAN-T5 model files from Hugging Face. Download only when you are ready. Loading and answers may be slow on phones and older devices. Questions stay in this browser. <a href={withBase("ai-notices/README.txt")}>Model and software notices</a>.</p>
           </div>
           <div class="ask-enhancement-actions">
             <button id="rag-enable" class="ask-secondary" type="button" aria-describedby="rag-help">Enable AI-selected answers</button>
