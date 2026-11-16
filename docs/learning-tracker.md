@@ -2,13 +2,13 @@
 
 This is the revisit point for what has been built, how its components connect, and what remains experimental. Implementation status is separate from your understanding: a built component is not automatically marked as reviewed by you.
 
-Updated: 17 November 2026. Current development checkpoint: `checkpoint/rag-experimental-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
+Updated: 17 November 2026. Current development checkpoint: `checkpoint/design-polish-v1-2026-11-17` on `pilot`. The production portfolio and the development navigator are different release states.
 
 ## Open the component map
 
 Use Node 24. After `npm run build`, run `npm run learn` and open `http://127.0.0.1:4382/` for the local learning lab. `npm run learn:build` generates a standalone copy under ignored `artifacts/learning/` for offline revisiting.
 
-The tracker maps 17 components, including the new context, validation, and answer-lifecycle boundaries. The lab lets you select a component to see its input, output, code files, exercise, and common mistake. It also compares actual word and hybrid results for saved evaluation questions. Those semantic traces use previously computed question vectors; clicking them does not run a live model. Reviewed-component checkboxes are your own local browser state. No visitor question or conversation history is persisted.
+The tracker maps 18 components, including the new context, validation, and answer-lifecycle boundaries. The lab lets you select a component to see its input, output, code files, exercise, and common mistake. It also compares actual word and hybrid results for saved evaluation questions. Those semantic traces use previously computed question vectors; clicking them does not run a live model. Reviewed-component checkboxes are your own local browser state. No visitor question or conversation history is persisted.
 
 ## How the existing system fits together
 
@@ -53,6 +53,32 @@ Reading path: public content → static build → corpus → precomputed vectors
 | Context, source validation, answer lifecycle | Implemented components with separate contract and browser checks | [Contract tests](../scripts/rag.test.mjs) and [browser checks](../scripts/verify-rag-browser.mjs) |
 | Physical-phone inference | Not measured | Record real device and browser before making phone claims |
 | Open-ended follow-up memory | Planned | Requires a new privacy and context-management decision |
+
+## Read the presentation as a system
+
+The 17 November polish adds a presentation component to the map. [The visual review](design-polish.md) connects the observed problems to the implementation and repeatable screenshots.
+
+```mermaid
+flowchart LR
+  H[Homepage: role and selected work] --> C[Case study: decisions and scoped outcomes]
+  H --> Q[Ask a question]
+  Q --> E[Complete original passage]
+  E --> S[Open the exact source]
+  E --> F[Guided follow-up]
+  F --> E
+  Q -. Separate explicit opt-ins .-> M[Optional local models]
+  M --> E
+```
+
+Revisit three decisions in the code:
+
+1. **Hierarchy:** compare the featured employer case with the compact independent projects. The same content source feeds the page, but its visual emphasis has a purpose.
+2. **Progressive disclosure:** examples are visible, topics are expandable, and model settings follow evidence. A disclosure changes when a control is seen, not its underlying capability.
+3. **Evidence integrity:** the visible excerpt is a complete original passage. Its exact source link precedes it; all matching passages remain available. A layout improvement must not remove scope or change attribution.
+
+Changing the old “Future search” heading required a new public source ID and regenerated vectors. The learning lab now replays the earlier RAG measurements against a frozen public corpus whose hash matches that experiment. Current retrieval traces still use the current corpus. This keeps historical results honest while allowing editorial changes; no model quality improvement is claimed by a UI pass.
+
+Run the capture and browser commands in the review, then mark this component reviewed only when you have explained its input and output yourself. Model quality remains experimental and physical-phone inference remains unmeasured.
 
 ## What the first generation experiment taught us
 

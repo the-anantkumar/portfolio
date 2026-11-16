@@ -1,8 +1,8 @@
 {
   "version": 1,
   "updated": "2026-11-17",
-  "checkpoint": "checkpoint/rag-experimental-v1-2026-11-17",
-  "focus": "Explore the complete experimental RAG pipeline, measured browser failures, and cached local inference",
+  "checkpoint": "checkpoint/design-polish-v1-2026-11-17",
+  "focus": "Study the evidence-first visitor journey, static presentation boundaries, and preserved experimental RAG replay",
   "examples": [
     "rows",
     "linkedin",
@@ -59,6 +59,12 @@
       "status": "implemented and locally checked; model quality remains experimental",
       "date": "2026-11-17",
       "evidence": "docs/rag-prd.md"
+    },
+    {
+      "name": "Editorial portfolio and evidence-first Ask polish",
+      "status": "built and locally browser-checked; production release pending",
+      "date": "2026-11-17",
+      "evidence": "docs/design-polish.md"
     }
   ],
   "components": [
@@ -96,6 +102,29 @@
       "exercise": "Run npm run build and inspect dist/index.html. Find the text without running an app server.",
       "explain": "What is computed while building, and what must run on a visitor's device?",
       "pitfall": "A larger optional AI bundle is not the same thing as the initial homepage transfer."
+    },
+    {
+      "id": "presentation",
+      "name": "Editorial presentation and progressive disclosure",
+      "status": "built",
+      "lane": "Visitor experience",
+      "purpose": "Make engineering work and original evidence easy to scan without adding a runtime to ordinary pages.",
+      "input": "Typed public project data, rendered Markdown, existing retrieval matches, and explicit visitor actions.",
+      "output": "A featured employer case, compact independent projects, readable case studies, and a complete first evidence passage with a source link.",
+      "files": [
+        "src/pages/index.astro",
+        "src/pages/projects/[slug].astro",
+        "src/components/ProjectVisual.astro",
+        "src/styles/global.css",
+        "src/styles/case-study.css",
+        "src/pages/ask.astro",
+        "src/scripts/ask.ts",
+        "scripts/capture-design.mjs",
+        "docs/design-polish.md"
+      ],
+      "exercise": "Open the homepage with JavaScript disabled, follow a case-study contents link, then enable JavaScript on Ask and compare its visible first passage with Complete matched evidence. Trace both to the same public source.",
+      "explain": "Why does moving model controls after results improve the default journey without removing AI capability? What must remain beside an evidence quotation?",
+      "pitfall": "A shorter interface is not permission to cut a qualification from a quotation. Show a complete passage and preserve all matched context."
     },
     {
       "id": "corpus",
@@ -200,15 +229,15 @@
       "lane": "Visitor device",
       "purpose": "Make sources easy to scan while keeping the complete original evidence available.",
       "input": "Ranked or selected passages and templates built from public content.",
-      "output": "Grouped cards, roles, source links, native evidence disclosures, and contextual actions.",
+      "output": "Source-grouped cards with the complete first matched passage visible, its exact canonical source link, and an expandable complete original evidence set.",
       "files": [
         "src/pages/ask.astro",
         "src/scripts/ask.ts",
         "src/styles/ask.css"
       ],
-      "exercise": "Expand a Nielsen card. Identify the public summary, original quote, and exact source link.",
-      "explain": "Why can we collapse a full passage but should not silently remove its qualification?",
-      "pitfall": "A card summary is authored portfolio copy, not model-written prose."
+      "exercise": "Read the visible first Nielsen passage, open its exact source, then expand Complete matched evidence and compare the original wording and qualifications.",
+      "explain": "Why can supporting controls be collapsed while the first complete passage and its source remain visible?",
+      "pitfall": "A true quotation can still be irrelevant to the question. Source integrity and relevance are separate checks."
     },
     {
       "id": "state",
